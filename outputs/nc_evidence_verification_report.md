@@ -1,0 +1,132 @@
+# NC Evidence Verification Report
+
+Date: 2026-06-18
+
+This report verifies generated artifacts only. NC 60% remains an empirical target beyond this verifier.
+
+## Checks
+
+- PASS: unified manifest has 2,460,425 rows
+- PASS: InstanceGM has 1,159,223 ground-motion rows
+- PASS: K-NET has 22,119 unified records
+- PASS: K-NET source is the approved Downloads/s7rk7bj3zn-1 path
+- PASS: K-NET conversion has 22,119 complete ZNE records
+- PASS: methods provenance table exists
+- PASS: method script exists: work/scripts/convert_knet_bson.py
+- PASS: method script exists: work/scripts/build_unified_manifest.py
+- PASS: method script exists: work/scripts/run_ground_motion_baseline.py
+- PASS: method script exists: work/scripts/audit_early_window_peak_capture.py
+- PASS: method script exists: work/scripts/audit_knet_prepeak_subset.py
+- PASS: method script exists: work/scripts/run_ground_motion_heldout_baseline.py
+- PASS: method script exists: work/scripts/run_attenuation_reference.py
+- PASS: method script exists: work/scripts/audit_regional_gmm_readiness.py
+- PASS: method script exists: work/scripts/run_openquake_pga_reference.py
+- PASS: method script exists: work/scripts/run_knet_japan_gmm_reference.py
+- PASS: method script exists: work/scripts/run_conformal_intervals.py
+- PASS: method script exists: work/scripts/analyze_ground_motion_residuals.py
+- PASS: method script exists: work/scripts/run_aq2009gm_chunk_baseline.py
+- PASS: method script exists: work/scripts/run_pnw_accelerometer_peak_baseline.py
+- PASS: NC reviewer risk matrix exists
+- PASS: reviewer risk matrix covers: 10 s window
+- PASS: reviewer risk matrix covers: group leakage
+- PASS: reviewer risk matrix covers: distribution artifacts
+- PASS: reviewer risk matrix covers: attenuation-shaped
+- PASS: reviewer risk matrix covers: fully specified regional GMM
+- PASS: reviewer risk matrix covers: AQ2009GM supplement
+- PASS: reviewer risk matrix covers: PNW target official PGA
+- PASS: reviewer risk matrix covers: Phase alignment
+- PASS: reviewer risk matrix covers: calibrated under station shift
+- PASS: reviewer risk matrix covers: physical causality
+- PASS: reviewer risk matrix covers: NC 60%
+- PASS: PNW unit provenance audit exists
+- PASS: PNWAccelerometers local HDF5 has component_order but no unit field
+- PASS: AQ2009GM 096-100 summary exists
+- PASS: AQ2009GM chunk 096 HDF5 declares velocity waveforms in m/s
+- PASS: AQ2009GM chunk 097 HDF5 declares velocity waveforms in m/s
+- PASS: AQ2009GM chunk 098 HDF5 declares velocity waveforms in m/s
+- PASS: AQ2009GM chunk 099 HDF5 declares velocity waveforms in m/s
+- PASS: AQ2009GM chunk 100 HDF5 declares velocity waveforms in m/s
+- PASS: AQ2009GM 096-100 comparison has 12 rows across holdout/target/window combinations
+- PASS: AQ2009GM 096-100 includes held-event and held-station splits
+- PASS: AQ2009GM 096-100 includes PGA and PGV targets
+- PASS: AQ2009GM 096-100 covers 1/3/10 s windows
+- PASS: AQ2009GM 096-100 held-out group overlap is zero
+- PASS: AQ2009GM 096-100 combined model improves over metadata-only for every row
+- PASS: AQ2009GM 096-100 station split has 3,500 test rows and at least 11 held station groups
+- PASS: AQ2009GM 096-100 supplementary figure exists
+- PASS: AQ2009GM 096-100 supplementary figure opens (2616x1084)
+- PASS: outputs/figures/figure1_dataset_task_matrix.png exists
+- PASS: outputs/figures/figure1_dataset_task_matrix.png opens as a nontrivial image (3168x1488)
+- PASS: outputs/figures/figure2_early_window_performance.png exists
+- PASS: outputs/figures/figure2_early_window_performance.png opens as a nontrivial image (2688x1680)
+- PASS: outputs/figures/figure3_heldout_generalization.png exists
+- PASS: outputs/figures/figure3_heldout_generalization.png opens as a nontrivial image (2340x1458)
+- PASS: outputs/figures/figure4_classical_uncertainty.png exists
+- PASS: outputs/figures/figure4_classical_uncertainty.png opens as a nontrivial image (2340x1475)
+- PASS: outputs/figures/figure5_residual_waveform_audit.png exists
+- PASS: outputs/figures/figure5_residual_waveform_audit.png opens as a nontrivial image (2334x6276)
+- PASS: outputs/figures/figure6_phase_label_audit.png exists
+- PASS: outputs/figures/figure6_phase_label_audit.png opens as a nontrivial image (2376x1404)
+- PASS: Figure 2 table has 18 rows across 1/3/10 s windows
+- PASS: Figure 2 MAE reductions are positive for all tested rows
+- PASS: Figure 2 K-NET 10 s PGA reduction matches reported value
+- PASS: early-window peak-capture audit has 6 dataset-window rows
+- PASS: K-NET 10 s windows often contain target-scale PGA amplitudes
+- PASS: InstanceGM early/PGA amplitude ratios are not directly comparable
+- PASS: K-NET pre-peak subset audit exists
+- PASS: K-NET pre-peak subset audit has 9 rows across 3 thresholds and 3 windows
+- PASS: K-NET pre-peak subset audit includes 0.5/0.8/1.0 thresholds
+- PASS: K-NET pre-peak main threshold covers 1/3/10 s windows
+- PASS: K-NET 1 s and 3 s pre-peak subsets have enough records for audit interpretation
+- PASS: K-NET 10 s pre-peak subset is present but small
+- PASS: K-NET pre-peak subsets improve over metadata-only
+- PASS: K-NET 1 s and 3 s pre-peak reductions exceed 10%
+- PASS: Figure 3 table has 12 held-out rows
+- PASS: Figure 3 includes held-event and held-station splits
+- PASS: Figure 3 held-out group overlap is zero
+- PASS: Figure 3 MAE reductions are positive for every held-out target
+- PASS: attenuation-shaped reference summary exists
+- PASS: attenuation-shaped reference has 6 balanced held-station target rows
+- PASS: regional GMM readiness audit exists
+- PASS: InstanceGM GMM readiness audit joins all held-station records
+- PASS: InstanceGM GMM readiness audit has complete Vs30 in this split
+- PASS: InstanceGM focal-mechanism coverage is sparse for full GMM claims
+- PASS: K-NET lacks Vs30 and focal-mechanism fields in approved local data
+- PASS: InstanceGM attenuation reference has Vs30 values available
+- PASS: K-NET attenuation reference is not site-corrected because Vs30 is missing
+- PASS: attenuation reference aligns with all Figure 3 station targets
+- PASS: combined model beats attenuation-shaped reference for all station targets
+- PASS: Figure 4 table has 6 OpenQuake/conformal rows
+- PASS: Figure 4 combined MAE is below Boore2014 for all rows
+- PASS: Figure 4 conformal coverage values are valid probabilities
+- PASS: K-NET Japan GMM screening has 8 candidate references
+- PASS: K-NET early-waveform model beats best Japan GMM screening reference
+- PASS: Figure 6 table has 16 rows: 4 datasets x 2 models x P/S
+- PASS: Figure 6 covers STEAD, InstanceGM, Iquique, and K-NET
+- PASS: outputs/nc_minimum_submission_package.md references Figure 1
+- PASS: outputs/nc_minimum_submission_package.md references Figure 2
+- PASS: outputs/nc_minimum_submission_package.md references Figure 3
+- PASS: outputs/nc_minimum_submission_package.md references Figure 4
+- PASS: outputs/nc_minimum_submission_package.md references Figure 5
+- PASS: outputs/nc_minimum_submission_package.md references Figure 6
+- PASS: outputs/nc_minimum_submission_package.md references AQ2009GM supplementary check
+- PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 1
+- PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 2
+- PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 3
+- PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 4
+- PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 5
+- PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 6
+- PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references AQ2009GM supplementary check
+- PASS: outputs/nc_evidence_packet_zh.md references Figure 1
+- PASS: outputs/nc_evidence_packet_zh.md references Figure 2
+- PASS: outputs/nc_evidence_packet_zh.md references Figure 3
+- PASS: outputs/nc_evidence_packet_zh.md references Figure 4
+- PASS: outputs/nc_evidence_packet_zh.md references Figure 5
+- PASS: outputs/nc_evidence_packet_zh.md references Figure 6
+- PASS: outputs/nc_evidence_packet_zh.md references AQ2009GM supplementary check
+
+## Current Acceptance-Probability Status
+
+The verified package supports the current NC submission story: cross-dataset early waveform information, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, phase-label auditing, and an AQ2009GM 096-100 supplementary check.
+
+The remaining 60% gap is empirical: broader independent strong-motion validation beyond this five-chunk AQ2009GM subset, a fully specified regional GMM comparison, or a stronger physical residual mechanism would be needed before claiming a high-confidence NC route.

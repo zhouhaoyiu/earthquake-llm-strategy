@@ -1,0 +1,49 @@
+{
+  "mode": "full",
+  "input_dir": "/Users/yojironoda/Downloads/s7rk7bj3zn-1/knet_1530",
+  "waveforms": "work/knet_converted/knet_full_waveforms.hdf5",
+  "manifest": "work/knet_converted/knet_full_manifest.csv",
+  "records": 22119,
+  "accelerogram_docs": 66357,
+  "complete_records": 22119,
+  "component_order": "ZNE",
+  "variable_length_records": true,
+  "length_counts_top": {
+    "11900": 45744,
+    "6000": 8412,
+    "5900": 3129,
+    "12000": 1806,
+    "36000": 345,
+    "6200": 276,
+    "6100": 267,
+    "6400": 261,
+    "6800": 258,
+    "6300": 234,
+    "6500": 216,
+    "6700": 195,
+    "6600": 195,
+    "7000": 192,
+    "6900": 174,
+    "7300": 153,
+    "7100": 144,
+    "7500": 132,
+    "7200": 132,
+    "7800": 126
+  },
+  "min_samples_per_component": 3000,
+  "max_samples_per_component": 113600,
+  "component_counts": {
+    "NS": 22119,
+    "EW": 22119,
+    "UD": 22119
+  },
+  "missing_component_counts": {},
+  "unknown_component_counts": {},
+  "unknown_accelerogram_records": 0,
+  "split_counts": {
+    "val": 2490,
+    "test": 2182,
+    "train": 17447
+  },
+  "unit_note": "Accelerogram values are stored as acceleration; gal consistency should be verified against K-NET documentation before publication."
+}

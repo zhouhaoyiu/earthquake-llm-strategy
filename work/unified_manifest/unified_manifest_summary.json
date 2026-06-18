@@ -1,0 +1,108 @@
+{
+  "unified_manifest": "work/unified_manifest/unified_manifest.csv.gz",
+  "rows": 2460425,
+  "columns": [
+    "global_id",
+    "dataset",
+    "record_id",
+    "event_id",
+    "station_network_code",
+    "station_code",
+    "original_split",
+    "split",
+    "waveform_store",
+    "hdf5_key",
+    "hdf5_index",
+    "sample_start",
+    "sample_stop",
+    "component_order",
+    "dimension_order",
+    "n_components",
+    "n_samples",
+    "sampling_rate_hz",
+    "trace_start_time",
+    "detection_label",
+    "p_pick_sample",
+    "s_pick_sample",
+    "p_pick_sec",
+    "s_pick_sec",
+    "source_magnitude",
+    "source_magnitude_type",
+    "source_depth_km",
+    "source_latitude_deg",
+    "source_longitude_deg",
+    "source_distance_km",
+    "source_distance_deg",
+    "station_latitude_deg",
+    "station_longitude_deg",
+    "station_elevation_m",
+    "station_vs30_mps",
+    "pga_cmps2",
+    "pgv_cmps",
+    "sa03_cmps2",
+    "sa10_cmps2",
+    "sa30_cmps2",
+    "snr_db",
+    "trace_category",
+    "year",
+    "has_phase_task",
+    "has_detection_task",
+    "has_ground_motion_task",
+    "source_metadata_path",
+    "unit_notes"
+  ],
+  "datasets": {
+    "stead": {
+      "rows": 1265657,
+      "split_counts": {
+        "val": 63283,
+        "train": 1075808,
+        "test": 126566
+      },
+      "phase_rows": 1030231,
+      "detection_rows": 1265657,
+      "ground_motion_rows": 0,
+      "min_samples": 6000,
+      "max_samples": 6000
+    },
+    "instancegm": {
+      "rows": 1159249,
+      "split_counts": {
+        "train": 699980,
+        "test": 344242,
+        "val": 115027
+      },
+      "phase_rows": 1159249,
+      "detection_rows": 1159249,
+      "ground_motion_rows": 1159223,
+      "min_samples": 12000,
+      "max_samples": 12000
+    },
+    "iquique": {
+      "rows": 13400,
+      "split_counts": {
+        "train": 8040,
+        "test": 4020,
+        "val": 1340
+      },
+      "phase_rows": 13400,
+      "detection_rows": 13400,
+      "ground_motion_rows": 0,
+      "min_samples": 14000,
+      "max_samples": 18414
+    },
+    "knet": {
+      "rows": 22119,
+      "split_counts": {
+        "val": 2490,
+        "test": 2182,
+        "train": 17447
+      },
+      "phase_rows": 22119,
+      "detection_rows": 22119,
+      "ground_motion_rows": 22119,
+      "min_samples": 3000,
+      "max_samples": 113600
+    }
+  }
+}
