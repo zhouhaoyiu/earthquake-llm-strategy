@@ -54,7 +54,7 @@ The split distribution audit shows that the held-station tests retain real shift
 
 ### OpenQuake reference and uncertainty reveal remaining limits
 
-We fit a low-parameter attenuation-shaped ridge reference using magnitude, a log10 hypocentral-distance shape, depth, and log10 Vs30 where available. InstanceGM has Vs30 in this split; K-NET does not, so the K-NET attenuation reference is not site-corrected. The metadata plus early-waveform model improved over this reference across all balanced held-station targets, with relative MAE reductions from 17.5% to 51.6%. This check shows that the waveform gain is not only a comparison against a flexible metadata baseline.
+We fit a low-parameter attenuation-shaped ridge reference using magnitude, a log10 hypocentral-distance shape, depth, and log10 Vs30 where available. InstanceGM has Vs30 in this split. K-NET lacks Vs30, so the K-NET attenuation reference is an attenuation-shaped baseline without site correction. The metadata plus early-waveform model improved over this reference across all balanced held-station targets, with relative MAE reductions from 17.5% to 51.6%. This check shows waveform gain beyond a flexible metadata baseline.
 
 We used OpenQuake hazardlib BooreEtAl2014 as a classical reference for PGA, PGV, and spectral acceleration where targets were available. The comparison uses train-set median bias correction. It also uses source distance as an Rjb proxy, rake fixed at 0, and Vs30 set to 760 m/s where missing. These approximations make the reference useful for context with limited rupture geometry.
 
@@ -120,7 +120,7 @@ Held-event splits exclude event groups from training. Held-station splits exclud
 
 ### Classical reference
 
-The attenuation-shaped reference uses Ridge regression on magnitude, log10 hypocentral-distance, depth, and log10 Vs30 where available. It is fitted only on balanced held-station training records and evaluated on the held-station test records. The K-NET split lacks Vs30, so the K-NET reference should be described as attenuation-shaped rather than site-corrected.
+The attenuation-shaped reference uses Ridge regression on magnitude, log10 hypocentral-distance, depth, and log10 Vs30 where available. It is fitted only on balanced held-station training records and evaluated on the held-station test records. The K-NET split lacks Vs30, so the K-NET reference should be described as an attenuation-shaped baseline without site correction.
 
 The OpenQuake comparison uses BooreEtAl2014 with train-set median bias correction. Source distance is used as an Rjb proxy, rake is fixed at 0, and missing Vs30 is set to 760 m/s. The K-NET Japanese GMM screening uses source distance as an Rrup proxy, missing Vs30 defaults, and train-set median bias correction. These assumptions should be stated in the Methods and figure caption.
 

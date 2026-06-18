@@ -226,6 +226,18 @@ def main() -> None:
         for idx in range(1, 7):
             check(f"figure{idx}_" in text, f"{doc} references Figure {idx}", rows)
         check("AQ2009GM" in text, f"{doc} references AQ2009GM supplementary check", rows)
+    article = Path("outputs/nc_article_draft_v1.md").read_text()
+    for phrase in [
+        "Figure 1. Cross-dataset waveform-task benchmark",
+        "Figure 6. Phase-label transfer audit",
+        "2,460,425 manifest records",
+        "35.5% for InstanceGM PGA",
+        "52.6% for InstanceGM PGV",
+        "49.9% for K-NET PGA",
+        "0.925 coverage for K-NET PGA",
+        "five-chunk aftershock subset is supplementary evidence",
+    ]:
+        check(phrase in article, f"article draft contains bounded claim: {phrase}", rows)
 
     rows.extend(
         [

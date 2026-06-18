@@ -132,6 +132,14 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 5
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 6
 - PASS: outputs/nc_evidence_packet_zh.md references AQ2009GM supplementary check
+- PASS: article draft contains bounded claim: Figure 1. Cross-dataset waveform-task benchmark
+- PASS: article draft contains bounded claim: Figure 6. Phase-label transfer audit
+- PASS: article draft contains bounded claim: 2,460,425 manifest records
+- PASS: article draft contains bounded claim: 35.5% for InstanceGM PGA
+- PASS: article draft contains bounded claim: 52.6% for InstanceGM PGV
+- PASS: article draft contains bounded claim: 49.9% for K-NET PGA
+- PASS: article draft contains bounded claim: 0.925 coverage for K-NET PGA
+- PASS: article draft contains bounded claim: five-chunk aftershock subset is supplementary evidence
 
 ## Current Acceptance-Probability Status
 

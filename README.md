@@ -6,6 +6,8 @@ This repository contains the lightweight evidence package and scripts for the Na
 
 The repository intentionally excludes raw waveform caches and large generated HDF5/manifest files. Reproducibility scripts are in `work/scripts/`; current manuscript, evidence, figures, and verification reports are in `outputs/`.
 
+Current article draft: `outputs/nc_article_draft_v1.md`.
+
 Run the local evidence verifier from this directory:
 
 ```bash

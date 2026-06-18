@@ -42,6 +42,10 @@ Methods provenance:
 
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/methods_provenance_table.md`
 
+Article draft:
+
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/nc_article_draft_v1.md`
+
 Reviewer risk matrix:
 
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/nc_reviewer_risk_matrix.md`
