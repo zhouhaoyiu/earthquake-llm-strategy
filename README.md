@@ -12,4 +12,10 @@ Run the local evidence verifier from this directory:
 /Users/yojironoda/miniforge3/envs/zhy/bin/python work/scripts/verify_nc_evidence_package.py
 ```
 
+Build the empirical predictability-boundary table:
+
+```bash
+/Users/yojironoda/miniforge3/envs/zhy/bin/python work/scripts/build_predictability_boundary_table.py
+```
+
 Some checks depend on local SeisBench and K-NET data caches that are not redistributed here.

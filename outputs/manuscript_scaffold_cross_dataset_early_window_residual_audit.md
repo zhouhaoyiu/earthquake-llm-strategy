@@ -2,7 +2,7 @@
 
 Date: 2026-06-18
 
-Status: current NC manuscript scaffold after the 2026-06-19 reframing. The paper is now a public benchmark, predictability-limit, and uncertainty-calibration study. The empirical evidence includes random splits, held-event splits, balanced held-station splits, OpenQuake reference comparisons, conformal intervals, station-split distribution audits, phase-label audits, a supplementary AQ2009GM 096-100 PGA/PGV check, and a supplementary PNW accelerometer peak-amplitude check.
+Status: current NC manuscript scaffold after the 2026-06-19 reframing. The paper is now a public benchmark, predictability-limit, and uncertainty-calibration study. The empirical evidence includes random splits, held-event splits, balanced held-station splits, an empirical predictability-boundary table, OpenQuake reference comparisons, conformal intervals, station-split distribution audits, phase-label audits, a supplementary AQ2009GM 096-100 PGA/PGV check, and a supplementary PNW accelerometer peak-amplitude check.
 
 ## Abstract
 
@@ -87,6 +87,8 @@ Metadata plus early velocity features reduce log10 MAE for PGA and PGV under hel
 ## Discussion
 
 The experiments support a narrow, defensible claim: early post-P waveform windows contain strong-motion information beyond source-path-site metadata, and this information persists across held-event and balanced held-station evaluations. The strongest main evidence comes from InstanceGM PGV, InstanceGM PGA, and K-NET PGA. Spectral acceleration targets also improve, with target-dependent transfer and calibration.
+
+The empirical boundary table should be used to report limits directly. K-NET PGA and InstanceGM PGV have the strongest robust held-out gains. InstanceGM SA10 is the weakest robust held-out gain among the main targets. InstanceGM targets show conformal under-coverage at nominal 90%, so the paper should present uncertainty as a measured station-shift limit.
 
 Residual auditing is part of the scientific contribution. The benchmark does more than report an accuracy gain. It shows where errors remain after early waveform information is added. K-NET distance tails and repeated InstanceGM outliers give concrete records and regimes for follow-up. The conformal results add a calibration layer and show that station shift remains a real risk.
 

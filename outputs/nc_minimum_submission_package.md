@@ -26,6 +26,7 @@ Public strong-motion archives can be organized into a reproducible benchmark for
 | Classical references | done | attenuation-shaped ridge, BooreEtAl2014, and K-NET Japanese GMM screening |
 | Regional GMM readiness | done | field audit explains why full regional GMM claim is not yet supported |
 | Uncertainty | done | station-shift calibration is target-dependent |
+| Predictability boundary | done | 10 s random performance, held-event and held-station residual floors, robust held-out gains, and conformal coverage gaps |
 | Residual panels | done | audit cases and distance-tail diagnostics |
 | AQ2009GM 096-100 | supplementary done | Expanded SeisBench aftershock ground-motion check with velocity waveforms and official PGA/PGV metadata targets |
 | PNWAccelerometers robustness | supplementary done | SeisBench accelerometer peak-amplitude check; local HDF5 lacks waveform units |
@@ -48,6 +49,11 @@ Reviewer risk matrix:
 Regional GMM readiness:
 
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/regional_gmm_readiness_audit.md`
+
+Predictability boundary:
+
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/predictability_boundary_summary.md`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/predictability_boundary_table.csv`
 
 ## Main Figures
 

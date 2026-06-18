@@ -41,6 +41,7 @@ METHOD_SCRIPTS = [
     "work/scripts/analyze_ground_motion_residuals.py",
     "work/scripts/run_aq2009gm_chunk_baseline.py",
     "work/scripts/run_pnw_accelerometer_peak_baseline.py",
+    "work/scripts/build_predictability_boundary_table.py",
 ]
 
 
@@ -195,6 +196,17 @@ def main() -> None:
     check((fig4["combined_mae"] < fig4["boore2014_mae"]).all(), "Figure 4 combined MAE is below Boore2014 for all rows", rows)
     check(fig4["coverage"].between(0, 1).all(), "Figure 4 conformal coverage values are valid probabilities", rows)
 
+    boundary_path = Path("outputs/predictability_boundary_table.csv")
+    boundary_summary = Path("outputs/predictability_boundary_summary.md")
+    check(boundary_path.exists() and boundary_path.stat().st_size > 0, "predictability boundary table exists", rows)
+    check(boundary_summary.exists() and boundary_summary.stat().st_size > 0, "predictability boundary summary exists", rows)
+    boundary = pd.read_csv(boundary_path)
+    check(len(boundary) == 6, "predictability boundary table has 6 main target rows", rows)
+    check((boundary["held_event_group_overlap"] == 0).all(), "predictability boundary table preserves held-event zero overlap", rows)
+    check((boundary["held_station_group_overlap"] == 0).all(), "predictability boundary table preserves held-station zero overlap", rows)
+    check((boundary["robust_heldout_gain_pct"] > 0).all(), "predictability boundary table has positive robust held-out gains", rows)
+    check(boundary["coverage_gap_to_90"].lt(0).any(), "predictability boundary table reports at least one conformal under-coverage case", rows)
+
     japan = pd.read_csv("work/ground_motion_balanced_station_10s/knet_japan_gmm_reference.csv")
     knet_station = pd.read_csv("outputs/figure3_heldout_generalization.csv")
     knet_combined = knet_station[
@@ -220,7 +232,7 @@ def main() -> None:
             "",
             "## Current Acceptance-Probability Status",
             "",
-            "The verified package supports the current NC submission story: cross-dataset early waveform information, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, phase-label auditing, and an AQ2009GM 096-100 supplementary check.",
+            "The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, phase-label auditing, and an AQ2009GM 096-100 supplementary check.",
             "",
             "The remaining 60% gap is empirical: broader independent strong-motion validation beyond this five-chunk AQ2009GM subset, a fully specified regional GMM comparison, or a stronger physical residual mechanism would be needed before claiming a high-confidence NC route.",
             "",

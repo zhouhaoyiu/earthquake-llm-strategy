@@ -27,6 +27,7 @@ Verified package:
 - Split tests: random, held-event, balanced held-station with zero group overlap.
 - Classical references: attenuation-shaped ridge, bias-corrected BooreEtAl2014, and K-NET Japanese GMM screening.
 - Uncertainty: split-conformal intervals on balanced held-station features.
+- Predictability boundary table: 10 s random performance, held-event and held-station residual floors, robust held-out gains, and conformal coverage gaps.
 - Audits: K-NET pre-peak subset, residual tails, phase-label transfer, AQ2009GM 096-100 supplement, PNW accelerometer peak-amplitude supplement.
 
 Verifier:
@@ -68,6 +69,12 @@ Use random only as a reference. Lead with held-event and balanced held-station.
 
 Use split-conformal intervals. Report under-coverage directly.
 
+### Empirical boundary
+
+`B = {held-station MAE, q90/q95 residual, C_gap}`
+
+Use this as a measured boundary tied to the current data, features, and splits.
+
 ## Minimum NC Evidence
 
 Required before submission:
@@ -78,6 +85,7 @@ Required before submission:
 - Figure 4: classical references plus conformal uncertainty.
 - Figure 5: residual and waveform audit.
 - Figure 6: phase-label audit supporting P alignment.
+- Predictability boundary table.
 - Methods provenance table.
 - Reviewer risk matrix.
 - Evidence verifier with all checks passing.
@@ -88,6 +96,8 @@ Already present:
 - `outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md`
 - `outputs/nc_reviewer_risk_matrix.md`
 - `outputs/methods_provenance_table.md`
+- `outputs/predictability_boundary_summary.md`
+- `outputs/predictability_boundary_table.csv`
 - `outputs/nc_evidence_verification_report.md`
 
 ## Immediate Work Queue

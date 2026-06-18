@@ -26,6 +26,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: method script exists: work/scripts/analyze_ground_motion_residuals.py
 - PASS: method script exists: work/scripts/run_aq2009gm_chunk_baseline.py
 - PASS: method script exists: work/scripts/run_pnw_accelerometer_peak_baseline.py
+- PASS: method script exists: work/scripts/build_predictability_boundary_table.py
 - PASS: NC reviewer risk matrix exists
 - PASS: reviewer risk matrix covers: 10 s window
 - PASS: reviewer risk matrix covers: group leakage
@@ -99,6 +100,13 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: Figure 4 table has 6 OpenQuake/conformal rows
 - PASS: Figure 4 combined MAE is below Boore2014 for all rows
 - PASS: Figure 4 conformal coverage values are valid probabilities
+- PASS: predictability boundary table exists
+- PASS: predictability boundary summary exists
+- PASS: predictability boundary table has 6 main target rows
+- PASS: predictability boundary table preserves held-event zero overlap
+- PASS: predictability boundary table preserves held-station zero overlap
+- PASS: predictability boundary table has positive robust held-out gains
+- PASS: predictability boundary table reports at least one conformal under-coverage case
 - PASS: K-NET Japan GMM screening has 8 candidate references
 - PASS: K-NET early-waveform model beats best Japan GMM screening reference
 - PASS: Figure 6 table has 16 rows: 4 datasets x 2 models x P/S
@@ -127,6 +135,6 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 
 ## Current Acceptance-Probability Status
 
-The verified package supports the current NC submission story: cross-dataset early waveform information, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, phase-label auditing, and an AQ2009GM 096-100 supplementary check.
+The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, phase-label auditing, and an AQ2009GM 096-100 supplementary check.
 
 The remaining 60% gap is empirical: broader independent strong-motion validation beyond this five-chunk AQ2009GM subset, a fully specified regional GMM comparison, or a stronger physical residual mechanism would be needed before claiming a high-confidence NC route.
