@@ -22,11 +22,6 @@ work/**
 !work/unified_manifest/unified_manifest_summary.json
 !work/knet_converted/
 !work/knet_converted/knet_full_convert_report.json
-!work/aq2009gm_chunks096-100_station12_baseline/
-!work/aq2009gm_chunks096-100_station12_baseline/aq2009gm_chunks096-100_comparison.csv
-!work/aq2009gm_chunks096-100_station12_baseline/aq2009gm_chunks096-100_metrics.csv
-!work/aq2009gm_chunks096-100_station12_baseline/aq2009gm_chunks096-100_split_info.csv
-!work/aq2009gm_chunks096-100_station12_baseline/aq2009gm_chunks096-100_summary.json
 !work/ground_motion_balanced_station_10s/
 !work/ground_motion_balanced_station_10s/attenuation_reference.csv
 !work/ground_motion_balanced_station_10s/instancegm_held_station_train_features.csv

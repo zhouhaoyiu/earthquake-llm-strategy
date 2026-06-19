@@ -1,6 +1,6 @@
 # NC Evidence Verification Report
 
-Date: 2026-06-18
+Date: 2026-06-20
 
 This report verifies generated artifacts only. NC 60% remains an empirical target beyond this verifier.
 
@@ -24,9 +24,14 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: method script exists: work/scripts/run_knet_japan_gmm_reference.py
 - PASS: method script exists: work/scripts/run_conformal_intervals.py
 - PASS: method script exists: work/scripts/analyze_ground_motion_residuals.py
-- PASS: method script exists: work/scripts/run_aq2009gm_chunk_baseline.py
+- PASS: method script exists: work/scripts/stream_aq2009gm_full_validation.py
+- PASS: method script exists: work/scripts/build_esm_compact_features.py
+- PASS: method script exists: work/scripts/run_esm_compact_baseline.py
 - PASS: method script exists: work/scripts/run_pnw_accelerometer_peak_baseline.py
 - PASS: method script exists: work/scripts/build_predictability_boundary_table.py
+- PASS: method script exists: work/scripts/summarize_held_station_window_scan.py
+- PASS: method script exists: work/scripts/run_cross_region_waveform_transfer.py
+- PASS: method script exists: work/scripts/summarize_cross_region_window_scan.py
 - PASS: NC reviewer risk matrix exists
 - PASS: reviewer risk matrix covers: 10 s window
 - PASS: reviewer risk matrix covers: group leakage
@@ -41,21 +46,38 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: reviewer risk matrix covers: NC 60%
 - PASS: PNW unit provenance audit exists
 - PASS: PNWAccelerometers local HDF5 has component_order but no unit field
-- PASS: AQ2009GM 096-100 summary exists
-- PASS: AQ2009GM chunk 096 HDF5 declares velocity waveforms in m/s
-- PASS: AQ2009GM chunk 097 HDF5 declares velocity waveforms in m/s
-- PASS: AQ2009GM chunk 098 HDF5 declares velocity waveforms in m/s
-- PASS: AQ2009GM chunk 099 HDF5 declares velocity waveforms in m/s
-- PASS: AQ2009GM chunk 100 HDF5 declares velocity waveforms in m/s
-- PASS: AQ2009GM 096-100 comparison has 12 rows across holdout/target/window combinations
-- PASS: AQ2009GM 096-100 includes held-event and held-station splits
-- PASS: AQ2009GM 096-100 includes PGA and PGV targets
-- PASS: AQ2009GM 096-100 covers 1/3/10 s windows
-- PASS: AQ2009GM 096-100 held-out group overlap is zero
-- PASS: AQ2009GM 096-100 combined model improves over metadata-only for every row
-- PASS: AQ2009GM 096-100 station split has 3,500 test rows and at least 11 held station groups
-- PASS: AQ2009GM 096-100 supplementary figure exists
-- PASS: AQ2009GM 096-100 supplementary figure opens (2616x1084)
+- PASS: AQ2009GM full-manifest streaming summary exists
+- PASS: AQ2009GM streaming covers all 254 local manifest chunks
+- PASS: AQ2009GM chunk inventory has 254 chunks and zero extraction errors
+- PASS: AQ2009GM streaming has 345,226 valid PGA/PGV records
+- PASS: AQ2009GM streaming event/station counts match summary
+- PASS: AQ2009GM full-manifest comparison has 18 rows across holdout/target/window combinations
+- PASS: AQ2009GM full-manifest includes held-event, held-station, and held-time splits
+- PASS: AQ2009GM full-manifest includes PGA and PGV targets
+- PASS: AQ2009GM full-manifest covers 1/3/10 s windows
+- PASS: AQ2009GM full-manifest held-out group overlap is zero
+- PASS: AQ2009GM full-manifest combined model improves over metadata-only for every row
+- PASS: AQ2009GM full-manifest station split has 10,000 test rows and 20 held station groups
+- PASS: AQ2009GM full-manifest supplementary figure exists
+- PASS: AQ2009GM full-manifest supplementary figure opens (2616x1084)
+- PASS: ESM compact feature summary exists
+- PASS: ESM compact feature table exists
+- PASS: ESM compact feature extraction covers 951 local zip packages
+- PASS: ESM compact feature table has 134,250 early-window rows
+- PASS: ESM compact feature event/station counts match summary
+- PASS: ESM compact feature table has complete PGA targets
+- PASS: ESM compact feature table records the five missing PGV window rows
+- PASS: ESM compact feature extraction has zero read errors
+- PASS: ESM compact feature table covers 1/2/3/5/10 s windows
+- PASS: ESM compact feature table excludes invalid theoretical P windows
+- PASS: ESM compact feature table has positive PGA targets
+- PASS: ESM compact feature table has positive nonmissing PGV targets and five missing PGV rows
+- PASS: ESM held-out baseline summary exists
+- PASS: ESM held-out baseline has 80 rows across holdout/window/target/feature-set combinations
+- PASS: ESM held-out baseline covers 1/2/3/5/10 s windows
+- PASS: ESM held-out baseline includes held-event and held-station splits
+- PASS: ESM held-out baseline group overlap is zero
+- PASS: ESM held-station P+distance+site model improves over median for every target/window
 - PASS: outputs/figures/figure1_dataset_task_matrix.png exists
 - PASS: outputs/figures/figure1_dataset_task_matrix.png opens as a nontrivial image (3168x1488)
 - PASS: outputs/figures/figure2_early_window_performance.png exists
@@ -107,6 +129,80 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: predictability boundary table preserves held-station zero overlap
 - PASS: predictability boundary table has positive robust held-out gains
 - PASS: predictability boundary table reports at least one conformal under-coverage case
+- PASS: held-station 1/2/3/5/10 window-scan summary exists
+- PASS: held-station 1/2/3/5/10 window-scan table exists
+- PASS: held-station 1/2/3/5/10 window-scan figure exists
+- PASS: held-station window-scan figure opens (1848x1100)
+- PASS: held-station window scan covers 1/2/3/5/10 s windows
+- PASS: held-station window scan has positive early-waveform gain for every row
+- PASS: held-station window scan preserves zero group overlap
+- PASS: cross-region waveform transfer summary exists
+- PASS: cross-region waveform transfer metrics exist
+- PASS: cross-region waveform transfer boundary table exists
+- PASS: cross-region waveform transfer boundary figure exists
+- PASS: cross-region waveform transfer figure opens (2310x1056)
+- PASS: cross-region transfer covers InstanceGM, K-NET, and AQ2009GM
+- PASS: cross-region transfer split group overlap is zero
+- PASS: cross-region transfer covers PGA and PGV where available
+- PASS: cross-region boundary table contains only cross-domain rows
+- PASS: cross-region transfer is worse than target-domain training for every cross-domain row
+- PASS: zero-shot cross-region transfer median penalty exceeds 2x target-domain MAE
+- PASS: target-train offset calibration reduces but does not remove the cross-region penalty
+- PASS: ESM four-domain transfer 1s summary exists
+- PASS: ESM four-domain transfer 1s metrics exist
+- PASS: ESM four-domain transfer 1s boundary table exists
+- PASS: ESM four-domain transfer 1s figure exists
+- PASS: ESM four-domain transfer 1s figure opens (2310x1056)
+- PASS: ESM transfer 1s split covers expected domains
+- PASS: ESM four-domain transfer 1s split group overlap is zero
+- PASS: ESM four-domain transfer 1s boundary contains only cross-domain rows
+- PASS: ESM four-domain transfer 1s rows remain worse than target-domain training
+- PASS: ESM four-domain transfer 2s summary exists
+- PASS: ESM four-domain transfer 2s metrics exist
+- PASS: ESM four-domain transfer 2s boundary table exists
+- PASS: ESM four-domain transfer 2s figure exists
+- PASS: ESM four-domain transfer 2s figure opens (2310x1056)
+- PASS: ESM transfer 2s split covers expected domains
+- PASS: ESM four-domain transfer 2s split group overlap is zero
+- PASS: ESM four-domain transfer 2s boundary contains only cross-domain rows
+- PASS: ESM four-domain transfer 2s rows remain worse than target-domain training
+- PASS: ESM four-domain transfer 3s summary exists
+- PASS: ESM four-domain transfer 3s metrics exist
+- PASS: ESM four-domain transfer 3s boundary table exists
+- PASS: ESM four-domain transfer 3s figure exists
+- PASS: ESM four-domain transfer 3s figure opens (2310x1056)
+- PASS: ESM transfer 3s split covers expected domains
+- PASS: ESM four-domain transfer 3s split group overlap is zero
+- PASS: ESM four-domain transfer 3s boundary contains only cross-domain rows
+- PASS: ESM four-domain transfer 3s rows remain worse than target-domain training
+- PASS: ESM four-domain transfer 5s summary exists
+- PASS: ESM four-domain transfer 5s metrics exist
+- PASS: ESM four-domain transfer 5s boundary table exists
+- PASS: ESM four-domain transfer 5s figure exists
+- PASS: ESM four-domain transfer 5s figure opens (2310x1056)
+- PASS: ESM transfer 5s split covers expected domains
+- PASS: ESM four-domain transfer 5s split group overlap is zero
+- PASS: ESM four-domain transfer 5s boundary contains only cross-domain rows
+- PASS: ESM four-domain transfer 5s rows remain worse than target-domain training
+- PASS: ESM four-domain transfer 10s summary exists
+- PASS: ESM four-domain transfer 10s metrics exist
+- PASS: ESM four-domain transfer 10s boundary table exists
+- PASS: ESM four-domain transfer 10s figure exists
+- PASS: ESM four-domain transfer 10s figure opens (2310x1056)
+- PASS: ESM transfer 10s split covers expected domains
+- PASS: ESM four-domain transfer 10s split group overlap is zero
+- PASS: ESM four-domain transfer 10s boundary contains only cross-domain rows
+- PASS: ESM four-domain transfer 10s rows remain worse than target-domain training
+- PASS: 10 s external-to-ESM PGA transfer remains above 2x target-domain MAE after offset calibration
+- PASS: 10 s external-to-ESM PGV transfer remains above 1.5x target-domain MAE after offset calibration
+- PASS: cross-region window-scan summary exists
+- PASS: cross-region window-scan table exists
+- PASS: cross-region window-scan figure exists
+- PASS: cross-region window-scan figure opens (1628x1011)
+- PASS: cross-region window-scan covers 1/3/10 s windows
+- PASS: cross-region window-scan rows remain worse than target-domain training
+- PASS: zero-shot transfer penalty increases from 1 s to 10 s
+- PASS: offset-calibrated transfer penalty increases from 1 s to 10 s
 - PASS: K-NET Japan GMM screening has 8 candidate references
 - PASS: K-NET early-waveform model beats best Japan GMM screening reference
 - PASS: Figure 6 table has 16 rows: 4 datasets x 2 models x P/S
@@ -139,10 +235,13 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: article draft contains bounded claim: 52.6% for InstanceGM PGV
 - PASS: article draft contains bounded claim: 49.9% for K-NET PGA
 - PASS: article draft contains bounded claim: 0.925 coverage for K-NET PGA
-- PASS: article draft contains bounded claim: five-chunk aftershock subset is supplementary evidence
+- PASS: article draft contains bounded claim: The retained AQ2009GM evidence consists of compact feature tables
+- PASS: article draft contains bounded claim: ESM provides an external European strong-motion check
+- PASS: article draft contains bounded claim: theoretical P-onset estimate
+- PASS: article draft contains bounded claim: 2.53x for PGA and 1.58x for PGV
 
 ## Current Acceptance-Probability Status
 
-The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, phase-label auditing, and an AQ2009GM 096-100 supplementary check.
+The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, cross-region waveform-transfer boundary, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, phase-label auditing, full-manifest AQ2009GM feature-table validation, and ESM European strong-motion compact-feature validation.
 
-The remaining 60% gap is empirical: broader independent strong-motion validation beyond this five-chunk AQ2009GM subset, a fully specified regional GMM comparison, or a stronger physical residual mechanism would be needed before claiming a high-confidence NC route.
+The remaining gap is empirical: a fully specified regional GMM comparison, ESM P-onset auditing, or a stronger physical residual mechanism would be needed before claiming a high-confidence NC route.

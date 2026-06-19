@@ -12,9 +12,9 @@ Working title:
 
 ## Central Claim
 
-Public strong-motion archives can be organized into a reproducible early-window benchmark that measures how much final strong shaking is predictable from the first seconds after P arrival. Early waveform features add information beyond source-path-site metadata, but the gain, tail risk, and calibration limits vary by target, split, and region.
+Public strong-motion archives can be organized into a reproducible early-window benchmark that measures how much final strong shaking is predictable from the first seconds after P arrival. Early waveform features add information beyond source-path-site metadata. The gain, tail risk, calibration, and cross-region transfer penalties vary by target, split, and region.
 
-This is a benchmark and uncertainty paper. It is not a new-model paper, not an earthquake-prediction paper, and not an operational early-warning claim.
+The paper is a benchmark, uncertainty, and predictability-boundary study. Keep new-model, earthquake-prediction, and operational early-warning claims outside the core framing.
 
 ## Current Evidence
 
@@ -23,12 +23,12 @@ Verified package:
 - Unified manifest: 2,460,425 records across STEAD, InstanceGM, Iquique, and K-NET.
 - K-NET conversion: 22,119 complete ZNE records; gal to cm/s2 unit provenance verified.
 - Main strong-motion evidence: InstanceGM PGA, PGV, SA03, SA10, SA30; K-NET PGA.
-- Early windows: 1 s, 3 s, and 10 s after catalog P arrival.
+- Early windows: 1 s, 2 s, 3 s, 5 s, and 10 s after catalog P arrival for held-station information gain; 1/3/10 s for AQ2009GM and cross-region transfer until AQ 2/5 s features are extracted.
 - Split tests: random, held-event, balanced held-station with zero group overlap.
 - Classical references: attenuation-shaped ridge, bias-corrected BooreEtAl2014, and K-NET Japanese GMM screening.
 - Uncertainty: split-conformal intervals on balanced held-station features.
-- Predictability boundary table: 10 s random performance, held-event and held-station residual floors, robust held-out gains, and conformal coverage gaps.
-- Audits: K-NET pre-peak subset, residual tails, phase-label transfer, AQ2009GM 096-100 supplement, PNW accelerometer peak-amplitude supplement.
+- Predictability boundary table: 10 s random performance, held-event and held-station residual floors, robust held-out gains, conformal coverage gaps, and cross-region transfer penalties.
+- Audits: K-NET pre-peak subset, residual tails, phase-label transfer, AQ2009GM full-manifest streaming supplement, PNW accelerometer peak-amplitude supplement.
 
 Verifier:
 
@@ -37,10 +37,10 @@ Verifier:
 ## Main Storyline
 
 1. Build a public early-window strong-motion benchmark with explicit data, split, unit, and target provenance.
-2. Quantify lead-time-dependent information gain from 1 s, 3 s, and 10 s post-P windows.
+2. Quantify lead-time-dependent information gain from 1 s, 2 s, 3 s, 5 s, and 10 s post-P windows.
 3. Test whether the gain survives held-event and balanced held-station evaluation.
 4. Compare against metadata baselines and classical ground-motion references.
-5. Report uncertainty calibration and tail-risk limits, not only point-prediction error.
+5. Report uncertainty calibration, tail-risk limits, and cross-region transfer penalties.
 6. Audit residuals and phase labels to expose where the benchmark still fails.
 
 ## Core Quantities
@@ -75,6 +75,12 @@ Use split-conformal intervals. Report under-coverage directly.
 
 Use this as a measured boundary tied to the current data, features, and splits.
 
+### Cross-region transfer penalty
+
+`T(domain, t) = R(source -> target, t) / R(target -> target, t)`
+
+Use this for the InstanceGM/K-NET/AQ2009GM early-waveform-only transfer boundary. Current median zero-shot penalties are 1.49x at 1 s, 1.74x at 3 s, and 2.84x at 10 s.
+
 ## Minimum NC Evidence
 
 Required before submission:
@@ -105,7 +111,7 @@ Already present:
 1. Rename and rewrite the manuscript scaffold around predictability limits, not residual auditing alone.
 2. Rebuild the six main figures in one Nature-style visual system.
 3. Turn the current evidence packet into a full manuscript draft.
-4. Decide whether to expand AQ2009GM beyond chunks 096-100; keep the current five-chunk result supplementary.
+4. Integrate cross-region transfer boundary into the manuscript and supplement.
 5. Add a short Data and Code Availability section with exact scripts and split files.
 6. Re-run the verifier after every figure/table regeneration.
 
@@ -117,6 +123,7 @@ Use:
 - This information persists under held-event and balanced held-station tests.
 - Public archives can support a reproducible benchmark for early strong-motion predictability.
 - Tail risk and conformal coverage show remaining limits under station shift.
+- Cross-region early-waveform transfer quantifies regional and measurement-system limits.
 
 Avoid:
 

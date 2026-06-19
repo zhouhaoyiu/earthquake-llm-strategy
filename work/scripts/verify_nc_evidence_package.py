@@ -39,9 +39,14 @@ METHOD_SCRIPTS = [
     "work/scripts/run_knet_japan_gmm_reference.py",
     "work/scripts/run_conformal_intervals.py",
     "work/scripts/analyze_ground_motion_residuals.py",
-    "work/scripts/run_aq2009gm_chunk_baseline.py",
+    "work/scripts/stream_aq2009gm_full_validation.py",
+    "work/scripts/build_esm_compact_features.py",
+    "work/scripts/run_esm_compact_baseline.py",
     "work/scripts/run_pnw_accelerometer_peak_baseline.py",
     "work/scripts/build_predictability_boundary_table.py",
+    "work/scripts/summarize_held_station_window_scan.py",
+    "work/scripts/run_cross_region_waveform_transfer.py",
+    "work/scripts/summarize_cross_region_window_scan.py",
 ]
 
 
@@ -59,7 +64,7 @@ def main() -> None:
     rows: list[str] = [
         "# NC Evidence Verification Report",
         "",
-        "Date: 2026-06-18",
+        "Date: 2026-06-20",
         "",
         "This report verifies generated artifacts only. NC 60% remains an empirical target beyond this verifier.",
         "",
@@ -105,28 +110,63 @@ def main() -> None:
         data_format_keys = set(h5["data_format"].keys())
     check("component_order" in data_format_keys and "unit" not in data_format_keys, "PNWAccelerometers local HDF5 has component_order but no unit field", rows)
 
-    aq_summary = Path("outputs/aq2009gm_chunks096-100_station12_baseline_summary.md")
-    aq_figure = Path("outputs/figures/ground_motion_audit/aq2009gm_chunks096-100_station12_panel.png")
-    check(aq_summary.exists() and aq_summary.stat().st_size > 0, "AQ2009GM 096-100 summary exists", rows)
-    for chunk in ["096", "097", "098", "099", "100"]:
-        with h5py.File(f"/Users/yojironoda/.seisbench/datasets/aq2009gm/waveforms{chunk}.hdf5", "r") as h5:
-            aq_measurement = h5["data_format/measurement"][()]
-            aq_unit = h5["data_format/unit"][()]
-        aq_measurement = aq_measurement.decode() if isinstance(aq_measurement, bytes) else str(aq_measurement)
-        aq_unit = aq_unit.decode() if isinstance(aq_unit, bytes) else str(aq_unit)
-        check(aq_measurement == "velocity" and aq_unit == "m/s", f"AQ2009GM chunk {chunk} HDF5 declares velocity waveforms in m/s", rows)
-    aq_comparison = pd.read_csv("work/aq2009gm_chunks096-100_station12_baseline/aq2009gm_chunks096-100_comparison.csv")
-    check(len(aq_comparison) == 12, "AQ2009GM 096-100 comparison has 12 rows across holdout/target/window combinations", rows)
-    check(set(aq_comparison["holdout"]) == {"event", "station"}, "AQ2009GM 096-100 includes held-event and held-station splits", rows)
-    check(set(aq_comparison["target"]) == {"pga", "pgv"}, "AQ2009GM 096-100 includes PGA and PGV targets", rows)
-    check(set(aq_comparison["early_seconds"]) == {1.0, 3.0, 10.0}, "AQ2009GM 096-100 covers 1/3/10 s windows", rows)
-    check((aq_comparison["group_overlap"] == 0).all(), "AQ2009GM 096-100 held-out group overlap is zero", rows)
-    check((aq_comparison["mae_reduction_pct"] > 0).all(), "AQ2009GM 096-100 combined model improves over metadata-only for every row", rows)
+    aq_summary = Path("outputs/aq2009gm_full_stream_validation_summary.md")
+    aq_figure = Path("outputs/figures/ground_motion_audit/aq2009gm_full_stream_panel.png")
+    aq_summary_json = json.load(open("work/aq2009gm_full_stream_validation/aq2009gm_full_stream_summary.json"))
+    aq_inventory = pd.read_csv("work/aq2009gm_full_stream_validation/chunk_inventory.csv")
+    aq_comparison = pd.read_csv("work/aq2009gm_full_stream_validation/aq2009gm_full_stream_comparison.csv")
+    chunk_manifest = [
+        line.strip()
+        for line in Path("/Users/yojironoda/.seisbench/datasets/aq2009gm/chunks").read_text().splitlines()
+        if line.strip()
+    ]
+    check(aq_summary.exists() and aq_summary.stat().st_size > 0, "AQ2009GM full-manifest streaming summary exists", rows)
+    check(aq_summary_json["chunk_count"] == len(chunk_manifest) == 254, "AQ2009GM streaming covers all 254 local manifest chunks", rows)
+    check(len(aq_inventory) == 254 and (aq_inventory["errors"] == 0).all(), "AQ2009GM chunk inventory has 254 chunks and zero extraction errors", rows)
+    check(aq_summary_json["valid_rows"] == 345226, "AQ2009GM streaming has 345,226 valid PGA/PGV records", rows)
+    check(aq_summary_json["valid_events"] == 60310 and aq_summary_json["valid_stations"] == 66, "AQ2009GM streaming event/station counts match summary", rows)
+    check(len(aq_comparison) == 18, "AQ2009GM full-manifest comparison has 18 rows across holdout/target/window combinations", rows)
+    check(set(aq_comparison["holdout"]) == {"event", "station", "time"}, "AQ2009GM full-manifest includes held-event, held-station, and held-time splits", rows)
+    check(set(aq_comparison["target"]) == {"pga", "pgv"}, "AQ2009GM full-manifest includes PGA and PGV targets", rows)
+    check(set(aq_comparison["early_seconds"]) == {1.0, 3.0, 10.0}, "AQ2009GM full-manifest covers 1/3/10 s windows", rows)
+    check((aq_comparison["group_overlap"] == 0).all(), "AQ2009GM full-manifest held-out group overlap is zero", rows)
+    check((aq_comparison["mae_reduction_pct"] > 0).all(), "AQ2009GM full-manifest combined model improves over metadata-only for every row", rows)
     station_aq = aq_comparison[aq_comparison["holdout"] == "station"]
-    check(station_aq["test_rows"].min() >= 3500 and station_aq["test_groups"].min() >= 11, "AQ2009GM 096-100 station split has 3,500 test rows and at least 11 held station groups", rows)
-    check(aq_figure.exists() and aq_figure.stat().st_size > 0, "AQ2009GM 096-100 supplementary figure exists", rows)
+    check(station_aq["test_rows"].min() >= 10000 and station_aq["test_groups"].min() >= 20, "AQ2009GM full-manifest station split has 10,000 test rows and 20 held station groups", rows)
+    check(aq_figure.exists() and aq_figure.stat().st_size > 0, "AQ2009GM full-manifest supplementary figure exists", rows)
     aq_im = Image.open(aq_figure)
-    check(aq_im.width >= 1000 and aq_im.height >= 700, f"AQ2009GM 096-100 supplementary figure opens ({aq_im.width}x{aq_im.height})", rows)
+    check(aq_im.width >= 1000 and aq_im.height >= 700, f"AQ2009GM full-manifest supplementary figure opens ({aq_im.width}x{aq_im.height})", rows)
+
+    esm_feature_summary = Path("outputs/esm_compact_features_full_summary.md")
+    esm_feature_path = Path("work/esm_compact_features_full/esm_compact_features.csv.gz")
+    esm_feature_json = json.load(open("work/esm_compact_features_full/esm_compact_feature_summary.json"))
+    check(esm_feature_summary.exists() and esm_feature_summary.stat().st_size > 0, "ESM compact feature summary exists", rows)
+    check(esm_feature_path.exists() and esm_feature_path.stat().st_size > 0, "ESM compact feature table exists", rows)
+    check(esm_feature_json["zip_files"] == 951, "ESM compact feature extraction covers 951 local zip packages", rows)
+    check(esm_feature_json["feature_rows"] == 134250, "ESM compact feature table has 134,250 early-window rows", rows)
+    check(esm_feature_json["events"] == 861 and esm_feature_json["stations"] == 1568, "ESM compact feature event/station counts match summary", rows)
+    check(esm_feature_json["target_pga_nonmissing_rows"] == 134250, "ESM compact feature table has complete PGA targets", rows)
+    check(esm_feature_json["target_pgv_nonmissing_rows"] == 134245 and esm_feature_json["target_pgv_missing_rows"] == 5, "ESM compact feature table records the five missing PGV window rows", rows)
+    check(esm_feature_json["errors"] == 0, "ESM compact feature extraction has zero read errors", rows)
+    esm_features = pd.read_csv(esm_feature_path)
+    check(set(esm_features["early_seconds"]) == {1.0, 2.0, 3.0, 5.0, 10.0}, "ESM compact feature table covers 1/2/3/5/10 s windows", rows)
+    check(esm_features["p_window_valid"].astype(bool).all(), "ESM compact feature table excludes invalid theoretical P windows", rows)
+    check(pd.to_numeric(esm_features["target_pga"], errors="coerce").gt(0).all(), "ESM compact feature table has positive PGA targets", rows)
+    esm_pgv = pd.to_numeric(esm_features["target_pgv"], errors="coerce")
+    check(esm_pgv.dropna().gt(0).all() and int(esm_pgv.isna().sum()) == 5, "ESM compact feature table has positive nonmissing PGV targets and five missing PGV rows", rows)
+
+    esm_heldout_summary = Path("outputs/esm_heldout_baseline_summary.md")
+    esm_heldout_metrics = pd.read_csv("work/esm_heldout_baseline/esm_heldout_metrics.csv")
+    esm_heldout_split = pd.read_csv("work/esm_heldout_baseline/esm_heldout_split_info.csv")
+    check(esm_heldout_summary.exists() and esm_heldout_summary.stat().st_size > 0, "ESM held-out baseline summary exists", rows)
+    check(len(esm_heldout_metrics) == 80, "ESM held-out baseline has 80 rows across holdout/window/target/feature-set combinations", rows)
+    check(set(esm_heldout_metrics["early_seconds"]) == {1.0, 2.0, 3.0, 5.0, 10.0}, "ESM held-out baseline covers 1/2/3/5/10 s windows", rows)
+    check(set(esm_heldout_metrics["holdout"]) == {"event", "station"}, "ESM held-out baseline includes held-event and held-station splits", rows)
+    check((esm_heldout_metrics["group_overlap"] == 0).all() and (esm_heldout_split["group_overlap"] == 0).all(), "ESM held-out baseline group overlap is zero", rows)
+    station_esm = esm_heldout_metrics[esm_heldout_metrics["holdout"] == "station"]
+    median_esm = station_esm[station_esm["feature_set"] == "median"].set_index(["target", "early_seconds"])["mae_log10_target"]
+    site_esm = station_esm[station_esm["feature_set"] == "p_waveform_distance_site"].set_index(["target", "early_seconds"])["mae_log10_target"]
+    check((site_esm < median_esm).all(), "ESM held-station P+distance+site model improves over median for every target/window", rows)
 
     for fig in FIGURES:
         path = Path(fig)
@@ -207,6 +247,87 @@ def main() -> None:
     check((boundary["robust_heldout_gain_pct"] > 0).all(), "predictability boundary table has positive robust held-out gains", rows)
     check(boundary["coverage_gap_to_90"].lt(0).any(), "predictability boundary table reports at least one conformal under-coverage case", rows)
 
+    held_window_summary = Path("outputs/held_station_window_scan_summary.md")
+    held_window_path = Path("work/held_station_window_scan.csv")
+    held_window_figure = Path("outputs/figures/ground_motion_audit/held_station_window_scan.png")
+    check(held_window_summary.exists() and held_window_summary.stat().st_size > 0, "held-station 1/2/3/5/10 window-scan summary exists", rows)
+    check(held_window_path.exists() and held_window_path.stat().st_size > 0, "held-station 1/2/3/5/10 window-scan table exists", rows)
+    check(held_window_figure.exists() and held_window_figure.stat().st_size > 0, "held-station 1/2/3/5/10 window-scan figure exists", rows)
+    held_window_im = Image.open(held_window_figure)
+    check(held_window_im.width >= 1000 and held_window_im.height >= 700, f"held-station window-scan figure opens ({held_window_im.width}x{held_window_im.height})", rows)
+    held_window = pd.read_csv(held_window_path)
+    check(set(held_window["window_s"]) == {1, 2, 3, 5, 10}, "held-station window scan covers 1/2/3/5/10 s windows", rows)
+    check(held_window["mae_reduction_pct"].gt(0).all(), "held-station window scan has positive early-waveform gain for every row", rows)
+    group_cols = [col for col in held_window.columns if col.startswith("group_overlap")]
+    check(held_window[group_cols].fillna(0).eq(0).all().all(), "held-station window scan preserves zero group overlap", rows)
+
+    transfer_summary = Path("outputs/cross_region_waveform_transfer_summary.md")
+    transfer_metrics_path = Path("work/cross_region_waveform_transfer/cross_region_waveform_transfer_metrics.csv")
+    transfer_boundary_path = Path("work/cross_region_waveform_transfer/cross_region_waveform_transfer_boundary.csv")
+    transfer_split_path = Path("work/cross_region_waveform_transfer/cross_region_waveform_transfer_split_info.csv")
+    transfer_figure = Path("outputs/figures/ground_motion_audit/cross_region_waveform_transfer_boundary.png")
+    check(transfer_summary.exists() and transfer_summary.stat().st_size > 0, "cross-region waveform transfer summary exists", rows)
+    check(transfer_metrics_path.exists() and transfer_metrics_path.stat().st_size > 0, "cross-region waveform transfer metrics exist", rows)
+    check(transfer_boundary_path.exists() and transfer_boundary_path.stat().st_size > 0, "cross-region waveform transfer boundary table exists", rows)
+    check(transfer_figure.exists() and transfer_figure.stat().st_size > 0, "cross-region waveform transfer boundary figure exists", rows)
+    transfer_im = Image.open(transfer_figure)
+    check(transfer_im.width >= 1000 and transfer_im.height >= 700, f"cross-region waveform transfer figure opens ({transfer_im.width}x{transfer_im.height})", rows)
+    transfer_split = pd.read_csv(transfer_split_path)
+    check(set(transfer_split["dataset"]) == {"instancegm", "knet", "aq2009gm"}, "cross-region transfer covers InstanceGM, K-NET, and AQ2009GM", rows)
+    check((transfer_split["group_overlap"] == 0).all(), "cross-region transfer split group overlap is zero", rows)
+    transfer = pd.read_csv(transfer_boundary_path)
+    check(set(transfer["target"]) == {"pga", "pgv"}, "cross-region transfer covers PGA and PGV where available", rows)
+    check((transfer["source_dataset"] != transfer["test_dataset"]).all(), "cross-region boundary table contains only cross-domain rows", rows)
+    check((transfer["mae_ratio_vs_within_target"] > 1.0).all(), "cross-region transfer is worse than target-domain training for every cross-domain row", rows)
+    direct_ratio = transfer[transfer["calibration"] == "source_only"]["mae_ratio_vs_within_target"].median()
+    calibrated_ratio = transfer[transfer["calibration"] == "target_offset_calibrated"]["mae_ratio_vs_within_target"].median()
+    check(direct_ratio > 2.0, "zero-shot cross-region transfer median penalty exceeds 2x target-domain MAE", rows)
+    check(1.5 < calibrated_ratio < direct_ratio, "target-train offset calibration reduces but does not remove the cross-region penalty", rows)
+
+    for window in [1, 2, 3, 5, 10]:
+        esm_transfer_summary = Path(f"outputs/cross_region_waveform_transfer_esm_{window}s_summary.md")
+        esm_transfer_metrics = Path(f"work/cross_region_waveform_transfer_esm_{window}s/cross_region_waveform_transfer_metrics.csv")
+        esm_transfer_boundary = Path(f"work/cross_region_waveform_transfer_esm_{window}s/cross_region_waveform_transfer_boundary.csv")
+        esm_transfer_split = Path(f"work/cross_region_waveform_transfer_esm_{window}s/cross_region_waveform_transfer_split_info.csv")
+        esm_transfer_figure = Path(f"outputs/figures/ground_motion_audit/cross_region_waveform_transfer_esm_{window}s_boundary.png")
+        check(esm_transfer_summary.exists() and esm_transfer_summary.stat().st_size > 0, f"ESM four-domain transfer {window}s summary exists", rows)
+        check(esm_transfer_metrics.exists() and esm_transfer_metrics.stat().st_size > 0, f"ESM four-domain transfer {window}s metrics exist", rows)
+        check(esm_transfer_boundary.exists() and esm_transfer_boundary.stat().st_size > 0, f"ESM four-domain transfer {window}s boundary table exists", rows)
+        check(esm_transfer_figure.exists() and esm_transfer_figure.stat().st_size > 0, f"ESM four-domain transfer {window}s figure exists", rows)
+        esm_transfer_im = Image.open(esm_transfer_figure)
+        check(esm_transfer_im.width >= 1000 and esm_transfer_im.height >= 700, f"ESM four-domain transfer {window}s figure opens ({esm_transfer_im.width}x{esm_transfer_im.height})", rows)
+        esm_split = pd.read_csv(esm_transfer_split)
+        expected_domains = {"instancegm", "knet", "esm"} if window in {2, 5} else {"instancegm", "knet", "aq2009gm", "esm"}
+        check(set(esm_split["dataset"]) == expected_domains, f"ESM transfer {window}s split covers expected domains", rows)
+        check((esm_split["group_overlap"] == 0).all(), f"ESM four-domain transfer {window}s split group overlap is zero", rows)
+        esm_boundary = pd.read_csv(esm_transfer_boundary)
+        check((esm_boundary["source_dataset"] != esm_boundary["test_dataset"]).all(), f"ESM four-domain transfer {window}s boundary contains only cross-domain rows", rows)
+        check((esm_boundary["mae_ratio_vs_within_target"] > 1.0).all(), f"ESM four-domain transfer {window}s rows remain worse than target-domain training", rows)
+        if window == 10:
+            esm_target = esm_boundary[
+                (esm_boundary["test_dataset"] == "esm")
+                & (esm_boundary["calibration"] == "target_offset_calibrated")
+            ]
+            best_esm = esm_target.sort_values("mae_log10_target").groupby("target").head(1).set_index("target")
+            check(best_esm.loc["pga", "mae_ratio_vs_within_target"] > 2.0, "10 s external-to-ESM PGA transfer remains above 2x target-domain MAE after offset calibration", rows)
+            check(best_esm.loc["pgv", "mae_ratio_vs_within_target"] > 1.5, "10 s external-to-ESM PGV transfer remains above 1.5x target-domain MAE after offset calibration", rows)
+
+    window_summary = Path("outputs/cross_region_waveform_transfer_window_scan_summary.md")
+    window_csv = Path("work/cross_region_waveform_transfer_window_scan.csv")
+    window_figure = Path("outputs/figures/ground_motion_audit/cross_region_waveform_transfer_window_scan.png")
+    check(window_summary.exists() and window_summary.stat().st_size > 0, "cross-region window-scan summary exists", rows)
+    check(window_csv.exists() and window_csv.stat().st_size > 0, "cross-region window-scan table exists", rows)
+    check(window_figure.exists() and window_figure.stat().st_size > 0, "cross-region window-scan figure exists", rows)
+    window_im = Image.open(window_figure)
+    check(window_im.width >= 1000 and window_im.height >= 700, f"cross-region window-scan figure opens ({window_im.width}x{window_im.height})", rows)
+    window_scan = pd.read_csv(window_csv)
+    check(set(window_scan["window_s"]) == {1, 3, 10}, "cross-region window-scan covers 1/3/10 s windows", rows)
+    check((window_scan["mae_ratio_vs_within_target"] > 1.0).all(), "cross-region window-scan rows remain worse than target-domain training", rows)
+    direct_window = window_scan[window_scan["calibration"] == "source_only"].groupby("window_s")["mae_ratio_vs_within_target"].median()
+    calibrated_window = window_scan[window_scan["calibration"] == "target_offset_calibrated"].groupby("window_s")["mae_ratio_vs_within_target"].median()
+    check(direct_window.loc[1] < direct_window.loc[3] < direct_window.loc[10], "zero-shot transfer penalty increases from 1 s to 10 s", rows)
+    check(calibrated_window.loc[1] < calibrated_window.loc[3] < calibrated_window.loc[10], "offset-calibrated transfer penalty increases from 1 s to 10 s", rows)
+
     japan = pd.read_csv("work/ground_motion_balanced_station_10s/knet_japan_gmm_reference.csv")
     knet_station = pd.read_csv("outputs/figure3_heldout_generalization.csv")
     knet_combined = knet_station[
@@ -235,7 +356,10 @@ def main() -> None:
         "52.6% for InstanceGM PGV",
         "49.9% for K-NET PGA",
         "0.925 coverage for K-NET PGA",
-        "five-chunk aftershock subset is supplementary evidence",
+        "The retained AQ2009GM evidence consists of compact feature tables",
+        "ESM provides an external European strong-motion check",
+        "theoretical P-onset estimate",
+        "2.53x for PGA and 1.58x for PGV",
     ]:
         check(phrase in article, f"article draft contains bounded claim: {phrase}", rows)
 
@@ -244,9 +368,9 @@ def main() -> None:
             "",
             "## Current Acceptance-Probability Status",
             "",
-            "The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, phase-label auditing, and an AQ2009GM 096-100 supplementary check.",
+            "The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, cross-region waveform-transfer boundary, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, phase-label auditing, full-manifest AQ2009GM feature-table validation, and ESM European strong-motion compact-feature validation.",
             "",
-            "The remaining 60% gap is empirical: broader independent strong-motion validation beyond this five-chunk AQ2009GM subset, a fully specified regional GMM comparison, or a stronger physical residual mechanism would be needed before claiming a high-confidence NC route.",
+            "The remaining gap is empirical: a fully specified regional GMM comparison, ESM P-onset auditing, or a stronger physical residual mechanism would be needed before claiming a high-confidence NC route.",
             "",
         ]
     )

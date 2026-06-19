@@ -22,5 +22,21 @@ This file is generated from existing figure tables. It does not add new model ru
 
 ## AQ2009GM Supplement
 
-- AQ2009GM 096-100 10 s minimum held-out gain: PGA 63.0%, PGV 83.5%.
-- This remains a five-chunk aftershock supplement, not a full external-validation claim.
+- AQ2009GM full-manifest chunk-streaming 10 s minimum held-out gain: PGA 62.5%, PGV 86.7%.
+- This is a full-manifest streaming validation over the local SeisBench AQ2009GM chunk list; raw HDF5 files are not retained.
+
+## Cross-Region Transfer Boundary
+
+- Early-waveform-only transfer was tested across InstanceGM, K-NET, and AQ2009GM using held-out target-domain test records.
+- Zero-shot cross-region transfer has a median MAE ratio of 2.84 relative to target-domain training.
+- Target-train offset calibration lowers the median ratio to 2.26, so simple target-domain calibration helps but does not remove the boundary.
+- The same transfer check now covers 1, 3, and 10 s early windows:
+
+| Window | Zero-shot median ratio | Target-train offset-calibrated median ratio |
+|---:|---:|---:|
+| 1 s | 1.49 | 1.40 |
+| 3 s | 1.74 | 1.65 |
+| 10 s | 2.84 | 2.26 |
+
+- The transfer penalty increases with window length, indicating that later early-window amplitude structure carries more regional and measurement-system dependence.
+- This supports a bounded claim: early P-window information is useful within curated public strong-motion domains, while direct regional transfer is limited by waveform measurement, target scale, and dataset shift.

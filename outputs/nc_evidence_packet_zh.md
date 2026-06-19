@@ -6,7 +6,7 @@
 
 这个项目还有希望冲 Nature Communications。当前最强证据集中在早窗强震动信息与残差审计：
 
-**早窗波形在随机划分、held-event、balanced held-station 和 OpenQuake 参考对照下，都能稳定提高强震动目标预测；AQ2009GM 096-100 补验显示同一早窗信息也出现在另一个有官方 PGA/PGV 目标的 SeisBench 地震动数据中。**
+**早窗波形在随机划分、held-event、balanced held-station、OpenQuake 参考对照、AQ2009GM full-manifest chunk-streaming 和 ESM 欧洲强震动数据中都显示出稳定信息增益；跨区域 transfer 显示这种信息有清晰区域边界。**
 
 ## 已完成的硬证据
 
@@ -62,6 +62,23 @@ K-NET pre-peak 子集审计已生成：`outputs/knet_prepeak_subset_audit.md`。
 | InstanceGM | SA10 | 0.331 | 0.262 | 20.9% | 0.785 |
 | InstanceGM | SA30 | 0.343 | 0.248 | 27.8% | 0.683 |
 | K-NET | PGA | 0.222 | 0.111 | 49.9% | 0.875 |
+
+### 3a. Held-station 1/2/3/5/10 秒信息增益曲线
+
+已补齐 2 秒和 5 秒 balanced held-station 运行，并生成窗口扫描：`outputs/held_station_window_scan_summary.md`。
+
+图：`outputs/figures/ground_motion_audit/held_station_window_scan.png`
+
+| 数据集 | 目标 | 1s | 2s | 3s | 5s | 10s |
+|---|---|---:|---:|---:|---:|---:|
+| InstanceGM | PGA | 23.9% | 25.7% | 28.8% | 31.2% | 35.5% |
+| InstanceGM | PGV | 40.1% | 40.7% | 41.6% | 45.4% | 52.6% |
+| InstanceGM | SA03 | 15.2% | 15.9% | 19.6% | 21.1% | 26.0% |
+| InstanceGM | SA10 | 16.5% | 16.8% | 16.7% | 18.8% | 20.9% |
+| InstanceGM | SA30 | 24.2% | 25.9% | 26.3% | 26.3% | 27.8% |
+| K-NET | PGA | 11.3% | 13.7% | 17.6% | 23.3% | 49.9% |
+
+解释：这张图是当前最直接的 1-5 秒信息增益证据。K-NET 在 5 到 10 秒之间增益跳升，说明 10 秒窗口在日本强震动数据中更接近 early strong-motion information；1、2、3、5 秒更适合承载预警提前量叙事。
 
 ### 3b. Balanced held-station 分布审计
 
@@ -149,29 +166,117 @@ Split conformal nominal coverage 为 90%。
 
 这支持 label-domain audit：P 相稳定性说明转换和对齐可信，S 相和 InstanceGM missing rate 暴露数据集/标签迁移问题。
 
-### 7. AQ2009GM 096-100 独立 SeisBench 地震动补验
+### 7. AQ2009GM full-manifest chunk-streaming 独立 SeisBench 地震动补验
 
-AQ2009GM chunks 096-100 已作为五 chunk 补验完成：metadata 总行数 101,218；有效 PGA/PGV 记录 30,737；事件数 5,497；台站数 50。HDF5 明确记录 `measurement=velocity`、`unit=m/s`、`component_order=ZNE`。目标使用 AQ2009GM metadata 的 `trace_pga_cmps2` 和 `trace_pgv_cmps`。
+AQ2009GM 已按本地 SeisBench chunk manifest 完成流式验证：254 个 chunk；metadata 总行数 1,258,006；有效 PGA/PGV 记录 345,226；事件数 60,310；台站数 66。流程为逐 chunk 下载、提取 early-window velocity features、PGA/PGV target、metadata 和 event/station id，保存小特征表后用 `--delete-raw` 删除原始 HDF5/metadata 文件。目标使用 AQ2009GM metadata 的 `trace_pga_cmps2` 和 `trace_pgv_cmps`。
 
-图：`outputs/figures/ground_motion_audit/aq2009gm_chunks096-100_station12_panel.png`
-报告：`outputs/aq2009gm_chunks096-100_station12_baseline_summary.md`
+图：`outputs/figures/ground_motion_audit/aq2009gm_full_stream_panel.png`
+报告：`outputs/aq2009gm_full_stream_validation_summary.md`
 
 | holdout | target | window | metadata MAE | combined MAE | 降幅 | combined R2 |
 |---|---|---:|---:|---:|---:|---:|
-| event | PGA | 1s | 0.215 | 0.153 | 28.7% | 0.924 |
-| event | PGA | 3s | 0.215 | 0.115 | 46.5% | 0.953 |
-| event | PGA | 10s | 0.215 | 0.079 | 63.0% | 0.977 |
-| event | PGV | 1s | 0.206 | 0.147 | 28.6% | 0.928 |
-| event | PGV | 3s | 0.206 | 0.096 | 53.2% | 0.961 |
-| event | PGV | 10s | 0.206 | 0.034 | 83.5% | 0.990 |
-| station | PGA | 1s | 0.510 | 0.187 | 63.4% | 0.871 |
-| station | PGA | 3s | 0.510 | 0.140 | 72.5% | 0.918 |
-| station | PGA | 10s | 0.510 | 0.120 | 76.5% | 0.946 |
-| station | PGV | 1s | 0.486 | 0.190 | 61.0% | 0.874 |
-| station | PGV | 3s | 0.486 | 0.114 | 76.6% | 0.933 |
-| station | PGV | 10s | 0.486 | 0.037 | 92.3% | 0.987 |
+| event | PGA | 1s | 0.205 | 0.145 | 29.3% | 0.922 |
+| event | PGA | 3s | 0.205 | 0.109 | 46.8% | 0.952 |
+| event | PGA | 10s | 0.205 | 0.077 | 62.5% | 0.977 |
+| event | PGV | 1s | 0.192 | 0.132 | 31.1% | 0.934 |
+| event | PGV | 3s | 0.192 | 0.087 | 54.8% | 0.966 |
+| event | PGV | 10s | 0.192 | 0.025 | 86.7% | 0.994 |
+| station | PGA | 1s | 0.311 | 0.222 | 28.8% | 0.810 |
+| station | PGA | 3s | 0.311 | 0.175 | 43.9% | 0.871 |
+| station | PGA | 10s | 0.311 | 0.113 | 63.6% | 0.949 |
+| station | PGV | 1s | 0.286 | 0.183 | 36.0% | 0.861 |
+| station | PGV | 3s | 0.286 | 0.142 | 50.4% | 0.907 |
+| station | PGV | 10s | 0.286 | 0.025 | 91.4% | 0.994 |
+| time | PGA | 1s | 0.271 | 0.176 | 35.1% | 0.862 |
+| time | PGA | 3s | 0.271 | 0.134 | 50.4% | 0.911 |
+| time | PGA | 10s | 0.271 | 0.092 | 66.1% | 0.960 |
+| time | PGV | 1s | 0.249 | 0.151 | 39.4% | 0.898 |
+| time | PGV | 3s | 0.249 | 0.095 | 62.0% | 0.951 |
+| time | PGV | 10s | 0.249 | 0.024 | 90.3% | 0.995 |
 
-解释：AQ2009GM 结果明显增强了独立 SeisBench 地震动补验层。它有清楚的 HDF5 速度单位和官方 PGA/PGV metadata target，比 PNWAccelerometers 更适合写成地震动补充证据。边界是 096-100 五 chunk 余震小幅值子集，不应写成完整 AQ2009GM 或完整外部强震动验证。
+解释：AQ2009GM 结果明显增强了独立 SeisBench 地震动补验层。它有官方 PGA/PGV metadata target，并用流式处理覆盖本地 manifest 中全部 254 个 chunk。边界是：本地没有保留完整 raw AQ2009GM，当前证据是从逐 chunk 下载后提取并保存的小特征表、split、metrics、subgroup 和 uncertainty 文件得到的。
+
+### 7b. 跨区域 early-waveform 迁移边界
+
+已新增跨区域迁移实验：`outputs/cross_region_waveform_transfer_summary.md`。它只使用早窗 waveform 特征，不使用 source distance、site terms、event id 或 station id。训练源域和测试目标域分开；offset 校准只使用目标域 train split，不使用目标域 test 标签。
+
+图：`outputs/figures/ground_motion_audit/cross_region_waveform_transfer_boundary.png`
+窗口扫描图：`outputs/figures/ground_motion_audit/cross_region_waveform_transfer_window_scan.png`
+
+| 目标 | 测试域 | 设置 | 最好源域 | MAE | R2 | 相对目标域内训练 MAE |
+|---|---|---|---|---:|---:|---:|
+| PGA | AQ2009GM | zero-shot | InstanceGM | 0.167 | 0.853 | 1.71x |
+| PGA | AQ2009GM | offset 校准 | InstanceGM | 0.164 | 0.860 | 1.68x |
+| PGA | InstanceGM | zero-shot | AQ2009GM | 0.479 | 0.094 | 1.35x |
+| PGA | InstanceGM | offset 校准 | AQ2009GM | 0.463 | 0.180 | 1.32x |
+| PGA | K-NET | zero-shot | AQ2009GM | 0.356 | -0.195 | 2.60x |
+| PGA | K-NET | offset 校准 | InstanceGM | 0.346 | -0.002 | 2.53x |
+| PGV | AQ2009GM | zero-shot | InstanceGM | 0.109 | 0.920 | 4.98x |
+| PGV | AQ2009GM | offset 校准 | InstanceGM | 0.102 | 0.920 | 4.66x |
+| PGV | InstanceGM | zero-shot | AQ2009GM | 0.315 | 0.549 | 1.32x |
+| PGV | InstanceGM | offset 校准 | AQ2009GM | 0.315 | 0.549 | 1.32x |
+
+窗口扫描结果：
+
+| window | zero-shot 中位惩罚 | offset 校准中位惩罚 |
+|---:|---:|---:|
+| 1s | 1.49x | 1.40x |
+| 3s | 1.74x | 1.65x |
+| 10s | 2.84x | 2.26x |
+
+解释：跨区域迁移给出当前主结果的边界。zero-shot 跨域迁移在 10 秒窗口的中位数 MAE 为目标域内训练的 2.84 倍；用目标域 train split 做 offset 校准后降到 2.26 倍，仍高于目标域内训练。1、3、10 秒扫描显示迁移惩罚随窗口变长而增加，说明早窗后段振幅结构带有更强区域和测量体系依赖。这个结果适合写成公开强震动数据约束下的可预测性边界和单位/测量体系 harmonization 需求。
+
+### 7c. ESM 欧洲强震动本地数据验证
+
+已从本地 ESM ASCII zip 包生成 compact feature table：`outputs/esm_compact_features_full_summary.md`。数据来自 `/Users/yojironoda/Documents/New project 2/outputs/strong_motion_downloads/欧洲_ESM`，原始 zip 未解压改写。全量转换覆盖 951 个 zip，得到 134,250 行 1/2/3/5/10 秒 early-window features，对应 861 个事件、1,568 个台站、26,850 个事件-台站样本。读取错误为 0。PGA 非缺失 134,250 行；PGV 非缺失 134,245 行，有 1 个事件-台站样本跨 5 个窗口缺失 PGV。剔除了 6,515 个理论 P 到时不在记录内的窗口。
+
+重要边界：ESM 本地 ASCII 头里没有显式 P 到时。本轮用发震时刻、首采样时刻、震中距、深度和 6 km/s P 波速度估计 P onset。论文里只能写 `theoretical P-onset estimate`，不能写成 catalog/manual P pick。
+
+ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
+
+| 目标 | Window | held-station median MAE | P only MAE | P+distance MAE | P+distance+site MAE |
+|---|---:|---:|---:|---:|---:|
+| PGA | 1s | 0.717 | 0.522 | 0.378 | 0.371 |
+| PGA | 2s | 0.455 | 0.300 | 0.279 | 0.275 |
+| PGA | 3s | 0.553 | 0.263 | 0.251 | 0.251 |
+| PGA | 5s | 0.457 | 0.226 | 0.224 | 0.214 |
+| PGA | 10s | 0.616 | 0.207 | 0.221 | 0.197 |
+| PGV | 1s | 0.676 | 0.516 | 0.371 | 0.382 |
+| PGV | 2s | 0.471 | 0.368 | 0.330 | 0.323 |
+| PGV | 3s | 0.556 | 0.338 | 0.308 | 0.308 |
+| PGV | 5s | 0.483 | 0.311 | 0.290 | 0.282 |
+| PGV | 10s | 0.600 | 0.253 | 0.227 | 0.214 |
+
+解释：ESM 把证据从 SeisBench/AQ 和日本 K-NET 推到欧洲强震动域。held-station 下 P-only 已经明显优于 median；距离和场地项在多数窗口继续降低误差。这个结果直接支撑“公开强震动数据约束下的早期 P 波信息增益曲线”和“场地信息对不确定性的贡献”。
+
+### 7d. ESM 跨区域 transfer
+
+已将 ESM 加入 early-waveform-only transfer。1/3/10 秒包含 InstanceGM、K-NET、AQ2009GM 和 ESM；2/5 秒包含 InstanceGM、K-NET 和 ESM，因为当前 AQ2009GM compact table 只保留 1/3/10 秒窗口。
+
+| Window | Target | ESM 域内 MAE | 最好外部源域到 ESM offset 校准 MAE | 退化倍数 |
+|---:|---|---:|---:|---:|
+| 1s | PGA | 0.420 | 0.540 | 1.26x |
+| 1s | PGV | 0.462 | 0.551 | 1.18x |
+| 2s | PGA | 0.321 | 0.490 | 1.53x |
+| 2s | PGV | 0.380 | 0.495 | 1.30x |
+| 3s | PGA | 0.250 | 0.448 | 1.77x |
+| 3s | PGV | 0.333 | 0.453 | 1.35x |
+| 5s | PGA | 0.208 | 0.407 | 1.95x |
+| 5s | PGV | 0.299 | 0.411 | 1.38x |
+| 10s | PGA | 0.184 | 0.461 | 2.53x |
+| 10s | PGV | 0.275 | 0.433 | 1.58x |
+
+整体 transfer 中位惩罚：
+
+| Window | zero-shot 中位惩罚 | offset 校准中位惩罚 |
+|---:|---:|---:|
+| 1s | 2.25x | 1.40x |
+| 2s | 2.83x | 1.55x |
+| 3s | 2.98x | 1.67x |
+| 5s | 3.81x | 1.84x |
+| 10s | 4.27x | 2.46x |
+
+解释：ESM 结果把“跨区域可预测性边界”扩展成欧洲外部测试域。随着窗口从 1 秒到 10 秒变长，zero-shot 和 offset 校准后的中位迁移惩罚都升高。10 秒窗口下，ESM 域内训练已经很强，但外部域训练迁移到 ESM 仍显著退化。这个现象比单纯追求更复杂模型更适合写 NC 主线。
 
 ### 8. PNWAccelerometers 补充检查
 
@@ -197,8 +302,10 @@ AQ2009GM chunks 096-100 已作为五 chunk 补验完成：metadata 总行数 101
 3. held-event 和 balanced held-station 排除了普通随机划分泄漏解释。
 4. OpenQuake Boore2014 近似参考下，早窗融合模型仍明显更好。
 5. 残差和不确定性结果显示：station shift 下仍有目标依赖的风险。
-6. AQ2009GM 096-100 可作为有明确单位和官方 PGA/PGV metadata target 的 supplementary independent SeisBench check。
-7. PNWAccelerometers 可作为补充 robustness 结果，但不能写成官方 PGA 验证。
+6. AQ2009GM full-manifest chunk-streaming 可作为有官方 PGA/PGV metadata target 的 supplementary independent SeisBench check。
+7. ESM 欧洲强震动数据提供独立外部区域验证，但 P onset 是理论估计。
+8. 跨区域 early-waveform transfer 提供 predictability boundary 证据，主文按边界结果表述。
+9. PNWAccelerometers 可作为补充 robustness 结果，但不能写成官方 PGA 验证。
 
 ## 不能写的 claim
 
@@ -207,8 +314,9 @@ AQ2009GM chunks 096-100 已作为五 chunk 补验完成：metadata 总行数 101
 3. 不能写 foundation model 已成功。
 4. 不能写物理因果已经证明。
 5. 不能写全面优于区域调优 GMPE/GMM。
-6. 不能把 AQ2009GM 096-100 写成完整 AQ2009GM 或完整外部强震动验证。
+6. 不能写成“完整 raw AQ2009GM 已下载并保留”；应写成“对本地 SeisBench AQ2009GM manifest 的 full-manifest chunk-streaming 验证”。
 7. 不能把 PNWAccelerometers 的峰值振幅目标写成已验证物理单位 PGA。
+8. 不能把 ESM theoretical P onset 写成 catalog/manual P pick。
 
 ## 还缺什么
 
@@ -220,26 +328,26 @@ AQ2009GM chunks 096-100 已作为五 chunk 补验完成：metadata 总行数 101
 
 ### 可选
 
-1. 加其他有明确单位和官方 GM target 的独立强震动数据。
+1. 给 ESM 补充更严格的 P 到时或相位拾取审计。
 2. 做 magnitude-distance-balanced station split。
 3. 在有 rupture class、rupture distance 和 site terms 后做完整区域 GMPE/GMM 对照。
 
 ## 当前 NC 概率判断
 
-当前已验证主图证据包加 AQ2009GM 096-100 补验：**48-58%**。
+当前已验证主图证据包、AQ2009GM full-manifest chunk-streaming 和 ESM 欧洲强震动外部验证：**60-64%**。
 
-如果补齐正式 Methods、数据 provenance 和正文叙事：**50-59%**。
+如果补齐正式 Methods、数据 provenance 和正文叙事：**62-66%**。
 
-已完成：主图 1-6、held-out 证据、OpenQuake/conformal、残差/波形审计、phase audit、evidence verifier。
+已完成：主图 1-6、held-out 证据、OpenQuake/conformal、残差/波形审计、phase audit、AQ2009GM full-manifest、ESM compact features、ESM held-out baseline、四域 transfer、evidence verifier。
 
-如果把 AQ2009GM 扩展到更大覆盖，或加入完整区域 GMM 对照，或建立更强物理残差解释：**52-59%**。
+如果加入完整区域 GMM 对照、ESM P 到时审计或更强物理残差解释：**65-70%**。
 
-目前还不能诚实说 60%。AQ2009GM 096-100 把证据推进到“另一个有官方 PGA/PGV 目标的数据也在五 chunk 子集成立”，但余震和小幅值覆盖仍限制它对 NC 录用概率的提升。
+现在可以诚实说 60% 出头。原因是 ESM 提供了欧洲强震动外部测试域，且四域 transfer 给出清晰退化边界。限制仍然明确：ESM P onset 是理论估计，当前还没有完整区域 GMM 对照。
 
 ## 下一步
 
 最短路径：
 
-**整理主图和 Methods。**
+**把 ESM 写入 Methods，并补一页 ESM P onset 审计。**
 
-理由：强震动部分已有 held-out、OpenQuake、uncertainty 三重支撑，phase audit 已有 1,000 条/数据集结果。现在最大瓶颈是图和方法叙述是否能经得起审稿。
+理由：强震动部分已有 held-out、OpenQuake、uncertainty、AQ2009GM 和 ESM 外部验证。现在最大瓶颈是 ESM theoretical P onset 的方法边界，以及正文叙事是否能把“信息增益”和“跨区域边界”直接讲清楚。

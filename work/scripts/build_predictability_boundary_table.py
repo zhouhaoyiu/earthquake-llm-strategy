@@ -91,7 +91,7 @@ def main() -> None:
     table = table.sort_values(["dataset", "target"]).reset_index(drop=True)
     OUT_CSV.write_text(table.to_csv(index=False))
 
-    aq = pd.read_csv("work/aq2009gm_chunks096-100_station12_baseline/aq2009gm_chunks096-100_comparison.csv")
+    aq = pd.read_csv("work/aq2009gm_full_stream_validation/aq2009gm_full_stream_comparison.csv")
     aq_best = aq[aq["early_seconds"] == 10].copy()
     aq_min_gain = aq_best.groupby("target")["mae_reduction_pct"].min().to_dict()
 
@@ -140,8 +140,8 @@ def main() -> None:
             "",
             "## AQ2009GM Supplement",
             "",
-            f"- AQ2009GM 096-100 10 s minimum held-out gain: PGA {aq_min_gain.get('pga', float('nan')):.1f}%, PGV {aq_min_gain.get('pgv', float('nan')):.1f}%.",
-            "- This remains a five-chunk aftershock supplement, not a full external-validation claim.",
+            f"- AQ2009GM full-manifest chunk-streaming 10 s minimum held-out gain: PGA {aq_min_gain.get('pga', float('nan')):.1f}%, PGV {aq_min_gain.get('pgv', float('nan')):.1f}%.",
+            "- This is a full-manifest streaming validation over the local SeisBench AQ2009GM chunk list; raw HDF5 files are not retained.",
         ]
     )
     OUT_MD.write_text("\n".join(rows) + "\n")
