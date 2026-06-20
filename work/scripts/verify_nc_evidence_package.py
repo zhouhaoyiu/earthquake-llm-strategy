@@ -117,6 +117,14 @@ def pdf_text(path: Path) -> str:
     return subprocess.check_output(["pdftotext", str(path), "-"], text=True)
 
 
+def pdf_pages(path: Path) -> int:
+    info = subprocess.check_output(["pdfinfo", str(path)], text=True)
+    match = re.search(r"^Pages:\s+(\d+)$", info, flags=re.MULTILINE)
+    if not match:
+        raise AssertionError(f"cannot read page count for {path}")
+    return int(match.group(1))
+
+
 def word_count(text: str) -> int:
     return len(re.findall(r"[A-Za-z0-9]+(?:[-'][A-Za-z0-9]+)?", text))
 
@@ -727,7 +735,8 @@ def main() -> None:
     official_md = Path("outputs/nc_manuscript_nc_official_format_v1.md")
     official_pdf = Path("outputs/pdf/nc_manuscript_nc_official_format_v1.pdf")
     check(official_md.exists() and official_md.stat().st_size > 0, "NC official-format manuscript markdown exists", rows)
-    check(official_pdf.exists() and official_pdf.stat().st_size > 40_000, "NC official-format manuscript PDF exists", rows)
+    check(official_pdf.exists() and official_pdf.stat().st_size > 1_000_000, "NC official-format manuscript PDF exists with embedded figures", rows)
+    check(pdf_pages(official_pdf) >= 18, "NC official-format manuscript PDF has text and embedded figure pages", rows)
     official = official_md.read_text()
     official_sec = markdown_sections(official)
     official_order = [
@@ -752,6 +761,7 @@ def main() -> None:
     check(word_count(abstract) <= 150, "NC official-format abstract has 150 words or fewer", rows)
     check(". Here, we show" in abstract or abstract.startswith("Here, we show"), "NC official-format abstract final sentence uses Here, we show", rows)
     main_text_words = word_count("\n\n".join(official_sec[name] for name in ["Introduction", "Results", "Discussion"]))
+    check(main_text_words >= 3800, "NC official-format main text is no longer a skeletal draft", rows)
     check(main_text_words <= 5000, "NC official-format main text is within the 5,000-word guide", rows)
     check(word_count(official_sec["Methods"]) <= 3000, "NC official-format Methods is below 3,000 words", rows)
     official_subheads = re.findall(r"^### (.+)$", official, flags=re.MULTILINE)
@@ -763,8 +773,11 @@ def main() -> None:
     official_pdf_text = pdf_text(official_pdf)
     check("Here, we show that early primary waves" in official_pdf_text, "NC official-format PDF includes the short official abstract", rows)
     check("Data Availability" in official_pdf_text and "Code Availability" in official_pdf_text, "NC official-format PDF separates Data and Code Availability", rows)
+    check("Figure 1 |" in official_pdf_text and "Figure 7 |" in official_pdf_text, "NC official-format PDF includes embedded main figures", rows)
+    check("Extended Data Figure |" in official_pdf_text, "NC official-format PDF includes embedded extended-data figure", rows)
     check("Figure 8 |" not in official_pdf_text, "NC official-format PDF does not advertise a missing Figure 8", rows)
     check("Figure legends" not in official_pdf_text, "NC official-format PDF uses Figures as the display-item heading", rows)
+    check("\\hat" not in official_pdf_text and "\\mathrm" not in official_pdf_text, "NC official-format PDF has no raw LaTeX equation fragments", rows)
     for deliverable in [official_md, official_pdf]:
         check(not file_contains_casefold(deliverable, "co" + "dex"), f"{deliverable} has no agent-marker text", rows)
 
