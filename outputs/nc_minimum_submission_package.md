@@ -30,6 +30,7 @@ Public strong-motion archives can be organized into a reproducible benchmark for
 | Classical references | done | attenuation-shaped ridge, BooreEtAl2014, and K-NET Japanese GMM screening |
 | Regional GMM readiness | done | field audit explains why full regional GMM claim is not yet supported |
 | Uncertainty | done | station-shift calibration is target-dependent |
+| Target calibration sample size | done | 50-100 target-domain calibration rows recover near-nominal cross-region conformal coverage in the 2 s and 5 s audit |
 | Predictability boundary | done | 10 s random performance, held-event and held-station residual floors, robust held-out gains, and conformal coverage gaps |
 | Cross-region transfer boundary | done | early-waveform-only transfer across InstanceGM, K-NET, and AQ2009GM quantifies regional and measurement-system penalties |
 | Core boundary synthesis | done | one four-panel map linking information gain, transfer penalty, uncertainty failure, and tail underprediction |
@@ -167,12 +168,16 @@ Use:
 - `outputs/attenuation_reference_summary.md`
 - `outputs/figures/ground_motion_audit/openquake_reference_panel.png`
 - `outputs/conformal_uncertainty_balanced_station_summary.md`
+- `outputs/nc_calibration_size_audit_summary.md`
+- `outputs/figures/ground_motion_audit/nc_calibration_size_audit.png`
 - `outputs/knet_japan_gmm_reference_summary.md`
 - `work/ground_motion_balanced_station_10s/knet_japan_gmm_reference.csv`
 
 Message:
 
 The early waveform model improves over a low-parameter attenuation-shaped reference and a bias-corrected BooreEtAl2014 reference. On K-NET PGA, it also improves over the best screened Japanese GMM candidate under stated distance, Vs30, and tectonic-class approximations. Uncertainty calibration remains target-dependent under station shift.
+
+The calibration-size audit keeps the source model fixed and varies only target-domain calibration rows for target-offset conformal intervals. Source-domain conformal coverage remains poor at 2 s and 5 s, while target-domain offset calibration recovers near-nominal coverage. In the tested grid, 50 target-domain calibration rows satisfy the IQR stability criterion and 100 rows put both windows near 0.90 median coverage.
 
 ### Figure 5. Residual diagnostics
 

@@ -109,6 +109,8 @@ Current evidence files:
 - `outputs/conformal_uncertainty_balanced_station_summary.md`
 - `outputs/nc_uncertainty_boundary_note.md`
 - `outputs/nc_core_predictability_boundary_summary.md`
+- `outputs/nc_calibration_size_audit_summary.md`
+- `work/nc_calibration_size_audit/target_calibration_size_audit.csv`
 
 Key values to report:
 
@@ -116,6 +118,8 @@ Key values to report:
 - InstanceGM PGV target-domain conformal coverage: 0.898.
 - Other main target-domain coverages: 0.820-0.876.
 - Source-domain conformal transfer coverage: 0.468 at 2 s and 0.298 at 5 s in the current transfer boundary test.
+- Target-domain offset conformal calibration recovers median coverage near 0.90 at 2 s and 5 s.
+- In the calibration-size audit, 50 target-domain calibration records meet the tested IQR stability criterion, and 100 records place both windows close to 0.90 median coverage.
 
 ## Supplementary Note 8. Cross-regional transfer
 
@@ -145,7 +149,8 @@ Key values to report:
 - Supplementary Fig. 5: strong-tail MAE and factor-of-two underprediction audit.
 - Supplementary Fig. 6: classical reference comparison.
 - Supplementary Fig. 7: uncertainty transfer boundary.
-- Supplementary Fig. 8: ESM and AQ2009GM supporting transfer evidence.
+- Supplementary Fig. 8: target-domain calibration sample-size audit.
+- Supplementary Fig. 9: ESM and AQ2009GM supporting transfer evidence.
 
 ## Supplementary Tables
 
@@ -156,7 +161,8 @@ Key values to report:
 - Supplementary Table 5: bootstrap confidence intervals.
 - Supplementary Table 6: strong-tail audit metrics.
 - Supplementary Table 7: conformal coverage metrics.
-- Supplementary Table 8: cross-regional transfer ratios.
+- Supplementary Table 8: target-domain calibration sample-size metrics.
+- Supplementary Table 9: cross-regional transfer ratios.
 
 ## Source data plan
 
