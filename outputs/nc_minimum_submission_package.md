@@ -45,7 +45,7 @@ Public strong-motion archives can be organized into a reproducible benchmark for
 | Uncertainty boundary note | done | exchangeability condition and source-domain conformal transfer boundary |
 | Regional GMM boundary note | done | separates classical-reference screening from a fully specified regional GMPE/GMM comparison |
 | Main figure redraw and style audit | done | Figures 1-6 redrawn from verified tables or audit panels; Figure 5 split into main residual diagnostics and extended waveform cases; Figure 1-7 dimension audit and contact sheet updated |
-| Source Data workbook | v1 done | `outputs/source_data/nc_source_data_v1.xlsx` and `outputs/source_data/nc_source_data_manifest.md`; Figure 5 numeric source table remains pending |
+| Source Data workbook | v1 done | `outputs/source_data/nc_source_data_v1.xlsx` and `outputs/source_data/nc_source_data_manifest.md`; Figure 5 residual source table included |
 | Next experiment decision | done | ESM waveform-level onset-proxy spot audit complete; defer full regional GMPE/GMM until required metadata are available |
 | Reviewer risk matrix | done | likely reviewer objections mapped to evidence and claim limits |
 | Evidence verification | done | generated figures, key tables, split overlap, and document references pass verifier |

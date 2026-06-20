@@ -187,6 +187,6 @@ Key values to report:
 
 Nature Communications may request source data files for graphs. A first source-data workbook has been generated at `outputs/source_data/nc_source_data_v1.xlsx`, with a machine-readable manifest at `outputs/source_data/nc_source_data_manifest.md`.
 
-The workbook contains one README sheet plus figure- or supplement-level sheets for Figures 1, 2, 3, 4, 6 and 7, the calibration-size audit, feature-group ablation, ESM timing audits, early-window peak-capture audit and the phase-audit table. Figure 5 is marked as pending because the residual diagnostic panel still needs a consolidated numeric source table before final submission.
+The workbook contains one README sheet plus figure- or supplement-level sheets for Figures 1, 2, 3, 4, 5, 6 and 7, the calibration-size audit, feature-group ablation, ESM timing audits, early-window peak-capture audit and the phase-audit table. Figure 5 uses a consolidated residual-diagnostic source table at `outputs/figure5_residual_diagnostic_source_data.csv`.
 
 Do not include raw waveform files in the source-data file. Provide provider links and derived feature-table release instructions instead.
