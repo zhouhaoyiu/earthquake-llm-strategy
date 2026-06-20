@@ -42,6 +42,8 @@ A matched-support audit first trims held-station test records to the training se
 
 A paired bootstrap audit resamples the same balanced held-station test records. The 95% bootstrap CI lower bounds remain positive for all six main targets, with the weakest lower bound at 16.9% for InstanceGM SA10. This supports sampling stability of the observed gain.
 
+The gain also appears in strong-tail subsets. In the top 5% target rows, tail MAE reductions remain positive for all six main targets, from 18.9% for InstanceGM SA10 to 66.0% for K-NET PGA. Factor-2 underprediction is not fully resolved; InstanceGM SA30 shows a small increase in top-tail underprediction. This keeps tail behavior in the predictability-boundary layer rather than the accuracy-gain layer.
+
 ### Classical References and Uncertainty Define Boundaries
 
 An attenuation-shaped ridge reference uses magnitude, log10 hypocentral-distance, depth, and log10 Vs30 where available. The metadata plus early-waveform model improves over this reference across all balanced held-station targets, with relative MAE reductions from 17.5% to 51.6%.

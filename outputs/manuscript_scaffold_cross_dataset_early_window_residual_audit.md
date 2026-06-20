@@ -56,6 +56,8 @@ The matched held-station gain audit first trims test records to the training set
 
 A paired bootstrap audit resamples the balanced held-station test rows and recomputes the metadata-only versus metadata plus early-waveform MAE reduction. The 95% CI lower bounds remain positive for all six main targets, with the weakest lower bound at 16.9% for InstanceGM SA10. Current files: `outputs/held_station_bootstrap_ci_summary.md`, `outputs/figures/ground_motion_audit/held_station_bootstrap_ci.png`, and `work/ground_motion_balanced_station_10s/held_station_bootstrap_ci.csv`. This supports sampling stability, not prospective validation.
 
+A held-station strong-tail audit evaluates the top 10% and top 5% target rows. In top 5% subsets, tail MAE reductions remain positive for all six main targets, from 18.9% for InstanceGM SA10 to 66.0% for K-NET PGA. Factor-2 underprediction improves for most targets but worsens slightly for InstanceGM SA30. Current files: `outputs/held_station_tail_audit_summary.md`, `outputs/figures/ground_motion_audit/held_station_tail_audit.png`, and `work/ground_motion_balanced_station_10s/held_station_tail_audit.csv`. This result supports the boundary framing: early windows reduce tail error, but tail underprediction is not eliminated.
+
 ### OpenQuake reference and uncertainty reveal remaining limits
 
 We fit a low-parameter attenuation-shaped ridge reference using magnitude, a log10 hypocentral-distance shape, depth, and log10 Vs30 where available. InstanceGM has Vs30 in this split. K-NET lacks Vs30, so the K-NET attenuation reference is an attenuation-shaped baseline without site correction. The metadata plus early-waveform model improved over this reference across all balanced held-station targets, with relative MAE reductions from 17.5% to 51.6%. This check shows waveform gain beyond a flexible metadata baseline.
@@ -228,7 +230,7 @@ Balanced held-station MAE reduction curves for InstanceGM PGA, PGV, SA03, SA10, 
 
 ### Figure 3. Held-out generalization and split distribution
 
-Held-event and balanced held-station performance for InstanceGM and K-NET. The distribution audit shows magnitude, distance, and PGA train/test coverage, including the farther and weaker InstanceGM station-held test set. The matched support and bootstrap CI audits belong in supplementary panels or tables. Current files: `outputs/figures/figure3_heldout_generalization.png`, `outputs/figures/ground_motion_audit/matched_station_gain_audit.png`, and `outputs/figures/ground_motion_audit/held_station_bootstrap_ci.png`.
+Held-event and balanced held-station performance for InstanceGM and K-NET. The distribution audit shows magnitude, distance, and PGA train/test coverage, including the farther and weaker InstanceGM station-held test set. The matched support, bootstrap CI, and strong-tail audits belong in supplementary panels or tables. Current files: `outputs/figures/figure3_heldout_generalization.png`, `outputs/figures/ground_motion_audit/matched_station_gain_audit.png`, `outputs/figures/ground_motion_audit/held_station_bootstrap_ci.png`, and `outputs/figures/ground_motion_audit/held_station_tail_audit.png`.
 
 ### Figure 4. Classical reference and uncertainty
 

@@ -26,6 +26,7 @@ Public strong-motion archives can be organized into a reproducible benchmark for
 | Held-station 1/2/3/5/10 scan | done | direct information-gain curve for the first 5 seconds and the 10 s reference |
 | Matched held-station gain audit | done | source-path support matching shows positive early-waveform gains are not only a station-test distribution artifact |
 | Held-station bootstrap CI audit | done | paired bootstrap shows balanced held-station gains are stable to test-record resampling |
+| Held-station strong-tail audit | done | top 10% and top 5% target rows show tail MAE gains while preserving factor-2 underprediction as a boundary |
 | Classical references | done | attenuation-shaped ridge, BooreEtAl2014, and K-NET Japanese GMM screening |
 | Regional GMM readiness | done | field audit explains why full regional GMM claim is not yet supported |
 | Uncertainty | done | station-shift calibration is target-dependent |
@@ -143,6 +144,7 @@ Use:
 - `outputs/figures/ground_motion_audit/balanced_station_distribution_audit_panel.png`
 - `outputs/figures/ground_motion_audit/matched_station_gain_audit.png`
 - `outputs/figures/ground_motion_audit/held_station_bootstrap_ci.png`
+- `outputs/figures/ground_motion_audit/held_station_tail_audit.png`
 - held-event table from `outputs/heldout_ground_motion_baseline_summary.md`
 
 Message:
@@ -152,6 +154,8 @@ Held-event and balanced held-station tests show that the early waveform gain per
 The matched held-station gain audit first trims test records to train 5-95% support for magnitude and distance only. These source-path support subsets retain 82.4-83.9% of test records and remain positive for every target, with the weakest reduction at 20.1% for InstanceGM SA10. A stricter target-matched support check also remains positive, with the weakest reduction at 17.2%. The target-matched check is post-hoc because it uses target amplitude.
 
 The paired bootstrap audit uses the same balanced held-station test rows and resamples records to quantify MAE-reduction stability. All six main targets keep positive 95% CI lower bounds; the weakest lower bound is 16.9% for InstanceGM SA10. Current files: `outputs/held_station_bootstrap_ci_summary.md` and `work/ground_motion_balanced_station_10s/held_station_bootstrap_ci.csv`.
+
+The held-station strong-tail audit evaluates the top 10% and top 5% target rows. In the top 5% subsets, tail MAE reductions remain positive for every main target, from 18.9% for InstanceGM SA10 to 66.0% for K-NET PGA. Factor-2 underprediction improves for most targets but worsens slightly for InstanceGM SA30, so the manuscript should present this as a tail-error boundary rather than a solved tail-risk problem. Current files: `outputs/held_station_tail_audit_summary.md` and `work/ground_motion_balanced_station_10s/held_station_tail_audit.csv`.
 
 ### Figure 4. Classical reference and uncertainty
 

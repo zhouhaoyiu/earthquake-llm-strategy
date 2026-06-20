@@ -38,6 +38,7 @@ METHOD_SCRIPTS = [
     "work/scripts/run_ground_motion_heldout_baseline.py",
     "work/scripts/audit_matched_station_gain.py",
     "work/scripts/audit_held_station_bootstrap_ci.py",
+    "work/scripts/audit_held_station_tail.py",
     "work/scripts/run_attenuation_reference.py",
     "work/scripts/audit_regional_gmm_readiness.py",
     "work/scripts/run_openquake_pga_reference.py",
@@ -101,6 +102,7 @@ def main() -> None:
     check("ESM waveform P-onset spot audit" in provenance_text, "methods provenance table covers ESM waveform P-onset spot audit", rows)
     check("Matched held-station gain audit" in provenance_text, "methods provenance table covers matched held-station gain audit", rows)
     check("Held-station bootstrap CI audit" in provenance_text, "methods provenance table covers held-station bootstrap CI audit", rows)
+    check("Held-station strong-tail audit" in provenance_text, "methods provenance table covers held-station strong-tail audit", rows)
     check("Uncertainty boundary note" in provenance_text, "methods provenance table covers uncertainty boundary note", rows)
     check("Regional GMM boundary note" in provenance_text, "methods provenance table covers regional GMM boundary note", rows)
     check("Main figure redraw and style audit" in provenance_text, "methods provenance table covers main figure redraw and style audit", rows)
@@ -118,6 +120,7 @@ def main() -> None:
         "matched-support audit",
         "source-path support",
         "sampling stability",
+        "strong-tail",
         "attenuation-shaped",
         "fully specified regional GMM",
         "AQ2009GM supplement",
@@ -319,6 +322,31 @@ def main() -> None:
     check((bootstrap["observed_reduction_pct"] > 0).all(), "held-station bootstrap CI observed reductions are positive", rows)
     check((bootstrap["ci95_low_pct"] > 0).all(), "held-station bootstrap CI lower bounds are positive for every target", rows)
     check((bootstrap["bootstrap_p_le_zero"] <= 0.001).all(), "held-station bootstrap CI has near-zero nonpositive-gain bootstrap mass", rows)
+
+    tail_summary_path = Path("outputs/held_station_tail_audit_summary.md")
+    tail_metrics_path = Path("work/ground_motion_balanced_station_10s/held_station_tail_audit.csv")
+    tail_figure = Path("outputs/figures/ground_motion_audit/held_station_tail_audit.png")
+    check(tail_summary_path.exists() and tail_summary_path.stat().st_size > 0, "held-station strong-tail audit summary exists", rows)
+    check(tail_metrics_path.exists() and tail_metrics_path.stat().st_size > 0, "held-station strong-tail audit metrics exist", rows)
+    check(tail_figure.exists() and tail_figure.stat().st_size > 0, "held-station strong-tail audit figure exists", rows)
+    tail_im = Image.open(tail_figure)
+    check(tail_im.width >= 1000 and tail_im.height >= 700, f"held-station strong-tail audit figure opens ({tail_im.width}x{tail_im.height})", rows)
+    tail = pd.read_csv(tail_metrics_path)
+    check(len(tail) == 24, "held-station strong-tail audit has 24 rows across targets, tails, and feature sets", rows)
+    tail_pivot = tail.pivot_table(
+        index=["dataset", "target", "tail_quantile"],
+        columns="feature_set",
+        values="mae_log10_target",
+        aggfunc="first",
+    )
+    check((tail_pivot["metadata_plus_early_waveform"] < tail_pivot["metadata_only"]).all(), "held-station strong-tail MAE improves for every target-tail subset", rows)
+    tail_under = tail.pivot_table(
+        index=["dataset", "target", "tail_quantile"],
+        columns="feature_set",
+        values="under_factor2_rate",
+        aggfunc="first",
+    )
+    check((tail_under["metadata_plus_early_waveform"] > tail_under["metadata_only"]).any(), "held-station strong-tail audit preserves at least one underprediction boundary case", rows)
 
     attenuation_summary = Path("outputs/attenuation_reference_summary.md")
     check(attenuation_summary.exists() and attenuation_summary.stat().st_size > 0, "attenuation-shaped reference summary exists", rows)
@@ -548,6 +576,7 @@ def main() -> None:
         check("esm_waveform_p_pick_spotcheck" in text, f"{doc} references ESM waveform onset-proxy spot audit", rows)
         check("matched_station_gain_audit" in text, f"{doc} references matched held-station gain audit", rows)
         check("held_station_bootstrap_ci" in text, f"{doc} references held-station bootstrap CI audit", rows)
+        check("held_station_tail_audit" in text, f"{doc} references held-station strong-tail audit", rows)
         check("extended_waveform_case_audit" in text, f"{doc} references extended waveform case audit", rows)
         check("nc_core_predictability_boundary" in text, f"{doc} references Figure 7 core boundary synthesis", rows)
     article = Path("outputs/nc_article_draft_v1.md").read_text()
@@ -566,6 +595,7 @@ def main() -> None:
         "waveform-envelope onset-proxy spot audit",
         "median absolute offset 1.223 s",
         "95% bootstrap CI lower bounds remain positive",
+        "tail MAE reductions remain positive",
         "theoretical P-onset estimate",
         "2.53x for PGA and 1.58x for PGV",
         "Python 3.12.13",

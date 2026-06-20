@@ -30,3 +30,4 @@ work/**
 !work/ground_motion_balanced_station_10s/matched_station_gain_audit.csv
 !work/ground_motion_balanced_station_10s/matched_station_gain_audit_summary.csv
 !work/ground_motion_balanced_station_10s/held_station_bootstrap_ci.csv
+!work/ground_motion_balanced_station_10s/held_station_tail_audit.csv
