@@ -688,6 +688,15 @@ def main() -> None:
     ]:
         check(phrase in article, f"article draft contains bounded claim: {phrase}", rows)
     manuscript = Path("outputs/nc_manuscript_main_v1.md").read_text()
+    for phrase in [
+        "Figure 3 | Held-out generalization and split distribution",
+        "Figure 4 | Classical reference and uncertainty",
+        "Figure 5 | Residual diagnostics",
+        "Figure 6 | Phase-label transfer audit",
+        "Extended Data Figure | Waveform case audit",
+    ]:
+        check(phrase in manuscript, f"main manuscript legend contains: {phrase}", rows)
+    check("Figure 8 |" not in manuscript, "main manuscript does not advertise a missing Figure 8", rows)
     check("coverage gaps of 0.432 and 0.602" in manuscript, "main manuscript reports transfer coverage gaps", rows)
     check("0.90 - observed coverage" in manuscript, "main manuscript legend defines Figure 7 coverage-gap axis", rows)
     for pdf in [

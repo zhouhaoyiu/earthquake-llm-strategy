@@ -154,21 +154,21 @@ The authors declare no competing interests. [Confirm before submission.]
 
 ## Figure legends
 
-**Figure 1 | Public strong-motion benchmark and prediction task.** Overview of the event-station construction, early P-wave windows and target ground-motion variables. Each sample uses a fixed P-window length and predicts later PGA, PGV or SA. The figure should show the data sources, grouped splits and the separation between source-path metadata and early-waveform features.
+**Figure 1 | Cross-dataset waveform-task benchmark.** Dataset-task matrix for STEAD, InstanceGM, Iquique, K-NET and supplementary PNWAccelerometers. Panels summarize record counts, task availability and target availability.
 
-**Figure 2 | Information gain from 1 to 10 s of P waves.** Held-station relative error reductions for PGA, PGV and SA targets as a function of P-window length. Curves should emphasize the different saturation behavior of PGA and PGV and should mark 1, 2, 3, 5 and 10 s windows.
+**Figure 2 | Lead-time-dependent early waveform information.** Performance across 1 s, 3 s and 10 s post-P windows. Panels show MAE reduction, q95 residual reduction, combined-model MAE and combined-model R2.
 
-**Figure 3 | Held-station robustness and bootstrap confidence.** Error reductions for the six balanced held-station targets with paired bootstrap confidence intervals. The figure should include the zero-gain reference line and should show that all interval lower bounds are positive.
+**Figure 3 | Held-out generalization and split distribution.** Held-event and balanced held-station performance for InstanceGM and K-NET. Distribution panels summarize magnitude, distance and PGA train-test coverage.
 
-**Figure 4 | Source-path support and strong-tail behavior.** Comparison of held-station gains in the source-path support subset and in the strongest 5% of target motions. The tail panel should also indicate factor-of-two underprediction changes, including the remaining SA at 3.0 s limitation.
+**Figure 4 | Classical reference and uncertainty.** Bias-corrected OpenQuake BooreEtAl2014 comparison and split-conformal interval results. Panels pair point-prediction improvement with station-shift calibration limits.
 
-**Figure 5 | Comparison with source-path and classical ground-motion references.** Model errors for source-path baselines, classical references and early-waveform models. The figure should show that early-waveform information remains useful when compared with empirical ground-motion references.
+**Figure 5 | Residual diagnostics.** Residual diagnostics for the combined strong-motion models. Waveform case audits are reported as an extended figure.
 
-**Figure 6 | Cross-regional transfer error boundary.** Japan-to-Europe and Japan-to-Australia transfer ratios across P-window lengths. Separate zero-shot and target-offset calibrated results. The figure should show that transfer penalties increase without target calibration.
+**Figure 6 | Phase-label transfer audit.** Cross-dataset P- and S-pick errors, q95 tails and missing-pick rates from pretrained PhaseNet and EQTransformer models.
 
 **Figure 7 | Predictability-boundary synthesis.** Within-domain information gain, cross-region transfer penalty, conformal coverage gap with interval width, and strong-motion tail underprediction. The uncertainty panel reports `0.90 - observed coverage`, so direct source-domain under-coverage appears as a positive gap.
 
-**Figure 8 | External dataset support.** Summary of ESM and AQ2009GM supporting tests, including processed sample counts, station/event coverage and external held-station gains. This figure should clearly label AQ2009GM as current processed-feature evidence if the full stream is not complete.
+**Extended Data Figure | Waveform case audit.** Repeated InstanceGM high-residual records and K-NET PGA high-residual waveform cases.
 
 ## References
 

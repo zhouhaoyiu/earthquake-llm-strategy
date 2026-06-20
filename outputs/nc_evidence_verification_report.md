@@ -429,6 +429,12 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: article draft contains bounded claim: theoretical P-onset estimate
 - PASS: article draft contains bounded claim: 2.53x for PGA and 1.58x for PGV
 - PASS: article draft contains bounded claim: Python 3.12.13
+- PASS: main manuscript legend contains: Figure 3 | Held-out generalization and split distribution
+- PASS: main manuscript legend contains: Figure 4 | Classical reference and uncertainty
+- PASS: main manuscript legend contains: Figure 5 | Residual diagnostics
+- PASS: main manuscript legend contains: Figure 6 | Phase-label transfer audit
+- PASS: main manuscript legend contains: Extended Data Figure | Waveform case audit
+- PASS: main manuscript does not advertise a missing Figure 8
 - PASS: main manuscript reports transfer coverage gaps
 - PASS: main manuscript legend defines Figure 7 coverage-gap axis
 - PASS: outputs/pdf/nc_manuscript_main_v1.pdf exists
