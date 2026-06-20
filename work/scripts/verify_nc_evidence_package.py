@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 from pathlib import Path
 from xml.etree import ElementTree as ET
@@ -114,6 +115,20 @@ def file_contains_casefold(path: Path, needle: str) -> bool:
 
 def pdf_text(path: Path) -> str:
     return subprocess.check_output(["pdftotext", str(path), "-"], text=True)
+
+
+def word_count(text: str) -> int:
+    return len(re.findall(r"[A-Za-z0-9]+(?:[-'][A-Za-z0-9]+)?", text))
+
+
+def markdown_sections(markdown: str) -> dict[str, str]:
+    matches = list(re.finditer(r"^## (.+)$", markdown, re.MULTILINE))
+    out: dict[str, str] = {}
+    for idx, match in enumerate(matches):
+        start = match.end() + 1
+        end = matches[idx + 1].start() if idx + 1 < len(matches) else len(markdown)
+        out[match.group(1)] = markdown[start:end].strip()
+    return out
 
 
 def main() -> None:
@@ -699,6 +714,7 @@ def main() -> None:
     check("Figure 8 |" not in manuscript, "main manuscript does not advertise a missing Figure 8", rows)
     check("coverage gaps of 0.432 and 0.602" in manuscript, "main manuscript reports transfer coverage gaps", rows)
     check("0.90 - observed coverage" in manuscript, "main manuscript legend defines Figure 7 coverage-gap axis", rows)
+    check("Here, we show" in markdown_sections(manuscript)["Introduction"].splitlines()[-1], "main manuscript Introduction final paragraph follows NC article guidance", rows)
     for pdf in [
         Path("outputs/pdf/nc_manuscript_main_v1.pdf"),
         Path("outputs/pdf/nc_manuscript_nc_official_template_v1.pdf"),
@@ -707,6 +723,50 @@ def main() -> None:
         text = pdf_text(pdf)
         check("coverage gaps of 0.432 and 0.602" in text, f"{pdf} includes updated coverage-gap text", rows)
         check("0.90 - observed coverage" in text, f"{pdf} includes updated Figure 7 axis text", rows)
+
+    official_md = Path("outputs/nc_manuscript_nc_official_format_v1.md")
+    official_pdf = Path("outputs/pdf/nc_manuscript_nc_official_format_v1.pdf")
+    check(official_md.exists() and official_md.stat().st_size > 0, "NC official-format manuscript markdown exists", rows)
+    check(official_pdf.exists() and official_pdf.stat().st_size > 40_000, "NC official-format manuscript PDF exists", rows)
+    official = official_md.read_text()
+    official_sec = markdown_sections(official)
+    official_order = [
+        "Abstract",
+        "Introduction",
+        "Results",
+        "Discussion",
+        "Methods",
+        "Data Availability",
+        "Code Availability",
+        "References",
+        "Acknowledgements",
+        "Author Contributions",
+        "Competing Interests",
+        "Figures",
+    ]
+    positions = [official.index(f"## {heading}") for heading in official_order]
+    check(positions == sorted(positions), "NC official-format manuscript follows official section order", rows)
+    title = official.splitlines()[0].lstrip("# ").strip()
+    check(word_count(title) <= 15, "NC official-format title has 15 words or fewer", rows)
+    abstract = official_sec["Abstract"]
+    check(word_count(abstract) <= 150, "NC official-format abstract has 150 words or fewer", rows)
+    check(". Here, we show" in abstract or abstract.startswith("Here, we show"), "NC official-format abstract final sentence uses Here, we show", rows)
+    main_text_words = word_count("\n\n".join(official_sec[name] for name in ["Introduction", "Results", "Discussion"]))
+    check(main_text_words <= 5000, "NC official-format main text is within the 5,000-word guide", rows)
+    check(word_count(official_sec["Methods"]) <= 3000, "NC official-format Methods is below 3,000 words", rows)
+    official_subheads = re.findall(r"^### (.+)$", official, flags=re.MULTILINE)
+    check(official_subheads and all(len(head) <= 60 for head in official_subheads), "NC official-format subheadings are 60 characters or fewer", rows)
+    figure_legends = [part for part in official_sec["Figures"].split("\n\n") if part.strip()]
+    check(len(figure_legends) == 8, "NC official-format Figures section has 7 main legends and 1 extended-data legend", rows)
+    check(all(word_count(legend) <= 350 for legend in figure_legends), "NC official-format figure legends are 350 words or fewer", rows)
+    check("Figure legends" not in official, "NC official-format uses Figures as the display-item heading", rows)
+    official_pdf_text = pdf_text(official_pdf)
+    check("Here, we show that early primary waves" in official_pdf_text, "NC official-format PDF includes the short official abstract", rows)
+    check("Data Availability" in official_pdf_text and "Code Availability" in official_pdf_text, "NC official-format PDF separates Data and Code Availability", rows)
+    check("Figure 8 |" not in official_pdf_text, "NC official-format PDF does not advertise a missing Figure 8", rows)
+    check("Figure legends" not in official_pdf_text, "NC official-format PDF uses Figures as the display-item heading", rows)
+    for deliverable in [official_md, official_pdf]:
+        check(not file_contains_casefold(deliverable, "co" + "dex"), f"{deliverable} has no agent-marker text", rows)
 
     rows.extend(
         [

@@ -437,12 +437,31 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: main manuscript does not advertise a missing Figure 8
 - PASS: main manuscript reports transfer coverage gaps
 - PASS: main manuscript legend defines Figure 7 coverage-gap axis
+- PASS: main manuscript Introduction final paragraph follows NC article guidance
 - PASS: outputs/pdf/nc_manuscript_main_v1.pdf exists
 - PASS: outputs/pdf/nc_manuscript_main_v1.pdf includes updated coverage-gap text
 - PASS: outputs/pdf/nc_manuscript_main_v1.pdf includes updated Figure 7 axis text
 - PASS: outputs/pdf/nc_manuscript_nc_official_template_v1.pdf exists
 - PASS: outputs/pdf/nc_manuscript_nc_official_template_v1.pdf includes updated coverage-gap text
 - PASS: outputs/pdf/nc_manuscript_nc_official_template_v1.pdf includes updated Figure 7 axis text
+- PASS: NC official-format manuscript markdown exists
+- PASS: NC official-format manuscript PDF exists
+- PASS: NC official-format manuscript follows official section order
+- PASS: NC official-format title has 15 words or fewer
+- PASS: NC official-format abstract has 150 words or fewer
+- PASS: NC official-format abstract final sentence uses Here, we show
+- PASS: NC official-format main text is within the 5,000-word guide
+- PASS: NC official-format Methods is below 3,000 words
+- PASS: NC official-format subheadings are 60 characters or fewer
+- PASS: NC official-format Figures section has 7 main legends and 1 extended-data legend
+- PASS: NC official-format figure legends are 350 words or fewer
+- PASS: NC official-format uses Figures as the display-item heading
+- PASS: NC official-format PDF includes the short official abstract
+- PASS: NC official-format PDF separates Data and Code Availability
+- PASS: NC official-format PDF does not advertise a missing Figure 8
+- PASS: NC official-format PDF uses Figures as the display-item heading
+- PASS: outputs/nc_manuscript_nc_official_format_v1.md has no agent-marker text
+- PASS: outputs/pdf/nc_manuscript_nc_official_format_v1.pdf has no agent-marker text
 
 ## Current Acceptance-Probability Status
 

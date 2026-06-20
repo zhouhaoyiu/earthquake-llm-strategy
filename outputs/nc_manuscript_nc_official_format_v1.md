@@ -8,7 +8,7 @@ Correspondence: [corresponding author email]
 
 ## Abstract
 
-Earthquake early warning must estimate damaging ground motion before the strongest shaking reaches exposed sites. The first seconds of P waves carry source and path information, yet their usable limit for cross-regional strong-motion prediction remains poorly quantified with public data. We build an event-station benchmark from public strong-motion records and test how much the first 1, 2, 3, 5 and 10 s after the P arrival reduce uncertainty in peak ground acceleration, peak ground velocity and spectral acceleration. Across 2,460,425 manifest records, held-station tests show consistent error reductions for early-waveform models compared with source-path baselines, including 35.5% for InstanceGM peak acceleration, 52.6% for InstanceGM peak velocity and 49.9% for K-NET peak acceleration at 10 s. Paired bootstrap intervals remain positive across six targets. The gain persists within source-path support and in the strongest 5% of test motions, while some tail underprediction remains. Cross-regional transfer from Japan to Europe and Australia degrades sharply without target calibration, and conformal intervals trained in the source region under-cover the target region. These results define a measurable predictability boundary for early P-wave strong-shaking forecasts.
+Earthquake early warning needs reliable estimates of damaging ground motion before the strongest shaking arrives. The first seconds of primary waves carry source and path information, but the cross-regional limit of that information remains unclear in public strong-motion data. We build an event-station benchmark from public strong-motion records and test whether 1 to 10 seconds of early primary-wave motion improve later peak and spectral ground-motion prediction under held-event, held-station and regional-transfer splits. Early-waveform features reduce held-station errors for Japanese and global strong-motion targets, with positive bootstrap intervals and persistent gains in the strongest-motion tail. Direct regional transfer remains penalized, and prediction intervals calibrated in a source region under-cover target regions. Here, we show that early primary waves add reproducible strong-motion information inside calibrated domains while defining measurable transfer and uncertainty boundaries across regions.
 
 ## Introduction
 
@@ -132,27 +132,31 @@ Cross-regional transfer tests train models in one region and evaluate in another
 
 All scripts were run locally in the project environment. Derived tables, figures and audit summaries are stored in the repository under the `work` and `outputs` trees. Raw waveform data remain external and should be obtained from their public providers. Before submission, the code repository should be rebuilt or archived without internal development history and with exact data-access instructions.
 
-## Data availability
+## Data Availability
 
 This study uses public strong-motion data sources, including InstanceGM, K-NET, European Strong-Motion records and AQ2009GM. Derived feature tables and split manifests will be released with the final repository or an archival deposit. Raw waveform redistribution will follow the terms of the original data providers. The current draft does not yet contain final repository DOIs or provider-specific access statements.
 
-## Code availability
+## Code Availability
 
 Analysis code, figure-generation scripts and verification scripts are available in the local project repository. A clean public release will be prepared before submission, with internal development history removed and with commands for regenerating the tables and figures used in the manuscript.
+
+## References
+
+References must be completed from the literature manager before submission. Do not fabricate bibliographic entries. Required groups include earthquake early warning, P-wave ground-motion prediction, ground-motion models, conformal prediction, K-NET, InstanceGM, European Strong-Motion records and AQ2009GM.
 
 ## Acknowledgements
 
 [To be completed.]
 
-## Author contributions
+## Author Contributions
 
 [To be completed.]
 
-## Competing interests
+## Competing Interests
 
 The authors declare no competing interests. [Confirm before submission.]
 
-## Figure legends
+## Figures
 
 **Figure 1 | Cross-dataset waveform-task benchmark.** Dataset-task matrix for STEAD, InstanceGM, Iquique, K-NET and supplementary PNWAccelerometers. Panels summarize record counts, task availability and target availability.
 
@@ -169,7 +173,3 @@ The authors declare no competing interests. [Confirm before submission.]
 **Figure 7 | Predictability-boundary synthesis.** Within-domain information gain, cross-region transfer penalty, conformal coverage gap with interval width, and strong-motion tail underprediction. The uncertainty panel reports `0.90 - observed coverage`, so direct source-domain under-coverage appears as a positive gap.
 
 **Extended Data Figure | Waveform case audit.** Repeated InstanceGM high-residual records and K-NET PGA high-residual waveform cases.
-
-## References
-
-References must be completed from the literature manager before submission. Do not fabricate bibliographic entries. Required groups include earthquake early warning, P-wave ground-motion prediction, ground-motion models, conformal prediction, K-NET, InstanceGM, European Strong-Motion records and AQ2009GM.
