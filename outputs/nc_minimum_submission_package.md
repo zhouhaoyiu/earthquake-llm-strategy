@@ -32,7 +32,13 @@ Public strong-motion archives can be organized into a reproducible benchmark for
 | Core boundary synthesis | done | one four-panel map linking information gain, transfer penalty, uncertainty failure, and tail underprediction |
 | Residual panels | done | audit cases and distance-tail diagnostics |
 | AQ2009GM full-manifest streaming | supplementary done | SeisBench aftershock ground-motion check over all 254 local manifest chunks with velocity waveforms and official PGA/PGV metadata targets |
+| ESM European strong-motion supplement | done | local ASCII package check with PGA/PGV targets, held-out baseline, four-domain transfer, and theoretical P-onset boundary |
+| ESM P-onset sensitivity | done | Vp 5.5/6.0/6.5 km/s timing audit; retained-window validity above 0.994 across 1/2/3/5/10 s |
 | PNWAccelerometers robustness | supplementary done | SeisBench accelerometer peak-amplitude check; local HDF5 lacks waveform units |
+| Formal Methods draft | done | submission Methods skeleton for data, features, targets, splits, models, references, uncertainty, and residual audits |
+| Uncertainty boundary note | done | exchangeability condition and source-domain conformal transfer boundary |
+| Regional GMM boundary note | done | separates classical-reference screening from a fully specified regional GMPE/GMM comparison |
+| Main figure redraw and style audit | done | Figures 1-6 redrawn from verified tables or audit panels; Figure 1-7 dimension audit and contact sheet updated |
 | Reviewer risk matrix | done | likely reviewer objections mapped to evidence and claim limits |
 | Evidence verification | done | generated figures, key tables, split overlap, and document references pass verifier |
 
@@ -56,6 +62,18 @@ Reviewer risk matrix:
 Regional GMM readiness:
 
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/regional_gmm_readiness_audit.md`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/regional_gmm_boundary_note.md`
+
+Formal Methods and boundary notes:
+
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/nc_methods_formal_draft.md`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/nc_uncertainty_boundary_note.md`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/esm_p_onset_sensitivity_audit.md`
+
+Figure style audit:
+
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/nc_figure_style_audit.md`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/nc_main_figure_contact_sheet.png`
 
 Predictability boundary:
 
@@ -229,11 +247,13 @@ Early-waveform-only transfer across InstanceGM, K-NET, AQ2009GM, and ESM is cons
 
 ### Data
 
-We assembled a unified waveform manifest from STEAD, InstanceGM, Iquique, and a locally converted K-NET strong-motion archive. The manifest standardizes record identifiers, dataset splits, waveform paths, component order, P and S picks, source metadata, station metadata, and available ground-motion targets.
+We assembled a unified waveform manifest from STEAD, InstanceGM, Iquique, and a locally converted K-NET strong-motion archive. Supplementary strong-motion checks use AQ2009GM through SeisBench chunk streaming and ESM through local ASCII zip packages. The manifest standardizes record identifiers, dataset splits, waveform paths, component order, P and S picks, source metadata, station metadata, and available ground-motion targets.
 
 K-NET records were converted from BSON to HDF5 with explicit component mapping `UD -> Z`, `NS -> N`, and `EW -> E`. The converted K-NET archive contains 22,119 records with complete ZNE components. K-NET `pga_gal` was mapped to `pga_cmps2` because NIED documentation states that K-NET acceleration waveforms are stored in gal and `1 gal = 1 cm/s2`.
 
 AQ2009GM was used as a supplementary SeisBench ground-motion check through full-manifest chunk streaming. The script reads the local SeisBench chunk manifest, downloads one chunk at a time, extracts early-window velocity features, metadata fields `trace_pga_cmps2` and `trace_pgv_cmps`, event identifiers, and station identifiers, and deletes raw chunk files. The check used 345,226 valid PGA/PGV records from 60,310 events and 66 stations, with held-event, held-station, and held-time splits.
+
+ESM was used as a local European strong-motion supplement. The feature builder reads local ASCII zip packages, pairs acceleration and velocity streams by event and station, computes full-record PGA/PGV targets, and keeps the original zip files unchanged. ESM windows use a theoretical P-onset estimate because the local headers do not provide explicit P arrivals.
 
 ### Phase audit
 
@@ -241,7 +261,7 @@ We evaluated pretrained SeisBench PhaseNet(STEAD) and EQTransformer(STEAD) model
 
 ### Early waveform features
 
-Waveforms were aligned to catalog P arrivals. Early windows were extracted at 1 s, 3 s, and 10 s after the P arrival. Features were computed from Z, N, E, horizontal, and vector amplitudes. Features included absolute maximum, RMS, standard deviation, and 95th-percentile absolute amplitude. Full-record peak features were excluded to avoid target leakage.
+Waveforms were aligned to catalog P arrivals where catalog picks are available. Early windows were extracted at 1, 2, 3, 5, and 10 s where retained feature tables are available. The main random-split figures use 1, 3, and 10 s; the held-station scan, AQ2009GM, ESM, and transfer synthesis include 2 and 5 s. Features were computed from Z, N, E, horizontal, and vector amplitudes. Features included absolute maximum, RMS, standard deviation, and 95th-percentile absolute amplitude. Full-record peak features were excluded to avoid target leakage.
 
 Peak-capture audit:
 
@@ -250,13 +270,22 @@ Peak-capture audit:
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/knet_prepeak_subset_audit.md`
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/knet_prepeak_subset_audit.csv`
 
-K-NET 10 s windows often contain target-scale horizontal amplitudes, so K-NET 10 s results should be framed as early strong-motion information. The 1 s and 3 s windows carry the lead-time-sensitive interpretation. In the K-NET pre-peak subset where early horizontal peak remains below 80% of observed PGA, early waveform features still reduce MAE by 13.8% at 1 s and 17.9% at 3 s. The 10 s pre-peak subset has 53 records and belongs in audit material. InstanceGM early/target amplitude ratios are not directly interpretable without unit reconciliation.
+K-NET 10 s windows often contain target-scale horizontal amplitudes, so K-NET 10 s results should be framed as early strong-motion information. The 1 s and 3 s windows carry the lead-time-sensitive interpretation. In the K-NET pre-peak subset where early horizontal peak remains below 80% of observed PGA, early waveform features still reduce MAE by 13.8% at 1 s and 17.9% at 3 s. The 10 s pre-peak subset has 53 records and belongs in audit material. InstanceGM early/target amplitude ratios need unit reconciliation before direct interpretation.
+
+ESM P-onset sensitivity:
+
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/esm_p_onset_sensitivity_audit.md`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/esm_p_onset_sensitivity_audit.csv`
+
+Vp 5.5 km/s delays the theoretical onset by a median 2.517 s relative to 6.0 km/s; Vp 6.5 km/s advances it by a median 2.130 s. Retained-window validity remains above 0.994 across all tested windows and velocities. ESM should be written as an external supplement and transfer-domain check, with explicit theoretical-P wording.
 
 ### Ground-motion targets
 
 Targets were modeled in log10 units. InstanceGM targets included PGA, PGV, SA03, SA10, and SA30. K-NET provided PGA. K-NET PGA values were treated as cm/s2 after unit verification from NIED documentation.
 
 AQ2009GM supplementary targets were modeled in log10 units from `trace_pga_cmps2` and `trace_pgv_cmps`. Early-window features were computed from streamed velocity waveforms, so this supplement tests whether early velocity carries information about PGA/PGV targets across the local AQ2009GM chunk manifest.
+
+ESM supplementary targets were modeled in log10 units from full-record PGA and PGV computed from local ACC.AP and VEL.AP streams.
 
 ### Baselines
 
@@ -282,7 +311,7 @@ Regional GMM readiness audit shows the current boundary. InstanceGM joins back t
 
 ### Uncertainty
 
-We computed split-conformal intervals on the balanced held-station features. Training records were split into proper training and calibration subsets. The 90% interval width was set by the finite-sample conformal quantile of calibration absolute residuals. Coverage was evaluated on held-station test records.
+We computed split-conformal intervals on the balanced held-station features. Training records were split into proper training and calibration subsets. The 90% interval width was set by the finite-sample conformal quantile of calibration absolute residuals. Coverage was evaluated on held-station test records. The uncertainty boundary note states the exchangeability condition and separates target-domain calibration from source-domain conformal transfer.
 
 ### Residual audit
 
@@ -299,6 +328,7 @@ Use:
 5. AQ2009GM full-manifest chunk-streaming gives a supplementary SeisBench check with official PGA/PGV metadata targets.
 6. Cross-region early-waveform transfer quantifies regional and measurement-system predictability penalties.
 7. Residual and conformal analyses expose remaining station-shift and target-dependent uncertainty.
+8. ESM provides an external European strong-motion domain with a quantified theoretical P-onset boundary.
 
 Avoid:
 
@@ -308,14 +338,15 @@ Avoid:
 4. Physical causality from residual correlations.
 5. Full superiority over a fully specified regional GMPE/GMM.
 6. Local retention of the full raw AQ2009GM archive.
+7. Catalog/manual P-pick claims for ESM.
 
 ## Remaining Work
 
 Must do before submission:
 
-1. Redraw all figures in one consistent publication style.
-2. Update the manuscript scaffold with cross-region transfer, balanced held-station, OpenQuake, and conformal results.
-3. Add exact software/data provenance to Methods.
+1. Add exact software versions and data-access notes to `outputs/nc_methods_formal_draft.md`.
+2. Do a page-level readability check for the redrawn figures, especially the vertical Figure 5 audit packet.
+3. Audit manuscript wording against the claim boundaries in `outputs/nc_evidence_packet_zh.md`.
 4. Decide whether phase audit stays at 1,000/dataset or is expanded.
 5. Decide whether to add another independent strong-motion archive with clear units beyond AQ2009GM.
 

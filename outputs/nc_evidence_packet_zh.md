@@ -251,6 +251,10 @@ AQ2009GM 已按本地 SeisBench chunk manifest 完成流式验证：254 个 chun
 
 重要边界：ESM 本地 ASCII 头里没有显式 P 到时。本轮用发震时刻、首采样时刻、震中距、深度和 6 km/s P 波速度估计 P onset。论文里只能写 `theoretical P-onset estimate`，不能写成 catalog/manual P pick。
 
+ESM P-onset sensitivity 审计已补：`outputs/esm_p_onset_sensitivity_audit.md`。审计没有重新提取波形特征，而是在已保留的 ESM compact feature table 上检查理论到时对 Vp 选择的敏感性。Vp 从 6.0 km/s 改到 5.5 km/s 时，理论 P onset 中位延后 2.517 秒；改到 6.5 km/s 时，中位提前 2.130 秒。所有 1/2/3/5/10 秒窗口在 5.5、6.0、6.5 km/s 下的 retained-window valid fraction 都大于 0.994。
+
+解释：ESM retained-row 定义对合理 Vp 扰动稳定，但 2 秒量级的 onset shift 对 1-2 秒窗口很大。论文里可以把 ESM 写成欧洲强震动外部域和 transfer-domain check，不能把它写成 catalog P pick 下的 lead-time 严格证明。
+
 ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
 | 目标 | Window | held-station median MAE | P only MAE | P+distance MAE | P+distance+site MAE |
@@ -350,6 +354,16 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
 解释：这张图把论文主线压成四个面板：早窗信息增益、跨区域迁移退化、不确定性迁移失配、强震动尾部漏报。它不是新实验，而是从已验证输出自动汇总，适合作为“边界测量”主图。
 
+### 7g. Methods、理论边界、GMM 边界和图风格补丁
+
+已补正式 Methods 草稿：`outputs/nc_methods_formal_draft.md`。它覆盖 Data Sources、Early-Window Features、Targets、Splits、Models、Classical References、Uncertainty and Boundary Analysis、Residual and Figure Audits。这里把 ESM 明确写成 theoretical P-onset supplement，把 AQ2009GM 写成 retained feature-table validation，把 K-NET 单位和 component mapping 写进 provenance。
+
+已补不确定性理论说明：`outputs/nc_uncertainty_boundary_note.md`。核心是 split conformal 的 exchangeability 条件：calibration residuals 和 test residuals 需要来自同一残差分布。source-domain conformal transfer 会故意打破这个条件；观测到的 2 秒 coverage 0.468、5 秒 coverage 0.298 就是 uncertainty-transfer boundary。target-offset conformal 使用目标域 train split 后 coverage 回到约 0.90，但 interval width 增大。
+
+已补区域 GMM 边界说明：`outputs/regional_gmm_boundary_note.md`。当前能支撑 classical-reference screening：attenuation-shaped ridge、BooreEtAl2014、K-NET Japanese GMM screening 和 readiness audit。当前不能支撑完整区域 GMPE/GMM 优越性声明，因为 K-NET 缺 Vs30、rupture distance 和 focal mechanism，InstanceGM focal-mechanism 覆盖很低。
+
+已补主图重画和风格审计：`work/scripts/redraw_nc_main_figures.py` 重画 Figure 1-6，`outputs/nc_figure_style_audit.md` 记录 Figure 1-7 尺寸，contact sheet 为 `outputs/figures/nc_main_figure_contact_sheet.png`。Figure 5 仍是纵向 audit packet，其余主图已统一为紧凑多面板风格。
+
 ### 8. PNWAccelerometers 补充检查
 
 这是补充 SeisBench 加速度数据检查，不作为正式 PGA 主证据。PNWAccelerometers 本地 HDF5 只记录了 `component_order=ENZ`，没有记录 waveform unit；因此目标写成全记录水平峰值波形振幅，而不是出版级 PGA。
@@ -378,6 +392,7 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 7. ESM 欧洲强震动数据提供独立外部区域验证，但 P onset 是理论估计。
 8. 跨区域 early-waveform transfer 提供 predictability boundary 证据，主文按边界结果表述。
 9. PNWAccelerometers 可作为补充 robustness 结果，但不能写成官方 PGA 验证。
+10. ESM P-onset sensitivity 已量化：retained-row 稳定，但 1-2 秒窗口对 Vp 假设敏感。
 
 ## 不能写的 claim
 
@@ -394,32 +409,32 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
 ### 必补
 
-1. 把 OpenQuake 参考的近似写清楚：Rjb 代理、rake 默认、Vs30 缺失。
-2. 写 Methods，确保 split、单位、target 定义可复现。
+1. 给 `outputs/nc_methods_formal_draft.md` 补软件版本和数据访问细节。
+2. 对重画后的 Figure 1-6 做人工版式细修，重点检查 Figure 5 纵向 audit packet 在期刊页面里的拆分方式。
 3. PNWAccelerometers 若进入正文，需要补充单位来源；否则只放补充材料。
 
 ### 可选
 
-1. 给 ESM 补充更严格的 P 到时或相位拾取审计。
+1. 给 ESM 做 waveform-level phase picker 或人工 P 到时抽查，以替代理论 P onset。
 2. 做 magnitude-distance-balanced station split。
 3. 在有 rupture class、rupture distance 和 site terms 后做完整区域 GMPE/GMM 对照。
 
 ## 当前 NC 概率判断
 
-当前已验证主图证据包、AQ2009GM full-manifest chunk-streaming 和 ESM 欧洲强震动外部验证：**60-64%**。
+当前已验证主图证据包、AQ2009GM full-manifest chunk-streaming、ESM 欧洲强震动外部验证和 ESM P-onset sensitivity：**62-66%**。
 
-如果补齐正式 Methods、数据 provenance 和正文叙事：**62-66%**。
+如果补齐软件版本、数据访问细节并对图件做投稿级细修：**64-68%**。
 
-已完成：主图 1-6、NC 主边界合成图、held-out 证据、OpenQuake/conformal、残差/波形审计、phase audit、AQ2009GM full-manifest、ESM compact features、ESM held-out baseline、四域 transfer、cross-region conformal/tail/seed sensitivity、evidence verifier。
+已完成：主图 1-6 重画、NC 主边界合成图、held-out 证据、OpenQuake/conformal、残差/波形审计、phase audit、AQ2009GM full-manifest、ESM compact features、ESM held-out baseline、ESM P-onset sensitivity、四域 transfer、cross-region conformal/tail/seed sensitivity、uncertainty boundary note、regional GMM boundary note、formal Methods draft 压缩版、figure style audit、evidence verifier。
 
-如果加入完整区域 GMM 对照、ESM P 到时审计或更强物理残差解释：**65-70%**。
+如果加入完整区域 GMM 对照、ESM waveform-level P 到时审计或更强物理残差解释：**67-72%**。
 
-现在可以诚实说 60% 出头。原因是 ESM 提供了欧洲强震动外部测试域，且四域 transfer 给出清晰退化边界。限制仍然明确：ESM P onset 是理论估计，当前还没有完整区域 GMM 对照。
+现在可以诚实说 60% 中段。原因是 ESM 提供了欧洲强震动外部测试域，四域 transfer 给出清晰退化边界，ESM P-onset sensitivity 已经把主要相位风险量化。限制仍然明确：ESM P onset 是理论估计，当前还没有完整区域 GMM 对照。
 
 ## 下一步
 
 最短路径：
 
-**把 ESM 写入 Methods，并补一页 ESM P onset 审计。**
+**补软件版本和数据访问细节，然后检查重画图在投稿页面里的可读性。**
 
-理由：强震动部分已有 held-out、OpenQuake、uncertainty、AQ2009GM 和 ESM 外部验证。现在最大瓶颈是 ESM theoretical P onset 的方法边界，以及正文叙事是否能把“信息增益”和“跨区域边界”直接讲清楚。
+理由：强震动部分已有 held-out、OpenQuake、uncertainty、AQ2009GM、ESM 外部验证和 ESM P-onset sensitivity。现在最大瓶颈是 Methods 的投稿级压缩、图件统一和正文叙事是否能把“信息增益”和“跨区域边界”直接讲清楚。

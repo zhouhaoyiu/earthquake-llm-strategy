@@ -1,0 +1,31 @@
+# Methods Draft for NC Submission
+
+## Data Sources
+
+The benchmark uses STEAD, InstanceGM, Iquique, K-NET, AQ2009GM, PNWAccelerometers, and local ESM strong-motion packages. SeisBench provides STEAD, InstanceGM, Iquique, AQ2009GM, and PNWAccelerometers. K-NET was converted from the approved local BSON package into HDF5 and CSV metadata with `UD`, `NS`, and `EW` mapped to `Z`, `N`, and `E`. K-NET acceleration is reported in gal, equivalent to `cm/s2`. ESM features were extracted from local ASCII zip packages without modifying the original archives.
+
+The unified manifest stores record identifiers, dataset names, waveform paths, component order, available P and S picks, source metadata, station metadata, and ground-motion targets.
+
+## Early-Window Features and Targets
+
+Waveforms with catalog P arrivals were aligned to the P pick. Early windows were extracted at 1, 2, 3, 5, and 10 s where retained feature tables were available. The main InstanceGM/K-NET random figures use 1, 3, and 10 s; the held-station scan, AQ2009GM, ESM, and transfer synthesis include 2 and 5 s. Features include component absolute maximum, RMS, standard deviation, 95th-percentile absolute amplitude, horizontal maximum, vector maximum, and vector RMS. Full-record peak features were excluded from predictive feature sets.
+
+Targets were modeled in log10 units. InstanceGM targets include PGA, PGV, SA03, SA10, and SA30. K-NET provides PGA. AQ2009GM provides metadata PGA and PGV. ESM PGA and PGV were computed from paired ACC.AP and VEL.AP streams. PNWAccelerometers is retained as a supplementary peak-amplitude check because the local HDF5 cache lacks waveform unit metadata.
+
+ESM headers do not provide explicit P arrivals. ESM windows use a theoretical onset from origin time, first sample time, epicentral distance, depth, and `Vp = 6 km/s`. The sensitivity audit tested `Vp = 5.5` and `6.5 km/s`; retained-window validity stayed above 0.99, while median onset shifts were about 2.1-2.5 s. ESM is used as an external supplement and transfer-domain check.
+
+## Splits and Models
+
+Random splits measure baseline information gain. Held-event splits remove selected events from training. Held-station splits remove selected stations from training. Balanced held-station splits hold out 50 stations per main strong-motion dataset and sample test records while preserving station coverage. Split files record train groups, test groups, and group overlap; verified held-out overlap is zero.
+
+The main regressor is `HistGradientBoostingRegressor` with fixed settings across experiments. Feature sets include median-only, metadata-only, early-waveform-only, and metadata plus early-waveform models. Metadata features include magnitude, depth, distance, station elevation, Vs30 where available, year, and sample count. Cross-region transfer uses early waveform features only and excludes distance, magnitude, site terms, event identifiers, and station identifiers.
+
+## Classical References
+
+Classical references include an attenuation-shaped ridge model, bias-corrected OpenQuake BooreEtAl2014, and K-NET Japanese GMM screening. BooreEtAl2014 uses source distance as an Rjb proxy, rake fixed at 0, missing Vs30 set to 760 m/s, and train-set median bias correction. K-NET GMM screening uses source distance as an Rrup proxy and missing Vs30 defaults. These comparisons are reference checks under documented metadata limits. A fully specified regional GMPE/GMM comparison requires curated rupture distance, site terms, and tectonic or focal-mechanism metadata.
+
+## Uncertainty and Boundary Analysis
+
+Split-conformal intervals use a proper-training and calibration split within training records. Coverage is evaluated on held-station test records. The exchangeability condition is explicit: calibration and test residuals must come from the same residual distribution for finite-sample marginal coverage to apply. Source-domain conformal transfer intentionally violates this condition and measures the uncertainty-transfer boundary. Target-offset conformal calibration uses the target-domain training split before target test evaluation.
+
+Residuals are predicted log10 target minus observed log10 target. Residual audits evaluate binned behavior by source, path, station, and early waveform variables, then select high-residual cases for waveform-level inspection. Figure-style audits record Figure 1-7 dimensions and provide a contact sheet for final production review.

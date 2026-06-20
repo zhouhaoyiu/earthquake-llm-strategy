@@ -74,6 +74,8 @@ AQ2009GM provides a separate SeisBench ground-motion check with official metadat
 
 ESM provides an external European strong-motion check from local ASCII zip packages. The compact feature table covers 951 zip files, 134,250 early-window rows, 861 events, and 1,568 stations, with zero read errors. ESM headers in the local packages do not provide explicit P arrivals, so windows use a deterministic theoretical P-onset estimate from origin time, first sample time, distance, depth, and a fixed 6 km/s P velocity. Held-station ESM results show that P-only features improve over the median baseline for PGA and PGV at 1, 2, 3, 5, and 10 s. Adding distance and site terms further reduces 10 s MAE to 0.197 for PGA and 0.214 for PGV.
 
+An ESM P-onset sensitivity audit quantifies the timing boundary. Changing the assumed P velocity from 6.0 to 5.5 km/s delays the theoretical onset by a median 2.517 s; changing it to 6.5 km/s advances the onset by a median 2.130 s. The retained-window valid fraction remains above 0.994 across all 1/2/3/5/10 s windows and all tested velocities. This supports ESM as an external strong-motion and transfer-domain check, while keeping catalog-P lead-time claims tied to datasets with explicit P labels.
+
 ### Cross-region transfer defines the prediction boundary
 
 We tested early-waveform-only transfer across InstanceGM, K-NET, AQ2009GM, and ESM using held-out target-domain test records. The transfer model uses waveform features only and excludes source distance, site terms, event identifiers, and station identifiers. The target-domain baseline trains and tests within the target domain under the same split family. The cross-domain setting trains on a source domain and evaluates on the held-out target-domain test set. A second setting applies a scalar offset estimated from the target-domain training split.
@@ -92,7 +94,7 @@ The strongest main evidence is K-NET PGA and InstanceGM PGV. K-NET PGA has a 49.
 
 The classical reference layer supports the scientific interpretation while keeping the metadata limits visible. Bias-corrected OpenQuake and Japanese GMM screening references are useful comparators under the available fields. A fully specified regional GMM comparison needs stronger rupture-distance, site, and focal-mechanism metadata than the current local package provides.
 
-The uncertainty results are central to the paper. Point prediction improves for every main target, while conformal coverage remains target-dependent under station shift. This pattern supports reporting early waveform information and uncertainty boundaries together. Residual audits then identify the cases that still fail after metadata and early waveform features are combined.
+The uncertainty results are central to the paper. Point prediction improves for every main target, while conformal coverage remains target-dependent under station shift. Split conformal coverage relies on exchangeability between calibration and test residuals. Source-domain calibration breaks that condition in cross-region transfer, so the observed under-coverage is an uncertainty-transfer boundary. This pattern supports reporting early waveform information and uncertainty boundaries together. Residual audits then identify the cases that still fail after metadata and early waveform features are combined.
 
 Operational early-warning deployment requires latency, telemetry, prospective validation, and real-time decision rules. Physical attribution of residual structures requires richer site, rupture, and path metadata. The present contribution is a public, reproducible measurement of early strong-motion information and its current empirical limits.
 
@@ -106,7 +108,7 @@ K-NET conversion maps UD, NS, and EW components to Z, N, and E. Complete records
 
 ### Early-window features
 
-Waveforms are aligned to catalog P arrivals where catalog picks are available. Early windows are extracted at 1 s, 3 s, and 10 s after P arrival. Features include component absolute maximum, RMS, standard deviation, 95th-percentile absolute amplitude, horizontal maximum, vector maximum, and vector RMS. Full-record peak features are excluded from the main models. ESM early windows use a deterministic theoretical P-onset estimate because the local ASCII headers do not include explicit P arrivals.
+Waveforms are aligned to catalog P arrivals where catalog picks are available. Early windows are extracted at 1, 2, 3, 5, and 10 s where retained feature tables are available. The main InstanceGM/K-NET random-split figures use 1, 3, and 10 s; the held-station scan, AQ2009GM supplement, ESM supplement, and transfer synthesis include the 2 and 5 s windows. Features include component absolute maximum, RMS, standard deviation, 95th-percentile absolute amplitude, horizontal maximum, vector maximum, and vector RMS. Full-record peak features are excluded from the main models. ESM early windows use a deterministic theoretical P-onset estimate because the local ASCII headers do not include explicit P arrivals.
 
 The early-window peak-capture audit compares early horizontal maximum amplitude with full-record PGA targets in generated test feature tables. The K-NET pre-peak subset audit filters records by the ratio of early horizontal peak to observed PGA at thresholds of 0.5, 0.8, and 1.0, then recomputes metadata-only and metadata plus early-waveform errors.
 
@@ -120,17 +122,17 @@ Random splits provide the first information-gain measurement. Held-event splits 
 
 ### Cross-region transfer
 
-Cross-region transfer experiments use compact feature tables from InstanceGM, K-NET, AQ2009GM, and ESM. The transfer feature set includes early waveform features only. It excludes distance, magnitude, site variables, event identifiers, and station identifiers. For each target domain, the within-domain baseline trains on the target training split and evaluates on the target test split. Zero-shot transfer trains on a source domain and evaluates on the target test split. Offset-calibrated transfer estimates a scalar residual offset on the target training split and applies it to source-domain predictions before target test evaluation. AQ2009GM is included for 1, 3, and 10 s, matching its retained compact windows.
+Cross-region transfer experiments use compact feature tables from InstanceGM, K-NET, AQ2009GM, and ESM. The transfer feature set includes early waveform features only. It excludes distance, magnitude, site variables, event identifiers, and station identifiers. For each target domain, the within-domain baseline trains on the target training split and evaluates on the target test split. Zero-shot transfer trains on a source domain and evaluates on the target test split. Offset-calibrated transfer estimates a scalar residual offset on the target training split and applies it to source-domain predictions before target test evaluation. AQ2009GM contributes retained compact feature tables at 1, 2, 3, 5, and 10 s through the 1/3/10 s and 2/5 s streaming validations.
 
 ### Classical references
 
 The attenuation-shaped reference uses Ridge regression on magnitude, log10 hypocentral distance, depth, and log10 Vs30 where available. It is fitted on balanced held-station training records and evaluated on held-station test records. The K-NET reference lacks site correction because Vs30 is absent from the approved local feature tables.
 
-OpenQuake BooreEtAl2014 is evaluated with train-set median bias correction. Source distance is used as an Rjb proxy, rake is fixed at 0, and missing Vs30 is set to 760 m/s. K-NET Japanese GMM screening uses source distance as an Rrup proxy, missing Vs30 defaults, and train-set median bias correction.
+OpenQuake BooreEtAl2014 is evaluated with train-set median bias correction. Source distance is used as an Rjb proxy, rake is fixed at 0, and missing Vs30 is set to 760 m/s. K-NET Japanese GMM screening uses source distance as an Rrup proxy, missing Vs30 defaults, and train-set median bias correction. The regional GMM boundary note records that the current package supports classical-reference screening under documented metadata limits. A fully specified regional GMPE/GMM comparison requires curated rupture distance, site terms, and tectonic or focal-mechanism metadata.
 
 ### Uncertainty and residual analysis
 
-Split-conformal intervals use a proper-training and calibration split inside the balanced held-station training records. Reported coverage is evaluated on held-station test records. Residuals are predicted log10 target minus observed log10 target. Residual audits evaluate binned behavior by magnitude, distance, depth, station variables, and early waveform amplitude, then select high-residual records for waveform-level panels.
+Split-conformal intervals use a proper-training and calibration split inside the balanced held-station training records. Reported coverage is evaluated on held-station test records. The Methods state the exchangeability condition for finite-sample marginal coverage. The cross-region sensitivity experiment separates target-domain conformal calibration, source-domain conformal transfer, and target-offset conformal calibration. Residuals are predicted log10 target minus observed log10 target. Residual audits evaluate binned behavior by magnitude, distance, depth, station variables, and early waveform amplitude, then select high-residual records for waveform-level panels.
 
 ### Supplementary datasets
 
@@ -138,13 +140,13 @@ PNWAccelerometers is used as an accelerometer peak-amplitude supplement. Its loc
 
 AQ2009GM is used as a SeisBench PGA/PGV supplement through full-manifest chunk streaming. The script reads the local SeisBench chunk manifest, downloads one chunk at a time, extracts early-window velocity features, `trace_pga_cmps2`, `trace_pgv_cmps`, metadata, event identifiers, and station identifiers, then deletes raw chunk files when `--delete-raw` is set. Held-event, held-station, and held-time splits have zero group overlap.
 
-ESM is used as a local European strong-motion supplement. The feature builder reads ASCII records from local zip packages, pairs ACC.AP and VEL.AP streams by event and station, computes full-record PGA/PGV targets, extracts early-window features at 1, 2, 3, 5, and 10 s, and skips records where the theoretical P window falls outside the waveform. ESM held-event and held-station splits have zero group overlap.
+ESM is used as a local European strong-motion supplement. The feature builder reads ASCII records from local zip packages, pairs ACC.AP and VEL.AP streams by event and station, computes full-record PGA/PGV targets, extracts early-window features at 1, 2, 3, 5, and 10 s, and skips records where the theoretical P window falls outside the waveform. The ESM P-onset sensitivity audit tests Vp values of 5.5, 6.0, and 6.5 km/s on the retained feature table. ESM held-event and held-station splits have zero group overlap.
 
 ## Data and Code Availability
 
 The benchmark uses public waveform archives. STEAD, InstanceGM, Iquique, AQ2009GM, and PNWAccelerometers are accessed through SeisBench. K-NET waveforms are public data from NIED and were converted locally from the approved BSON package into HDF5 with explicit component mapping. ESM-derived compact features are generated from local ASCII zip packages. Raw waveform redistribution should follow the license and access rules of each source archive.
 
-The reproducible release should include the unified manifest schema, split files, generated figure tables, methods scripts, evidence verifier, and derived feature tables where licenses allow. The current local evidence package is verified by `work/scripts/verify_nc_evidence_package.py`.
+The reproducible release should include the unified manifest schema, split files, generated figure tables, methods scripts, evidence verifier, formal Methods draft, uncertainty boundary note, regional GMM boundary note, figure style audit, and derived feature tables where licenses allow. The current local evidence package is verified by `work/scripts/verify_nc_evidence_package.py`.
 
 ## Figure Legends
 
@@ -191,3 +193,7 @@ Held-event, held-station, and held-time PGA/PGV results for all 254 chunks liste
 ### Supplementary Figure 3. Cross-region early-waveform transfer boundary
 
 Early-waveform-only transfer penalties across InstanceGM, K-NET, AQ2009GM, and ESM at 1 s, 2 s, 3 s, 5 s, and 10 s. AQ2009GM contributes to all evaluated windows through retained 1/3/10 s and 2/5 s compact feature tables. Panels compare zero-shot transfer and target-train offset calibration against target-domain training.
+
+### Supplementary Table. ESM P-onset sensitivity
+
+Theoretical P-onset sensitivity for Vp 5.5, 6.0, and 6.5 km/s in the retained ESM compact feature table. The table reports onset shift relative to 6.0 km/s and retained-window validity for 1/2/3/5/10 s windows.

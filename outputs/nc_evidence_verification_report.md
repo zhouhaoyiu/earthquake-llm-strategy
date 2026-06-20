@@ -14,6 +14,10 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: methods provenance table exists
 - PASS: methods provenance table covers core boundary synthesis
 - PASS: methods provenance table covers boundary sensitivity checks
+- PASS: methods provenance table covers ESM P-onset sensitivity audit
+- PASS: methods provenance table covers uncertainty boundary note
+- PASS: methods provenance table covers regional GMM boundary note
+- PASS: methods provenance table covers main figure redraw and style audit
 - PASS: method script exists: work/scripts/convert_knet_bson.py
 - PASS: method script exists: work/scripts/build_unified_manifest.py
 - PASS: method script exists: work/scripts/run_ground_motion_baseline.py
@@ -28,6 +32,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: method script exists: work/scripts/analyze_ground_motion_residuals.py
 - PASS: method script exists: work/scripts/stream_aq2009gm_full_validation.py
 - PASS: method script exists: work/scripts/build_esm_compact_features.py
+- PASS: method script exists: work/scripts/audit_esm_p_onset_sensitivity.py
 - PASS: method script exists: work/scripts/run_esm_compact_baseline.py
 - PASS: method script exists: work/scripts/run_pnw_accelerometer_peak_baseline.py
 - PASS: method script exists: work/scripts/build_predictability_boundary_table.py
@@ -36,6 +41,8 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: method script exists: work/scripts/summarize_cross_region_window_scan.py
 - PASS: method script exists: work/scripts/run_nc_boundary_sensitivity.py
 - PASS: method script exists: work/scripts/build_nc_core_boundary_figure.py
+- PASS: method script exists: work/scripts/redraw_nc_main_figures.py
+- PASS: method script exists: work/scripts/audit_nc_figure_style.py
 - PASS: NC reviewer risk matrix exists
 - PASS: reviewer risk matrix covers: 10 s window
 - PASS: reviewer risk matrix covers: group leakage
@@ -86,6 +93,13 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: ESM compact feature table excludes invalid theoretical P windows
 - PASS: ESM compact feature table has positive PGA targets
 - PASS: ESM compact feature table has positive nonmissing PGV targets and five missing PGV rows
+- PASS: ESM P-onset sensitivity summary exists
+- PASS: ESM P-onset sensitivity table exists
+- PASS: ESM P-onset sensitivity table has 15 rows across 3 Vp values and 5 windows
+- PASS: ESM P-onset sensitivity covers Vp 5.5/6.0/6.5 km/s
+- PASS: ESM P-onset sensitivity covers 1/2/3/5/10 s windows
+- PASS: ESM P-onset retained-window validity remains above 0.99
+- PASS: ESM P-onset sensitivity records multi-second timing shifts for plausible Vp values
 - PASS: ESM held-out baseline summary exists
 - PASS: ESM held-out baseline has 80 rows across holdout/window/target/feature-set combinations
 - PASS: ESM held-out baseline covers 1/2/3/5/10 s windows
@@ -93,17 +107,17 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: ESM held-out baseline group overlap is zero
 - PASS: ESM held-station P+distance+site model improves over median for every target/window
 - PASS: outputs/figures/figure1_dataset_task_matrix.png exists
-- PASS: outputs/figures/figure1_dataset_task_matrix.png opens as a nontrivial image (3168x1488)
+- PASS: outputs/figures/figure1_dataset_task_matrix.png opens as a nontrivial image (2880x1224)
 - PASS: outputs/figures/figure2_early_window_performance.png exists
-- PASS: outputs/figures/figure2_early_window_performance.png opens as a nontrivial image (2688x1680)
+- PASS: outputs/figures/figure2_early_window_performance.png opens as a nontrivial image (2880x1776)
 - PASS: outputs/figures/figure3_heldout_generalization.png exists
-- PASS: outputs/figures/figure3_heldout_generalization.png opens as a nontrivial image (2340x1458)
+- PASS: outputs/figures/figure3_heldout_generalization.png opens as a nontrivial image (2880x1776)
 - PASS: outputs/figures/figure4_classical_uncertainty.png exists
-- PASS: outputs/figures/figure4_classical_uncertainty.png opens as a nontrivial image (2340x1475)
+- PASS: outputs/figures/figure4_classical_uncertainty.png opens as a nontrivial image (2880x1776)
 - PASS: outputs/figures/figure5_residual_waveform_audit.png exists
-- PASS: outputs/figures/figure5_residual_waveform_audit.png opens as a nontrivial image (2334x6276)
+- PASS: outputs/figures/figure5_residual_waveform_audit.png opens as a nontrivial image (2272x6097)
 - PASS: outputs/figures/figure6_phase_label_audit.png exists
-- PASS: outputs/figures/figure6_phase_label_audit.png opens as a nontrivial image (2376x1404)
+- PASS: outputs/figures/figure6_phase_label_audit.png opens as a nontrivial image (2880x1728)
 - PASS: Figure 2 table has 18 rows across 1/3/10 s windows
 - PASS: Figure 2 MAE reductions are positive for all tested rows
 - PASS: Figure 2 K-NET 10 s PGA reduction matches reported value
@@ -247,6 +261,21 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: NC core boundary offset transfer penalty increases with window length
 - PASS: NC core boundary source conformal coverage worsens from 2 s to 5 s
 - PASS: NC core boundary target-domain top-tail underprediction improves from 2 s to 5 s
+- PASS: formal NC Methods draft exists
+- PASS: formal NC Methods draft covers: Data Sources
+- PASS: formal NC Methods draft covers: Early-Window Features
+- PASS: formal NC Methods draft covers: Uncertainty and Boundary Analysis
+- PASS: formal NC Methods draft covers: Classical References
+- PASS: NC uncertainty boundary note exists
+- PASS: NC uncertainty boundary note states exchangeability condition
+- PASS: regional GMM boundary note exists
+- PASS: regional GMM boundary note limits full regional GMM claims
+- PASS: NC figure style audit summary exists
+- PASS: NC figure style audit table exists
+- PASS: NC figure style audit covers Figures 1-7
+- PASS: NC figure style audit confirms all main figures exceed 2000 px width
+- PASS: NC main figure contact sheet exists
+- PASS: NC main figure contact sheet opens (1604x2380)
 - PASS: cross-region window-scan summary exists
 - PASS: cross-region window-scan table exists
 - PASS: cross-region window-scan figure exists
@@ -266,6 +295,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/nc_minimum_submission_package.md references Figure 5
 - PASS: outputs/nc_minimum_submission_package.md references Figure 6
 - PASS: outputs/nc_minimum_submission_package.md references AQ2009GM supplementary check
+- PASS: outputs/nc_minimum_submission_package.md references ESM P-onset boundary
 - PASS: outputs/nc_minimum_submission_package.md references Figure 7 core boundary synthesis
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 1
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 2
@@ -274,6 +304,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 5
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 6
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references AQ2009GM supplementary check
+- PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references ESM P-onset boundary
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 7 core boundary synthesis
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 1
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 2
@@ -282,6 +313,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 5
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 6
 - PASS: outputs/nc_evidence_packet_zh.md references AQ2009GM supplementary check
+- PASS: outputs/nc_evidence_packet_zh.md references ESM P-onset boundary
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 7 core boundary synthesis
 - PASS: article draft contains bounded claim: Figure 1. Cross-dataset waveform-task benchmark
 - PASS: article draft contains bounded claim: Figure 6. Phase-label transfer audit
@@ -293,11 +325,14 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: article draft contains bounded claim: 0.925 coverage for K-NET PGA
 - PASS: article draft contains bounded claim: The retained AQ2009GM evidence consists of compact feature tables
 - PASS: article draft contains bounded claim: ESM provides an external European strong-motion check
+- PASS: article draft contains bounded claim: ESM P-onset sensitivity audit
 - PASS: article draft contains bounded claim: theoretical P-onset estimate
+- PASS: article draft contains bounded claim: exchangeability
 - PASS: article draft contains bounded claim: 2.53x for PGA and 1.58x for PGV
+- PASS: article draft contains bounded claim: formal Methods draft
 
 ## Current Acceptance-Probability Status
 
-The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, cross-region waveform-transfer boundary, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, phase-label auditing, full-manifest AQ2009GM feature-table validation, and ESM European strong-motion compact-feature validation.
+The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, cross-region waveform-transfer boundary, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, phase-label auditing, full-manifest AQ2009GM feature-table validation, ESM European strong-motion compact-feature validation, ESM P-onset sensitivity auditing, formal Methods drafting, and figure-style auditing.
 
-The remaining gap is empirical: a fully specified regional GMM comparison, ESM P-onset auditing, or a stronger physical residual mechanism would be needed before claiming a high-confidence NC route.
+The remaining gap is empirical and presentational: a fully specified regional GMM comparison, waveform-level ESM P-pick auditing, stronger physical residual mechanism, final Methods polishing, or unified journal-style figure redraw would raise the confidence of the NC route.

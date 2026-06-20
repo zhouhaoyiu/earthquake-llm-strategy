@@ -1,0 +1,8 @@
+figure,path,width_px,height_px,aspect_ratio,sha256_12
+Figure 1,outputs/figures/figure1_dataset_task_matrix.png,2880,1224,2.353,38a93d86c2db
+Figure 2,outputs/figures/figure2_early_window_performance.png,2880,1776,1.622,df593c5531c7
+Figure 3,outputs/figures/figure3_heldout_generalization.png,2880,1776,1.622,01c76b433536
+Figure 4,outputs/figures/figure4_classical_uncertainty.png,2880,1776,1.622,c464e40d9c8a
+Figure 5,outputs/figures/figure5_residual_waveform_audit.png,2272,6097,0.373,905a38fcfe32
+Figure 6,outputs/figures/figure6_phase_label_audit.png,2880,1728,1.667,ed36245eca18
+Figure 7,outputs/figures/nc_core_predictability_boundary.png,2688,1944,1.383,2dc391899d20
