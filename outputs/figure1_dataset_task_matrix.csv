@@ -1,0 +1,7 @@
+dataset,records,phase,detect,gm,pga,pgv,sa,supplement
+STEAD,1265657,True,True,False,False,False,False,False
+InstanceGM,1159249,True,True,True,True,True,True,False
+Iquique,13400,True,True,False,False,False,False,False
+K-NET,22119,True,True,True,True,False,False,False
+"PNW Accel.
+(supp.)",5981,True,False,False,False,False,False,True

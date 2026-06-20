@@ -1,0 +1,31 @@
+.DS_Store
+__pycache__/
+*.pyc
+
+# Raw/cache/generated heavy artifacts.
+*.hdf5
+*.h5
+*.bson
+*.mseed
+*.sac
+*.npz
+*.npy
+*.pt
+*.pth
+work/**
+
+# Keep reproducibility scripts and small verifier inputs.
+!work/
+!work/scripts/
+!work/scripts/*.py
+!work/unified_manifest/
+!work/unified_manifest/unified_manifest_summary.json
+!work/knet_converted/
+!work/knet_converted/knet_full_convert_report.json
+!work/ground_motion_balanced_station_10s/
+!work/ground_motion_balanced_station_10s/attenuation_reference.csv
+!work/ground_motion_balanced_station_10s/instancegm_held_station_train_features.csv
+!work/ground_motion_balanced_station_10s/knet_held_station_train_features.csv
+!work/ground_motion_balanced_station_10s/knet_japan_gmm_reference.csv
+!work/ground_motion_balanced_station_10s/matched_station_gain_audit.csv
+!work/ground_motion_balanced_station_10s/matched_station_gain_audit_summary.csv

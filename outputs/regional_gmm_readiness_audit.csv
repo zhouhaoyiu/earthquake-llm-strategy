@@ -1,0 +1,5 @@
+dataset,split,rows,join_rows,vs30_rows,mechanism_rows,ep_distance_rows,hyp_distance_rows,vs30_frac,mechanism_frac
+instancegm,train,5000,5000,5000,141,5000,5000,1.0,0.0282
+knet,train,5000,5000,0,0,5000,5000,0.0,0.0
+instancegm,test,1000,1000,1000,36,1000,1000,1.0,0.036
+knet,test,1000,1000,0,0,1000,1000,0.0,0.0
