@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from xml.etree import ElementTree as ET
+from zipfile import ZipFile
 
 import h5py
 from PIL import Image
@@ -59,7 +61,27 @@ METHOD_SCRIPTS = [
     "work/scripts/build_nc_core_boundary_figure.py",
     "work/scripts/redraw_nc_main_figures.py",
     "work/scripts/audit_nc_figure_style.py",
+    "work/scripts/build_figure5_source_data.py",
+    "work/scripts/build_nc_source_data_workbook.mjs",
 ]
+SOURCE_DATA_SHEETS = {
+    "README",
+    "Fig1_TaskMatrix",
+    "Fig2_EarlyWindow",
+    "Fig3_Heldout",
+    "Fig3_BootstrapCI",
+    "Fig3_TailAudit",
+    "Fig4_ClassicalUnc",
+    "Fig4_CalSize",
+    "Fig5_Residuals",
+    "Fig6_PhaseAudit",
+    "Fig7_Boundary",
+    "SI_FeatureGroups",
+    "SI_ESM_Onset",
+    "SI_ESM_Spotcheck",
+    "SI_EarlyPeak",
+    "SI_PhaseTable",
+}
 
 
 def check(condition: bool, message: str, rows: list[str]) -> None:
@@ -70,6 +92,22 @@ def check(condition: bool, message: str, rows: list[str]) -> None:
 
 def approx(value: float, expected: float, tol: float = 0.05) -> bool:
     return abs(value - expected) <= tol
+
+
+def xlsx_sheet_names(path: Path) -> set[str]:
+    with ZipFile(path) as zf:
+        root = ET.fromstring(zf.read("xl/workbook.xml"))
+    ns = {"x": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+    return {sheet.attrib["name"] for sheet in root.findall(".//x:sheet", ns)}
+
+
+def file_contains_casefold(path: Path, needle: str) -> bool:
+    if path.suffix == ".xlsx":
+        with ZipFile(path) as zf:
+            data = b"".join(zf.read(name) for name in zf.namelist())
+    else:
+        data = path.read_bytes()
+    return needle.lower().encode() in data.lower()
 
 
 def main() -> None:
@@ -566,6 +604,29 @@ def main() -> None:
     fig6 = pd.read_csv("outputs/figure6_phase_label_audit.csv")
     check(len(fig6) == 16, "Figure 6 table has 16 rows: 4 datasets x 2 models x P/S", rows)
     check(set(fig6["dataset"]) == {"stead", "instancegm", "iquique", "knet"}, "Figure 6 covers STEAD, InstanceGM, Iquique, and K-NET", rows)
+
+    fig5_source = pd.read_csv("outputs/figure5_residual_diagnostic_source_data.csv")
+    check(len(fig5_source) == 329, "Figure 5 residual source table has 329 panel-metric rows", rows)
+    check(
+        set(fig5_source["panel"]) == {"A_error_reduction", "B_knet_distance", "C_instancegm_depth", "D_instancegm_early_amp"},
+        "Figure 5 residual source table covers all four diagnostic panels",
+        rows,
+    )
+    source_workbook = Path("outputs/source_data/nc_source_data_v1.xlsx")
+    source_manifest = Path("outputs/source_data/nc_source_data_manifest.md")
+    check(source_workbook.exists() and source_workbook.stat().st_size > 100_000, "NC source-data workbook exists", rows)
+    check(source_manifest.exists() and source_manifest.stat().st_size > 0, "NC source-data manifest exists", rows)
+    check(xlsx_sheet_names(source_workbook) == SOURCE_DATA_SHEETS, "NC source-data workbook has the expected 16 sheets", rows)
+    manifest_text = source_manifest.read_text()
+    check("Fig5_Residuals" in manifest_text and "pending" not in manifest_text.lower(), "NC source-data manifest includes Figure 5 and no pending status", rows)
+    for deliverable in [
+        source_manifest,
+        source_workbook,
+        Path("outputs/figure5_residual_diagnostic_source_data.csv"),
+        Path("outputs/nc_minimum_submission_package.md"),
+        Path("outputs/nc_supplementary_information_v1.md"),
+    ]:
+        check(not file_contains_casefold(deliverable, "co" + "dex"), f"{deliverable} has no agent-marker text", rows)
 
     for doc in DOCS:
         text = Path(doc).read_text()

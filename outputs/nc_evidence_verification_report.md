@@ -52,6 +52,8 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: method script exists: work/scripts/build_nc_core_boundary_figure.py
 - PASS: method script exists: work/scripts/redraw_nc_main_figures.py
 - PASS: method script exists: work/scripts/audit_nc_figure_style.py
+- PASS: method script exists: work/scripts/build_figure5_source_data.py
+- PASS: method script exists: work/scripts/build_nc_source_data_workbook.mjs
 - PASS: NC reviewer risk matrix exists
 - PASS: reviewer risk matrix covers: 10 s window
 - PASS: reviewer risk matrix covers: group leakage
@@ -342,6 +344,17 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: K-NET early-waveform model beats best Japan GMM screening reference
 - PASS: Figure 6 table has 16 rows: 4 datasets x 2 models x P/S
 - PASS: Figure 6 covers STEAD, InstanceGM, Iquique, and K-NET
+- PASS: Figure 5 residual source table has 329 panel-metric rows
+- PASS: Figure 5 residual source table covers all four diagnostic panels
+- PASS: NC source-data workbook exists
+- PASS: NC source-data manifest exists
+- PASS: NC source-data workbook has the expected 16 sheets
+- PASS: NC source-data manifest includes Figure 5 and no pending status
+- PASS: outputs/source_data/nc_source_data_manifest.md has no agent-marker text
+- PASS: outputs/source_data/nc_source_data_v1.xlsx has no agent-marker text
+- PASS: outputs/figure5_residual_diagnostic_source_data.csv has no agent-marker text
+- PASS: outputs/nc_minimum_submission_package.md has no agent-marker text
+- PASS: outputs/nc_supplementary_information_v1.md has no agent-marker text
 - PASS: outputs/nc_minimum_submission_package.md references Figure 1
 - PASS: outputs/nc_minimum_submission_package.md references Figure 2
 - PASS: outputs/nc_minimum_submission_package.md references Figure 3
