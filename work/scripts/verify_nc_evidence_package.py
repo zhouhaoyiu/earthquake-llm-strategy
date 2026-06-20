@@ -545,6 +545,17 @@ def main() -> None:
     check(core["offset_transfer_ratio"].is_monotonic_increasing, "NC core boundary offset transfer penalty increases with window length", rows)
     core_by_window = core.set_index("window_s")
     check(core_by_window.loc[5, "zero_shot_conformal_coverage"] < core_by_window.loc[2, "zero_shot_conformal_coverage"], "NC core boundary source conformal coverage worsens from 2 s to 5 s", rows)
+    for col in [
+        "zero_shot_coverage_gap_to_90",
+        "target_offset_coverage_gap_to_90",
+        "zero_shot_interval_width",
+        "target_offset_interval_width",
+    ]:
+        check(col in core.columns, f"NC core boundary table includes {col}", rows)
+    check(core_by_window.loc[2, "zero_shot_coverage_gap_to_90"] > 0.4, "NC core boundary source coverage gap is large at 2 s", rows)
+    check(core_by_window.loc[5, "zero_shot_coverage_gap_to_90"] > 0.5, "NC core boundary source coverage gap is large at 5 s", rows)
+    check(core_by_window.loc[[2, 5], "target_offset_coverage_gap_to_90"].abs().max() < 0.01, "NC core boundary target-offset coverage gap is near zero", rows)
+    check(core_by_window.loc[[2, 5], ["zero_shot_interval_width", "target_offset_interval_width"]].gt(0).all().all(), "NC core boundary interval widths are positive", rows)
     check(core_by_window.loc[5, "target_domain_top5_under_factor2_rate"] < core_by_window.loc[2, "target_domain_top5_under_factor2_rate"], "NC core boundary target-domain top-tail underprediction improves from 2 s to 5 s", rows)
 
     formal_methods = Path("outputs/nc_methods_formal_draft.md")

@@ -43,6 +43,11 @@ def main() -> None:
     assert table["zero_shot_transfer_ratio"].is_monotonic_increasing
     assert table["offset_transfer_ratio"].is_monotonic_increasing
     assert table.loc[table["window_s"].eq(5), "zero_shot_conformal_coverage"].iloc[0] < 0.4
+    assert table.loc[table["window_s"].eq(2), "zero_shot_coverage_gap_to_90"].iloc[0] > 0.4
+    assert table.loc[table["window_s"].eq(5), "zero_shot_coverage_gap_to_90"].iloc[0] > 0.5
+    assert table.loc[table["window_s"].eq(5), "target_offset_interval_width"].iloc[0] > table.loc[
+        table["window_s"].eq(5), "zero_shot_interval_width"
+    ].iloc[0]
     assert (
         table.loc[table["window_s"].eq(5), "target_domain_top5_under_factor2_rate"].iloc[0]
         < table.loc[table["window_s"].eq(2), "target_domain_top5_under_factor2_rate"].iloc[0]
@@ -110,7 +115,8 @@ def transfer_penalty() -> pd.DataFrame:
 
 def conformal_boundary() -> pd.DataFrame:
     df = pd.read_csv("work/nc_boundary_sensitivity/conformal_boundary.csv")
-    cov = df.groupby(["early_seconds", "mode"])["coverage90"].median().unstack()
+    grouped = df.groupby(["early_seconds", "mode"])
+    cov = grouped["coverage90"].median().unstack()
     cov = cov.rename(
         columns={
             "target_domain": "target_domain_conformal_coverage",
@@ -118,8 +124,19 @@ def conformal_boundary() -> pd.DataFrame:
             "target_offset_conformal": "target_offset_conformal_coverage",
         }
     )
-    cov.index = cov.index.astype(int)
-    return cov.reset_index(names="window_s")
+    width = grouped["interval_width_log10"].median().unstack()
+    width = width.rename(
+        columns={
+            "target_domain": "target_domain_interval_width",
+            "zero_shot_source_conformal": "zero_shot_interval_width",
+            "target_offset_conformal": "target_offset_interval_width",
+        }
+    )
+    out = cov.join(width)
+    for prefix in ["target_domain", "zero_shot", "target_offset"]:
+        out[f"{prefix}_coverage_gap_to_90"] = 0.9 - out[f"{prefix}_conformal_coverage"]
+    out.index = out.index.astype(int)
+    return out.reset_index(names="window_s")
 
 
 def tail_boundary() -> pd.DataFrame:
@@ -143,16 +160,16 @@ def write_summary(table: pd.DataFrame) -> None:
         "",
         "This file is generated from existing validated outputs. It does not add a new model run.",
         "",
-        "| Window | Main held-station gain % | AQ station gain % | ESM station gain vs median % | Zero-shot transfer ratio | Offset transfer ratio | Source conformal coverage | Target-offset coverage | Target-domain top5 under-rate |",
-        "|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "| Window | Main held-station gain % | AQ station gain % | ESM station gain vs median % | Zero-shot transfer ratio | Offset transfer ratio | Source coverage gap | Target-offset gap | Target-offset width | Target-domain top5 under-rate |",
+        "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for row in table.itertuples(index=False):
         lines.append(
             f"| {row.window_s}s | {fmt(row.main_held_station_gain_pct, 1)} | "
             f"{fmt(row.aq_station_gain_pct, 1)} | {fmt(row.esm_station_gain_vs_median_pct, 1)} | "
             f"{fmt(row.zero_shot_transfer_ratio, 2)} | {fmt(row.offset_transfer_ratio, 2)} | "
-            f"{fmt(row.zero_shot_conformal_coverage, 3)} | {fmt(row.target_offset_conformal_coverage, 3)} | "
-            f"{fmt(row.target_domain_top5_under_factor2_rate, 3)} |"
+            f"{fmt(row.zero_shot_coverage_gap_to_90, 3)} | {fmt(row.target_offset_coverage_gap_to_90, 3)} | "
+            f"{fmt(row.target_offset_interval_width, 3)} | {fmt(row.target_domain_top5_under_factor2_rate, 3)} |"
         )
     lines.extend(
         [
@@ -160,7 +177,8 @@ def write_summary(table: pd.DataFrame) -> None:
             "Plain-language read:",
             "- Early-window information gain is consistently positive under held-station or held-station-like checks.",
             "- Cross-region transfer penalties grow from 1 s to 10 s, and offset calibration does not remove them.",
-            "- Source-domain conformal intervals under-cover target domains at 2 s and 5 s.",
+            "- Source-domain conformal intervals have large positive coverage gaps at 2 s and 5 s.",
+            "- Target-offset calibration restores near-zero coverage gaps but changes interval width.",
             "- The strongest-shaking tail improves from 2 s to 5 s, but the top-tail underprediction boundary remains visible.",
             "",
             "Files:",
@@ -192,14 +210,23 @@ def draw_figure(table: pd.DataFrame) -> None:
 
     sub = table[table["window_s"].isin([2, 5])]
     x = sub["window_s"].astype(float)
-    ax3.axhline(0.9, color="#333333", linestyle="--", linewidth=1, alpha=0.55, zorder=0)
-    ax3.plot(x - 0.06, sub["target_domain_conformal_coverage"], marker="o", label="target-domain", zorder=3)
-    ax3.plot(x, sub["zero_shot_conformal_coverage"], marker="s", label="source conformal", zorder=3)
-    ax3.plot(x + 0.06, sub["target_offset_conformal_coverage"], marker="^", label="target-offset", zorder=3)
-    ax3.set_ylim(0.2, 1.0)
-    ax3.set_xlim(1.75, 5.25)
-    style_axis(ax3, "C. Uncertainty transfer boundary", "P-window length (s)", "90% interval coverage")
-    ax3.legend(frameon=False, fontsize=8)
+    ax3.axhline(0.0, color="#333333", linestyle="--", linewidth=1, alpha=0.55, zorder=0)
+    ax3.plot(x - 0.04, sub["zero_shot_coverage_gap_to_90"], marker="s", color="#b65f2a", label="source gap", zorder=3)
+    ax3.plot(x + 0.04, sub["target_offset_coverage_gap_to_90"], marker="^", color="#2f7d4f", label="target-offset gap", zorder=3)
+    ax3.set_ylim(-0.08, 0.68)
+    ax3.set_xlim(1.75, 5.55)
+    style_axis(ax3, "C. Uncertainty transfer boundary", "P-window length (s)", "0.90 - observed coverage")
+    ax3b = ax3.twinx()
+    ax3b.plot(x, sub["zero_shot_interval_width"], marker="s", color="#b65f2a", linestyle=":", label="source width")
+    ax3b.plot(x, sub["target_offset_interval_width"], marker="^", color="#2f7d4f", linestyle=":", label="target-offset width")
+    ax3b.set_ylabel("interval width (log10)")
+    ax3b.set_ylim(0.5, 2.6)
+    ax3b.spines["top"].set_visible(False)
+    end = sub[sub["window_s"].eq(5)].iloc[0]
+    ax3.text(5.08, end["zero_shot_coverage_gap_to_90"], "source gap", color="#b65f2a", va="center", fontsize=7)
+    ax3.text(5.08, end["target_offset_coverage_gap_to_90"], "offset gap", color="#2f7d4f", va="center", fontsize=7)
+    ax3b.text(5.08, end["zero_shot_interval_width"], "source width", color="#b65f2a", va="center", fontsize=7)
+    ax3b.text(5.08, end["target_offset_interval_width"], "offset width", color="#2f7d4f", va="center", fontsize=7)
 
     ax4.plot(sub["window_s"], sub["target_domain_top5_under_factor2_rate"], marker="o", label="target-domain")
     ax4.plot(sub["window_s"], sub["zero_shot_top5_under_factor2_rate"], marker="s", label="zero-shot")

@@ -313,6 +313,14 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: NC core boundary zero-shot transfer penalty increases with window length
 - PASS: NC core boundary offset transfer penalty increases with window length
 - PASS: NC core boundary source conformal coverage worsens from 2 s to 5 s
+- PASS: NC core boundary table includes zero_shot_coverage_gap_to_90
+- PASS: NC core boundary table includes target_offset_coverage_gap_to_90
+- PASS: NC core boundary table includes zero_shot_interval_width
+- PASS: NC core boundary table includes target_offset_interval_width
+- PASS: NC core boundary source coverage gap is large at 2 s
+- PASS: NC core boundary source coverage gap is large at 5 s
+- PASS: NC core boundary target-offset coverage gap is near zero
+- PASS: NC core boundary interval widths are positive
 - PASS: NC core boundary target-domain top-tail underprediction improves from 2 s to 5 s
 - PASS: formal NC Methods draft exists
 - PASS: formal NC Methods draft covers: Data Sources
