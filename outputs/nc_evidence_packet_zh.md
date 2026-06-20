@@ -98,6 +98,24 @@ K-NET pre-peak 子集审计已生成：`outputs/knet_prepeak_subset_audit.md`。
 主图：`outputs/figures/figure3_heldout_generalization.png`
 支撑图：`outputs/figures/ground_motion_audit/balanced_station_distribution_audit_panel.png`
 
+### 3c. Matched held-station 增益审计
+
+已补一个全自动事后审计：`outputs/matched_station_gain_audit_summary.md`。它把 held-station 测试样本裁到训练集震级、距离和目标幅值的 5-95% 覆盖范围内，再重新评估 metadata-only 与 metadata + 早窗波形。
+
+| 数据集 | 目标 | matched 保留比例 | full 降幅 | matched 降幅 |
+|---|---|---:|---:|---:|
+| InstanceGM | PGA | 0.730 | 35.5% | 38.4% |
+| InstanceGM | PGV | 0.753 | 52.6% | 52.1% |
+| InstanceGM | SA03 | 0.772 | 26.0% | 26.6% |
+| InstanceGM | SA10 | 0.778 | 20.9% | 17.2% |
+| InstanceGM | SA30 | 0.751 | 27.8% | 24.9% |
+| K-NET | PGA | 0.767 | 49.9% | 50.4% |
+
+解释：所有 matched 子集仍为正增益，最小 matched 降幅为 17.2%。这个结果降低了“增益只来自 held-station 测试集分布异常”的风险。因为裁剪使用目标幅值，它只能作为分布伪影审计，不能当成可部署预警模型评估。
+
+支撑图：`outputs/figures/ground_motion_audit/matched_station_gain_audit.png`
+CSV：`work/ground_motion_balanced_station_10s/matched_station_gain_audit.csv`
+
 ### 4. OpenQuake Boore2014 参考
 
 已补充一个低参数 attenuation-shaped ridge 参考：`outputs/attenuation_reference_summary.md`。它只用震级、log10 hypocentral-distance 形状、深度和可用 Vs30，在 balanced held-station 上拟合。InstanceGM 这个 split 有 Vs30；K-NET 没有 Vs30，所以 K-NET attenuation 参考不是 site-corrected。metadata + 早窗波形在所有 6 个目标上都优于这个参考，相对降幅为 17.5-51.6%。这个结果只作为 baseline check，不替代完整区域 GMM。
@@ -424,7 +442,7 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
 ## 当前 NC 概率判断
 
-当前已验证主图证据包、AQ2009GM full-manifest chunk-streaming、ESM 欧洲强震动外部验证、ESM P-onset sensitivity 和 ESM waveform-onset spot audit：**68-72%**。
+当前已验证主图证据包、AQ2009GM full-manifest chunk-streaming、ESM 欧洲强震动外部验证、ESM P-onset sensitivity、ESM waveform-onset spot audit 和 matched held-station 增益审计：**70-73%**。
 
 如果再做投稿级图文细修和人工 ESM P 到时抽查：**70-74%**。
 
@@ -432,7 +450,7 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
 如果加入完整区域 GMM 对照或更强物理残差解释：**73-78%**。
 
-现在可以诚实说接近 70%。原因是 ESM 提供了欧洲强震动外部测试域，四域 transfer 给出清晰退化边界，ESM P-onset sensitivity 和 waveform-onset spot audit 已经把主要相位风险量化。限制仍然明确：ESM 还不是人工 P pick，当前还没有完整区域 GMM 对照。
+现在可以诚实说站上 70%。原因是 ESM 提供了欧洲强震动外部测试域，四域 transfer 给出清晰退化边界，ESM P-onset sensitivity 和 waveform-onset spot audit 已经把主要相位风险量化，matched held-station 审计降低了分布伪影解释。限制仍然明确：ESM 还不是人工 P pick，当前还没有完整区域 GMM 对照。
 
 ## 下一步
 

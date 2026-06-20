@@ -2,7 +2,7 @@
 
 Date: 2026-06-18
 
-Status: current NC manuscript scaffold after the 2026-06-20 evidence expansion. The paper is now a public benchmark, predictability-limit, and uncertainty-calibration study. The empirical evidence includes random splits, held-event splits, balanced held-station splits, an empirical predictability-boundary table, four-domain cross-region early-waveform transfer, OpenQuake reference comparisons, conformal intervals, station-split distribution audits, phase-label audits, a full-manifest chunk-streaming AQ2009GM PGA/PGV check, an ESM European strong-motion supplement with P-onset sensitivity auditing, and a supplementary PNW accelerometer peak-amplitude check.
+Status: current NC manuscript scaffold after the 2026-06-20 evidence expansion. The paper is now a public benchmark, predictability-limit, and uncertainty-calibration study. The empirical evidence includes random splits, held-event splits, balanced held-station splits, matched held-station gain auditing, an empirical predictability-boundary table, four-domain cross-region early-waveform transfer, OpenQuake reference comparisons, conformal intervals, station-split distribution audits, phase-label audits, a full-manifest chunk-streaming AQ2009GM PGA/PGV check, an ESM European strong-motion supplement with P-onset sensitivity auditing, and a supplementary PNW accelerometer peak-amplitude check.
 
 ## Abstract
 
@@ -51,6 +51,8 @@ Held-event evaluation excludes all records from selected events during training.
 Balanced held-station evaluation excludes selected stations during training and preserves coverage over 50 held-out stations for InstanceGM and 50 for K-NET. In this split, the combined model again improved every tested target. MAE reductions were 35.5% for InstanceGM PGA, 52.6% for InstanceGM PGV, 26.0% for SA03, 20.9% for SA10, 27.8% for SA30, and 49.9% for K-NET PGA. Group overlap was zero.
 
 The split distribution audit shows that the held-station tests retain real shift. InstanceGM test records are farther and weaker than the training records: median distance increases from 44.27 km to 70.61 km, and median log10 PGA decreases from -1.68 to -2.11. K-NET train and test distributions overlap closely for distance and PGA, with overlap above 0.91. The station-held results should be framed as robust under source-path-target shift. Avoid distribution-matched transfer wording.
+
+The matched held-station gain audit trims test records to the training set 5-95% support for magnitude, distance, and target amplitude. This audit retains 73.0-77.8% of held-station test records and keeps every target positive, with matched MAE reductions from 17.2% to 52.1%. It is a post-hoc distribution-artifact audit, because target amplitude is part of the trimming rule.
 
 ### OpenQuake reference and uncertainty reveal remaining limits
 
@@ -224,7 +226,7 @@ Balanced held-station MAE reduction curves for InstanceGM PGA, PGV, SA03, SA10, 
 
 ### Figure 3. Held-out generalization and split distribution
 
-Held-event and balanced held-station performance for InstanceGM and K-NET. The distribution audit shows magnitude, distance, and PGA train/test coverage, including the farther and weaker InstanceGM station-held test set. Current file: `outputs/figures/figure3_heldout_generalization.png`.
+Held-event and balanced held-station performance for InstanceGM and K-NET. The distribution audit shows magnitude, distance, and PGA train/test coverage, including the farther and weaker InstanceGM station-held test set. The matched support audit belongs in a supplementary panel or table. Current files: `outputs/figures/figure3_heldout_generalization.png` and `outputs/figures/ground_motion_audit/matched_station_gain_audit.png`.
 
 ### Figure 4. Classical reference and uncertainty
 

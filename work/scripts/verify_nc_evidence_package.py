@@ -36,6 +36,7 @@ METHOD_SCRIPTS = [
     "work/scripts/audit_early_window_peak_capture.py",
     "work/scripts/audit_knet_prepeak_subset.py",
     "work/scripts/run_ground_motion_heldout_baseline.py",
+    "work/scripts/audit_matched_station_gain.py",
     "work/scripts/run_attenuation_reference.py",
     "work/scripts/audit_regional_gmm_readiness.py",
     "work/scripts/run_openquake_pga_reference.py",
@@ -97,6 +98,7 @@ def main() -> None:
     check("Boundary sensitivity checks" in provenance_text, "methods provenance table covers boundary sensitivity checks", rows)
     check("ESM P-onset sensitivity audit" in provenance_text, "methods provenance table covers ESM P-onset sensitivity audit", rows)
     check("ESM waveform P-onset spot audit" in provenance_text, "methods provenance table covers ESM waveform P-onset spot audit", rows)
+    check("Matched held-station gain audit" in provenance_text, "methods provenance table covers matched held-station gain audit", rows)
     check("Uncertainty boundary note" in provenance_text, "methods provenance table covers uncertainty boundary note", rows)
     check("Regional GMM boundary note" in provenance_text, "methods provenance table covers regional GMM boundary note", rows)
     check("Main figure redraw and style audit" in provenance_text, "methods provenance table covers main figure redraw and style audit", rows)
@@ -111,6 +113,7 @@ def main() -> None:
         "10 s window",
         "group leakage",
         "distribution artifacts",
+        "matched-support audit",
         "attenuation-shaped",
         "fully specified regional GMM",
         "AQ2009GM supplement",
@@ -278,6 +281,22 @@ def main() -> None:
     check(set(fig3["holdout"]) == {"event", "station"}, "Figure 3 includes held-event and held-station splits", rows)
     check((fig3["group_overlap_metadata"] == 0).all() and (fig3["group_overlap_combined"] == 0).all(), "Figure 3 held-out group overlap is zero", rows)
     check((fig3["mae_reduction_pct"] > 0).all(), "Figure 3 MAE reductions are positive for every held-out target", rows)
+
+    matched_summary_path = Path("outputs/matched_station_gain_audit_summary.md")
+    matched_metrics_path = Path("work/ground_motion_balanced_station_10s/matched_station_gain_audit.csv")
+    matched_compact_path = Path("work/ground_motion_balanced_station_10s/matched_station_gain_audit_summary.csv")
+    matched_figure = Path("outputs/figures/ground_motion_audit/matched_station_gain_audit.png")
+    check(matched_summary_path.exists() and matched_summary_path.stat().st_size > 0, "matched held-station gain audit summary exists", rows)
+    check(matched_metrics_path.exists() and matched_metrics_path.stat().st_size > 0, "matched held-station gain audit metrics exist", rows)
+    check(matched_compact_path.exists() and matched_compact_path.stat().st_size > 0, "matched held-station gain audit compact table exists", rows)
+    check(matched_figure.exists() and matched_figure.stat().st_size > 0, "matched held-station gain audit figure exists", rows)
+    matched_im = Image.open(matched_figure)
+    check(matched_im.width >= 1000 and matched_im.height >= 700, f"matched held-station gain audit figure opens ({matched_im.width}x{matched_im.height})", rows)
+    matched = pd.read_csv(matched_compact_path)
+    matched_scope = matched[matched["scope"] == "matched_train_support"]
+    check(len(matched_scope) == 6, "matched held-station gain audit has 6 matched target rows", rows)
+    check(matched_scope["retained_fraction"].min() >= 0.70, "matched held-station gain audit retains at least 70% of test rows for every target", rows)
+    check((matched_scope["mae_reduction_pct"] > 0).all(), "matched held-station gain audit keeps positive early-waveform gains for every target", rows)
 
     attenuation_summary = Path("outputs/attenuation_reference_summary.md")
     check(attenuation_summary.exists() and attenuation_summary.stat().st_size > 0, "attenuation-shaped reference summary exists", rows)
@@ -505,6 +524,7 @@ def main() -> None:
         check("AQ2009GM" in text, f"{doc} references AQ2009GM supplementary check", rows)
         check("ESM" in text and "P-onset" in text, f"{doc} references ESM P-onset boundary", rows)
         check("esm_waveform_p_pick_spotcheck" in text, f"{doc} references ESM waveform onset-proxy spot audit", rows)
+        check("matched_station_gain_audit" in text, f"{doc} references matched held-station gain audit", rows)
         check("extended_waveform_case_audit" in text, f"{doc} references extended waveform case audit", rows)
         check("nc_core_predictability_boundary" in text, f"{doc} references Figure 7 core boundary synthesis", rows)
     article = Path("outputs/nc_article_draft_v1.md").read_text()

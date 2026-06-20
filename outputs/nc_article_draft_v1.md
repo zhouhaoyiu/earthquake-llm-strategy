@@ -38,6 +38,8 @@ Balanced held-station splits exclude selected stations from training and hold ou
 
 The held-station split contains real distribution shift. InstanceGM test records are farther and weaker than the training records: median distance increases from 44.27 km to 70.61 km, and median log10 PGA decreases from -1.68 to -2.11. K-NET train and test distributions overlap more closely for distance and PGA. The split audit supports a measured generalization claim, not a distribution-matched transfer claim.
 
+A matched-support audit trims held-station test records to the training set 5-95% support for magnitude, distance, and target amplitude. The retained subsets keep 73.0-77.8% of test records. All targets remain positive, with matched MAE reductions from 17.2% to 52.1%. This audit reduces the risk that the observed gain is only a station-test distribution artifact, but it remains a post-hoc audit because target amplitude is part of the trimming rule.
+
 ### Classical References and Uncertainty Define Boundaries
 
 An attenuation-shaped ridge reference uses magnitude, log10 hypocentral-distance, depth, and log10 Vs30 where available. The metadata plus early-waveform model improves over this reference across all balanced held-station targets, with relative MAE reductions from 17.5% to 51.6%.

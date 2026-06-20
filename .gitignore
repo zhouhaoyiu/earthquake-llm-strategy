@@ -27,3 +27,5 @@ work/**
 !work/ground_motion_balanced_station_10s/instancegm_held_station_train_features.csv
 !work/ground_motion_balanced_station_10s/knet_held_station_train_features.csv
 !work/ground_motion_balanced_station_10s/knet_japan_gmm_reference.csv
+!work/ground_motion_balanced_station_10s/matched_station_gain_audit.csv
+!work/ground_motion_balanced_station_10s/matched_station_gain_audit_summary.csv

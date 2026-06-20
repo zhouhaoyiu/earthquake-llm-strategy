@@ -24,6 +24,7 @@ Public strong-motion archives can be organized into a reproducible benchmark for
 | Held-event | done | rules out ordinary event leakage |
 | Balanced held-station | done | station-transfer evidence across 50 held-out stations per strong-motion dataset |
 | Held-station 1/2/3/5/10 scan | done | direct information-gain curve for the first 5 seconds and the 10 s reference |
+| Matched held-station gain audit | done | post-hoc train-support matching shows positive early-waveform gains are not only a station-test distribution artifact |
 | Classical references | done | attenuation-shaped ridge, BooreEtAl2014, and K-NET Japanese GMM screening |
 | Regional GMM readiness | done | field audit explains why full regional GMM claim is not yet supported |
 | Uncertainty | done | station-shift calibration is target-dependent |
@@ -139,11 +140,14 @@ Use:
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figure3_heldout_generalization.csv`
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/ground_motion_audit/balanced_station_heldout_panel.png`
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/ground_motion_audit/balanced_station_distribution_audit_panel.png`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/ground_motion_audit/matched_station_gain_audit.png`
 - held-event table from `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/heldout_ground_motion_baseline_summary.md`
 
 Message:
 
 Held-event and balanced held-station tests show that the early waveform gain persists after event and station separation. The distribution audit shows that the station-held tests still contain source-path-target shift, so the result should be framed as held-out robustness with explicit split provenance.
+
+The matched held-station gain audit trims test records to train 5-95% support for magnitude, distance, and target amplitude. Matched subsets retain 73.0-77.8% of test records and remain positive for every target, with the weakest matched reduction at 17.2% for InstanceGM SA10. This is a post-hoc distribution-artifact audit because it uses target amplitude for matching.
 
 ### Figure 4. Classical reference and uncertainty
 
