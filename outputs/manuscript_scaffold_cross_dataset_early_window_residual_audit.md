@@ -130,6 +130,8 @@ Held-event splits exclude event groups from training. Held-station splits exclud
 
 Cross-region transfer uses compact feature tables from InstanceGM, K-NET, and AQ2009GM. The transfer feature set includes early waveform features only. It excludes distance, magnitude, site variables, event identifiers, and station identifiers. Zero-shot transfer trains on a source domain and evaluates on the target-domain test split. Offset-calibrated transfer estimates a scalar residual offset on the target-domain training split.
 
+The core boundary synthesis combines validated tables only. It maps four quantities across windows: held-station information gain, cross-region transfer penalty, source-domain conformal under-coverage, and top-tail underprediction.
+
 ### Classical reference
 
 The attenuation-shaped reference uses Ridge regression on magnitude, log10 hypocentral-distance, depth, and log10 Vs30 where available. It is fitted only on balanced held-station training records and evaluated on the held-station test records. The K-NET split lacks Vs30, so the K-NET reference should be described as an attenuation-shaped baseline without site correction.
@@ -162,6 +164,8 @@ Minimum release files:
 - `work/scripts/stream_aq2009gm_full_validation.py`
 - `work/scripts/run_cross_region_waveform_transfer.py`
 - `work/scripts/summarize_cross_region_window_scan.py`
+- `work/scripts/run_nc_boundary_sensitivity.py`
+- `work/scripts/build_nc_core_boundary_figure.py`
 - `work/scripts/run_pnw_accelerometer_peak_baseline.py`
 - `work/scripts/verify_nc_evidence_package.py`
 
@@ -177,7 +181,11 @@ Minimum evidence tables:
 - `work/ground_motion_balanced_station_10s/conformal_intervals.csv`
 - `work/held_station_window_scan.csv`
 - `work/aq2009gm_full_stream_validation/aq2009gm_full_stream_comparison.csv`
+- `work/aq2009gm_full_stream_validation_2s5s/aq2009gm_full_stream_comparison.csv`
 - `work/cross_region_waveform_transfer_window_scan.csv`
+- `work/nc_boundary_sensitivity/conformal_boundary.csv`
+- `work/nc_boundary_sensitivity/tail_underprediction.csv`
+- `outputs/nc_core_predictability_boundary_table.csv`
 
 ## Figure Captions Draft
 
@@ -209,17 +217,21 @@ Residual diagnostics and high-residual waveform examples. Panels show distance-d
 
 Cross-dataset P and S picking errors, q95 tails, and missing-pick rates from pretrained PhaseNet and EQTransformer models. The figure supports P alignment and shows dataset-dependent S-phase limits. Current file: `outputs/figures/figure6_phase_label_audit.png`.
 
+### Figure 7. Predictability-boundary synthesis
+
+Four-panel synthesis of the measured boundary. Panels show within-domain information gain, cross-region transfer penalty, conformal coverage under transfer, and top-tail factor-2 underprediction. Current file: `outputs/figures/nc_core_predictability_boundary.png`.
+
 ### Supplementary Figure. PNW accelerometer peak-amplitude check
 
 Held-event and held-station peak-amplitude results for PNWAccelerometers at 1 s, 3 s, and 10 s. The caption should state that local waveform units are not encoded. The target is peak horizontal waveform amplitude. Official PGA use requires unit documentation.
 
 ### Supplementary Figure. AQ2009GM full-manifest chunk-streaming early velocity check
 
-Held-event, held-station, and held-time PGA/PGV results for all 254 chunks listed in the local SeisBench AQ2009GM manifest at 1 s, 3 s, and 10 s. The caption should state that the evidence comes from retained feature tables after raw chunk files were deleted. Current file: `outputs/figures/ground_motion_audit/aq2009gm_full_stream_panel.png`.
+Held-event, held-station, and held-time PGA/PGV results for all 254 chunks listed in the local SeisBench AQ2009GM manifest at 1 s, 2 s, 3 s, 5 s, and 10 s. The caption should state that the evidence comes from retained feature tables after raw chunk files were deleted. Current files: `outputs/figures/ground_motion_audit/aq2009gm_full_stream_panel.png` and `outputs/figures/ground_motion_audit/aq2009gm_full_stream_2s5s_panel.png`.
 
 ### Supplementary Figure. Cross-region early-waveform transfer boundary
 
-Cross-domain transfer penalties across InstanceGM, K-NET, and AQ2009GM at 1 s, 3 s, and 10 s. The caption should state that the transfer model uses early waveform features only and that offset calibration uses only the target-domain training split. Current files: `outputs/figures/ground_motion_audit/cross_region_waveform_transfer_boundary.png` and `outputs/figures/ground_motion_audit/cross_region_waveform_transfer_window_scan.png`.
+Cross-domain transfer penalties across InstanceGM, K-NET, AQ2009GM, and ESM at 1 s, 2 s, 3 s, 5 s, and 10 s. The caption should state that the transfer model uses early waveform features only and that offset calibration uses only the target-domain training split. Current files: `outputs/figures/ground_motion_audit/cross_region_waveform_transfer_window_scan.png`, `outputs/figures/ground_motion_audit/cross_region_waveform_transfer_aq_esm_2s_boundary.png`, and `outputs/figures/ground_motion_audit/cross_region_waveform_transfer_aq_esm_5s_boundary.png`.
 
 ## Claim Boundaries
 

@@ -168,10 +168,12 @@ Split conformal nominal coverage 为 90%。
 
 ### 7. AQ2009GM full-manifest chunk-streaming 独立 SeisBench 地震动补验
 
-AQ2009GM 已按本地 SeisBench chunk manifest 完成流式验证：254 个 chunk；metadata 总行数 1,258,006；有效 PGA/PGV 记录 345,226；事件数 60,310；台站数 66。流程为逐 chunk 下载、提取 early-window velocity features、PGA/PGV target、metadata 和 event/station id，保存小特征表后用 `--delete-raw` 删除原始 HDF5/metadata 文件。目标使用 AQ2009GM metadata 的 `trace_pga_cmps2` 和 `trace_pgv_cmps`。
+AQ2009GM 已按本地 SeisBench chunk manifest 完成流式验证：254 个 chunk；有效 PGA/PGV 记录 345,226；事件数 60,310；台站数 66。流程为逐 chunk 下载、提取 early-window velocity features、PGA/PGV target、metadata 和 event/station id，保存小特征表后用 `--delete-raw` 删除原始 HDF5/metadata 文件。目标使用 AQ2009GM metadata 的 `trace_pga_cmps2` 和 `trace_pgv_cmps`。
 
 图：`outputs/figures/ground_motion_audit/aq2009gm_full_stream_panel.png`
 报告：`outputs/aq2009gm_full_stream_validation_summary.md`
+2/5 秒图：`outputs/figures/ground_motion_audit/aq2009gm_full_stream_2s5s_panel.png`
+2/5 秒报告：`outputs/aq2009gm_full_stream_validation_2s5s_summary.md`
 
 | holdout | target | window | metadata MAE | combined MAE | 降幅 | combined R2 |
 |---|---|---:|---:|---:|---:|---:|
@@ -193,6 +195,23 @@ AQ2009GM 已按本地 SeisBench chunk manifest 完成流式验证：254 个 chun
 | time | PGV | 1s | 0.249 | 0.151 | 39.4% | 0.898 |
 | time | PGV | 3s | 0.249 | 0.095 | 62.0% | 0.951 |
 | time | PGV | 10s | 0.249 | 0.024 | 90.3% | 0.995 |
+
+新增 2/5 秒全量补验：
+
+| holdout | target | window | metadata MAE | combined MAE | 降幅 | combined R2 |
+|---|---|---:|---:|---:|---:|---:|
+| event | PGA | 2s | 0.205 | 0.128 | 37.6% | 0.937 |
+| event | PGA | 5s | 0.205 | 0.087 | 57.8% | 0.969 |
+| event | PGV | 2s | 0.192 | 0.114 | 40.5% | 0.949 |
+| event | PGV | 5s | 0.192 | 0.048 | 74.9% | 0.985 |
+| station | PGA | 2s | 0.311 | 0.206 | 33.9% | 0.832 |
+| station | PGA | 5s | 0.311 | 0.138 | 55.8% | 0.921 |
+| station | PGV | 2s | 0.286 | 0.166 | 42.1% | 0.883 |
+| station | PGV | 5s | 0.286 | 0.081 | 71.9% | 0.958 |
+| time | PGA | 2s | 0.271 | 0.162 | 40.1% | 0.878 |
+| time | PGA | 5s | 0.271 | 0.103 | 61.9% | 0.946 |
+| time | PGV | 2s | 0.249 | 0.135 | 46.0% | 0.918 |
+| time | PGV | 5s | 0.249 | 0.048 | 80.6% | 0.984 |
 
 解释：AQ2009GM 结果明显增强了独立 SeisBench 地震动补验层。它有官方 PGA/PGV metadata target，并用流式处理覆盖本地 manifest 中全部 254 个 chunk。边界是：本地没有保留完整 raw AQ2009GM，当前证据是从逐 chunk 下载后提取并保存的小特征表、split、metrics、subgroup 和 uncertainty 文件得到的。
 
@@ -251,7 +270,7 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
 ### 7d. ESM 跨区域 transfer
 
-已将 ESM 加入 early-waveform-only transfer。1/3/10 秒包含 InstanceGM、K-NET、AQ2009GM 和 ESM；2/5 秒包含 InstanceGM、K-NET 和 ESM，因为当前 AQ2009GM compact table 只保留 1/3/10 秒窗口。
+已将 ESM 和 AQ2009GM 2/5 秒全量特征加入 early-waveform-only transfer。1/2/3/5/10 秒均覆盖 InstanceGM、K-NET、AQ2009GM 和 ESM。
 
 | Window | Target | ESM 域内 MAE | 最好外部源域到 ESM offset 校准 MAE | 退化倍数 |
 |---:|---|---:|---:|---:|
@@ -271,12 +290,65 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 | Window | zero-shot 中位惩罚 | offset 校准中位惩罚 |
 |---:|---:|---:|
 | 1s | 2.25x | 1.40x |
-| 2s | 2.83x | 1.55x |
+| 2s | 2.65x | 1.55x |
 | 3s | 2.98x | 1.67x |
-| 5s | 3.81x | 1.84x |
+| 5s | 3.38x | 1.85x |
 | 10s | 4.27x | 2.46x |
 
 解释：ESM 结果把“跨区域可预测性边界”扩展成欧洲外部测试域。随着窗口从 1 秒到 10 秒变长，zero-shot 和 offset 校准后的中位迁移惩罚都升高。10 秒窗口下，ESM 域内训练已经很强，但外部域训练迁移到 ESM 仍显著退化。这个现象比单纯追求更复杂模型更适合写 NC 主线。
+
+### 7e. 不确定性、强震动尾部和 seed 稳健性补验
+
+已补三项边界敏感性实验：`outputs/nc_boundary_sensitivity_summary.md`。特征只用 early log-waveform，不用 distance、site terms、event id 或 station id。
+
+不确定性边界：
+
+| Window | Mode | median coverage90 | median interval width |
+|---:|---|---:|---:|
+| 2s | target-domain conformal | 0.895 | 1.230 |
+| 2s | source-domain conformal | 0.468 | 1.228 |
+| 2s | target-offset conformal | 0.905 | 2.177 |
+| 5s | target-domain conformal | 0.895 | 0.828 |
+| 5s | source-domain conformal | 0.298 | 0.826 |
+| 5s | target-offset conformal | 0.903 | 2.177 |
+
+解释：源域校准区间直接迁移到目标域会明显 under-cover；使用目标域 train split 做 offset 和 conformal calibration 后 coverage 回到约 0.90，但 interval width 变大。这正是“不确定性边界”，不是模型失败。
+
+强震动尾部漏报边界：
+
+| Window | Mode | Tail | factor-2 underprediction rate | q95 underprediction |
+|---:|---|---:|---:|---:|
+| 2s | target-domain | top 5% | 0.520 | 1.479 |
+| 2s | source-domain conformal | top 5% | 0.563 | 1.133 |
+| 5s | target-domain | top 5% | 0.320 | 0.715 |
+| 5s | source-domain conformal | top 5% | 0.442 | 1.017 |
+
+解释：即使域内训练，强震动尾部仍存在漏报边界；5 秒比 2 秒缓解明显，但没有消除。跨域条件下尾部漏报仍然突出。
+
+三 seed 稳健性：
+
+| Window | Target | Mode | median transfer ratio range |
+|---:|---|---|---:|
+| 2s | PGA | offset conformal | 1.54-1.58 |
+| 2s | PGV | offset conformal | 1.40-1.42 |
+| 5s | PGA | offset conformal | 1.81-1.85 |
+| 5s | PGV | offset conformal | 1.87-1.98 |
+
+解释：跨域惩罚和 offset 后残余边界在三个 seed 下稳定，足以排除一次 split 偶然性。
+
+### 7f. 主边界合成图
+
+已生成一张压缩主图：`outputs/figures/nc_core_predictability_boundary.png`。对应表为 `outputs/nc_core_predictability_boundary_table.csv`，摘要为 `outputs/nc_core_predictability_boundary_summary.md`。
+
+| Window | 主 held-station 增益 | AQ station 增益 | ESM station 增益 | zero-shot transfer | offset transfer | source conformal coverage | top5 漏报率 |
+|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1s | 20.2% | 32.4% | 45.9% | 2.25x | 1.40x | NA | NA |
+| 2s | 21.2% | 38.0% | 35.5% | 2.65x | 1.55x | 0.468 | 0.520 |
+| 3s | 22.9% | 47.2% | 49.6% | 2.98x | 1.67x | NA | NA |
+| 5s | 24.8% | 63.8% | 47.4% | 3.38x | 1.85x | 0.298 | 0.320 |
+| 10s | 31.6% | 77.5% | 66.2% | 4.27x | 2.46x | NA | NA |
+
+解释：这张图把论文主线压成四个面板：早窗信息增益、跨区域迁移退化、不确定性迁移失配、强震动尾部漏报。它不是新实验，而是从已验证输出自动汇总，适合作为“边界测量”主图。
 
 ### 8. PNWAccelerometers 补充检查
 
@@ -338,7 +410,7 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
 如果补齐正式 Methods、数据 provenance 和正文叙事：**62-66%**。
 
-已完成：主图 1-6、held-out 证据、OpenQuake/conformal、残差/波形审计、phase audit、AQ2009GM full-manifest、ESM compact features、ESM held-out baseline、四域 transfer、evidence verifier。
+已完成：主图 1-6、NC 主边界合成图、held-out 证据、OpenQuake/conformal、残差/波形审计、phase audit、AQ2009GM full-manifest、ESM compact features、ESM held-out baseline、四域 transfer、cross-region conformal/tail/seed sensitivity、evidence verifier。
 
 如果加入完整区域 GMM 对照、ESM P 到时审计或更强物理残差解释：**65-70%**。
 

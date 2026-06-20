@@ -12,6 +12,8 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: K-NET source is the approved Downloads/s7rk7bj3zn-1 path
 - PASS: K-NET conversion has 22,119 complete ZNE records
 - PASS: methods provenance table exists
+- PASS: methods provenance table covers core boundary synthesis
+- PASS: methods provenance table covers boundary sensitivity checks
 - PASS: method script exists: work/scripts/convert_knet_bson.py
 - PASS: method script exists: work/scripts/build_unified_manifest.py
 - PASS: method script exists: work/scripts/run_ground_motion_baseline.py
@@ -32,6 +34,8 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: method script exists: work/scripts/summarize_held_station_window_scan.py
 - PASS: method script exists: work/scripts/run_cross_region_waveform_transfer.py
 - PASS: method script exists: work/scripts/summarize_cross_region_window_scan.py
+- PASS: method script exists: work/scripts/run_nc_boundary_sensitivity.py
+- PASS: method script exists: work/scripts/build_nc_core_boundary_figure.py
 - PASS: NC reviewer risk matrix exists
 - PASS: reviewer risk matrix covers: 10 s window
 - PASS: reviewer risk matrix covers: group leakage
@@ -60,6 +64,16 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: AQ2009GM full-manifest station split has 10,000 test rows and 20 held station groups
 - PASS: AQ2009GM full-manifest supplementary figure exists
 - PASS: AQ2009GM full-manifest supplementary figure opens (2616x1084)
+- PASS: AQ2009GM 2/5 s streaming summary exists
+- PASS: AQ2009GM 2/5 s streaming covers all 254 local manifest chunks
+- PASS: AQ2009GM 2/5 s chunk inventory has 254 chunks and zero extraction errors
+- PASS: AQ2009GM 2/5 s streaming has 345,226 valid PGA/PGV records
+- PASS: AQ2009GM 2/5 s comparison has 12 rows across holdout/target/window combinations
+- PASS: AQ2009GM 2/5 s full-manifest covers 2/5 s windows
+- PASS: AQ2009GM 2/5 s held-out group overlap is zero
+- PASS: AQ2009GM 2/5 s combined model improves over metadata-only for every row
+- PASS: AQ2009GM 2/5 s supplementary figure exists
+- PASS: AQ2009GM 2/5 s supplementary figure opens (2616x1084)
 - PASS: ESM compact feature summary exists
 - PASS: ESM compact feature table exists
 - PASS: ESM compact feature extraction covers 951 local zip packages
@@ -195,6 +209,44 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: ESM four-domain transfer 10s rows remain worse than target-domain training
 - PASS: 10 s external-to-ESM PGA transfer remains above 2x target-domain MAE after offset calibration
 - PASS: 10 s external-to-ESM PGV transfer remains above 1.5x target-domain MAE after offset calibration
+- PASS: AQ+ESM four-domain transfer 2s summary exists
+- PASS: AQ+ESM four-domain transfer 2s metrics exist
+- PASS: AQ+ESM four-domain transfer 2s boundary table exists
+- PASS: AQ+ESM four-domain transfer 2s figure exists
+- PASS: AQ+ESM four-domain transfer 2s figure opens (2310x1056)
+- PASS: AQ+ESM transfer 2s split covers all four domains
+- PASS: AQ+ESM four-domain transfer 2s split group overlap is zero
+- PASS: AQ+ESM four-domain transfer 2s boundary contains only cross-domain rows
+- PASS: AQ+ESM four-domain transfer 2s rows remain worse than target-domain training
+- PASS: AQ+ESM four-domain transfer 5s summary exists
+- PASS: AQ+ESM four-domain transfer 5s metrics exist
+- PASS: AQ+ESM four-domain transfer 5s boundary table exists
+- PASS: AQ+ESM four-domain transfer 5s figure exists
+- PASS: AQ+ESM four-domain transfer 5s figure opens (2310x1056)
+- PASS: AQ+ESM transfer 5s split covers all four domains
+- PASS: AQ+ESM four-domain transfer 5s split group overlap is zero
+- PASS: AQ+ESM four-domain transfer 5s boundary contains only cross-domain rows
+- PASS: AQ+ESM four-domain transfer 5s rows remain worse than target-domain training
+- PASS: NC boundary sensitivity summary exists
+- PASS: NC boundary conformal table has expected rows
+- PASS: NC strong-motion tail table has expected rows
+- PASS: NC three-seed robustness table has expected rows
+- PASS: target-domain conformal coverage is near nominal
+- PASS: source-domain conformal transfer under-covers target domains
+- PASS: target-offset conformal transfer restores near-nominal coverage
+- PASS: 5 s reduces target-domain top-tail underprediction relative to 2 s
+- PASS: offset-calibrated transfer penalties are stable across three seeds
+- PASS: NC core predictability-boundary summary exists
+- PASS: NC core predictability-boundary table exists
+- PASS: NC core predictability-boundary figure exists
+- PASS: NC core predictability-boundary figure opens (2688x1944)
+- PASS: NC core boundary table covers 1/2/3/5/10 s windows
+- PASS: NC core boundary table has positive main held-station gains
+- PASS: NC core boundary table has positive AQ station gains
+- PASS: NC core boundary zero-shot transfer penalty increases with window length
+- PASS: NC core boundary offset transfer penalty increases with window length
+- PASS: NC core boundary source conformal coverage worsens from 2 s to 5 s
+- PASS: NC core boundary target-domain top-tail underprediction improves from 2 s to 5 s
 - PASS: cross-region window-scan summary exists
 - PASS: cross-region window-scan table exists
 - PASS: cross-region window-scan figure exists
@@ -214,6 +266,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/nc_minimum_submission_package.md references Figure 5
 - PASS: outputs/nc_minimum_submission_package.md references Figure 6
 - PASS: outputs/nc_minimum_submission_package.md references AQ2009GM supplementary check
+- PASS: outputs/nc_minimum_submission_package.md references Figure 7 core boundary synthesis
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 1
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 2
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 3
@@ -221,6 +274,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 5
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 6
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references AQ2009GM supplementary check
+- PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 7 core boundary synthesis
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 1
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 2
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 3
@@ -228,8 +282,10 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 5
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 6
 - PASS: outputs/nc_evidence_packet_zh.md references AQ2009GM supplementary check
+- PASS: outputs/nc_evidence_packet_zh.md references Figure 7 core boundary synthesis
 - PASS: article draft contains bounded claim: Figure 1. Cross-dataset waveform-task benchmark
 - PASS: article draft contains bounded claim: Figure 6. Phase-label transfer audit
+- PASS: article draft contains bounded claim: Figure 7. Predictability-boundary synthesis
 - PASS: article draft contains bounded claim: 2,460,425 manifest records
 - PASS: article draft contains bounded claim: 35.5% for InstanceGM PGA
 - PASS: article draft contains bounded claim: 52.6% for InstanceGM PGV

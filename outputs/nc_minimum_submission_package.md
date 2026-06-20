@@ -29,6 +29,7 @@ Public strong-motion archives can be organized into a reproducible benchmark for
 | Uncertainty | done | station-shift calibration is target-dependent |
 | Predictability boundary | done | 10 s random performance, held-event and held-station residual floors, robust held-out gains, and conformal coverage gaps |
 | Cross-region transfer boundary | done | early-waveform-only transfer across InstanceGM, K-NET, and AQ2009GM quantifies regional and measurement-system penalties |
+| Core boundary synthesis | done | one four-panel map linking information gain, transfer penalty, uncertainty failure, and tail underprediction |
 | Residual panels | done | audit cases and distance-tail diagnostics |
 | AQ2009GM full-manifest streaming | supplementary done | SeisBench aftershock ground-motion check over all 254 local manifest chunks with velocity waveforms and official PGA/PGV metadata targets |
 | PNWAccelerometers robustness | supplementary done | SeisBench accelerometer peak-amplitude check; local HDF5 lacks waveform units |
@@ -60,6 +61,9 @@ Predictability boundary:
 
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/predictability_boundary_summary.md`
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/predictability_boundary_table.csv`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/nc_core_predictability_boundary_summary.md`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/nc_core_predictability_boundary_table.csv`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/nc_core_predictability_boundary.png`
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/cross_region_waveform_transfer_summary.md`
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/cross_region_waveform_transfer_window_scan_summary.md`
 
@@ -165,6 +169,18 @@ Message:
 
 P picks support waveform alignment and K-NET conversion quality. S-phase errors and missing-pick rates expose label-domain transfer issues.
 
+### Figure 7. Predictability-boundary synthesis
+
+Use:
+
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/nc_core_predictability_boundary.png`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/nc_core_predictability_boundary_summary.md`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/nc_core_predictability_boundary_table.csv`
+
+Message:
+
+This figure is the main boundary map. It shows that within-domain early-window gains are positive, cross-region transfer penalties increase from 1 s to 10 s, source-domain conformal intervals under-cover target domains at 2 s and 5 s, and strong-motion tail underprediction remains visible after 5 s.
+
 ### Supplementary Figure. PNWAccelerometers peak-amplitude robustness
 
 Use:
@@ -182,8 +198,11 @@ Early-window amplitude information also appears in a separate SeisBench accelero
 Use:
 
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/ground_motion_audit/aq2009gm_full_stream_panel.png`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/ground_motion_audit/aq2009gm_full_stream_2s5s_panel.png`
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/aq2009gm_full_stream_validation_summary.md`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/aq2009gm_full_stream_validation_2s5s_summary.md`
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/work/aq2009gm_full_stream_validation/aq2009gm_full_stream_comparison.csv`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/work/aq2009gm_full_stream_validation_2s5s/aq2009gm_full_stream_comparison.csv`
 
 Message:
 
@@ -195,12 +214,16 @@ Use:
 
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/ground_motion_audit/cross_region_waveform_transfer_boundary.png`
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/ground_motion_audit/cross_region_waveform_transfer_window_scan.png`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/ground_motion_audit/cross_region_waveform_transfer_aq_esm_2s_boundary.png`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/ground_motion_audit/cross_region_waveform_transfer_aq_esm_5s_boundary.png`
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/cross_region_waveform_transfer_summary.md`
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/cross_region_waveform_transfer_window_scan_summary.md`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/cross_region_waveform_transfer_aq_esm_2s_summary.md`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/cross_region_waveform_transfer_aq_esm_5s_summary.md`
 
 Message:
 
-Early-waveform-only transfer across InstanceGM, K-NET, and AQ2009GM is consistently worse than target-domain training. Median zero-shot MAE penalty increases from 1.49x at 1 s to 2.84x at 10 s, and target-train offset calibration lowers the 10 s median to 2.26x. This figure anchors the cross-region predictability-boundary claim.
+Early-waveform-only transfer across InstanceGM, K-NET, AQ2009GM, and ESM is consistently worse than target-domain training. In the four-domain synthesis, median zero-shot MAE penalty increases from 2.25x at 1 s to 4.27x at 10 s, and target-train offset calibration reduces but does not remove the penalty. This figure anchors the cross-region predictability-boundary claim.
 
 ## Methods Draft
 

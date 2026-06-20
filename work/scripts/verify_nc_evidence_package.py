@@ -47,6 +47,8 @@ METHOD_SCRIPTS = [
     "work/scripts/summarize_held_station_window_scan.py",
     "work/scripts/run_cross_region_waveform_transfer.py",
     "work/scripts/summarize_cross_region_window_scan.py",
+    "work/scripts/run_nc_boundary_sensitivity.py",
+    "work/scripts/build_nc_core_boundary_figure.py",
 ]
 
 
@@ -83,6 +85,9 @@ def main() -> None:
 
     provenance = Path("outputs/methods_provenance_table.md")
     check(provenance.exists() and provenance.stat().st_size > 0, "methods provenance table exists", rows)
+    provenance_text = provenance.read_text()
+    check("Core boundary synthesis" in provenance_text, "methods provenance table covers core boundary synthesis", rows)
+    check("Boundary sensitivity checks" in provenance_text, "methods provenance table covers boundary sensitivity checks", rows)
     for script in METHOD_SCRIPTS:
         check(Path(script).exists(), f"method script exists: {script}", rows)
 
@@ -136,6 +141,23 @@ def main() -> None:
     check(aq_figure.exists() and aq_figure.stat().st_size > 0, "AQ2009GM full-manifest supplementary figure exists", rows)
     aq_im = Image.open(aq_figure)
     check(aq_im.width >= 1000 and aq_im.height >= 700, f"AQ2009GM full-manifest supplementary figure opens ({aq_im.width}x{aq_im.height})", rows)
+
+    aq25_summary = Path("outputs/aq2009gm_full_stream_validation_2s5s_summary.md")
+    aq25_figure = Path("outputs/figures/ground_motion_audit/aq2009gm_full_stream_2s5s_panel.png")
+    aq25_summary_json = json.load(open("work/aq2009gm_full_stream_validation_2s5s/aq2009gm_full_stream_summary.json"))
+    aq25_inventory = pd.read_csv("work/aq2009gm_full_stream_validation_2s5s/chunk_inventory.csv")
+    aq25_comparison = pd.read_csv("work/aq2009gm_full_stream_validation_2s5s/aq2009gm_full_stream_comparison.csv")
+    check(aq25_summary.exists() and aq25_summary.stat().st_size > 0, "AQ2009GM 2/5 s streaming summary exists", rows)
+    check(aq25_summary_json["chunk_count"] == len(chunk_manifest) == 254, "AQ2009GM 2/5 s streaming covers all 254 local manifest chunks", rows)
+    check(len(aq25_inventory) == 254 and (aq25_inventory["errors"] == 0).all(), "AQ2009GM 2/5 s chunk inventory has 254 chunks and zero extraction errors", rows)
+    check(aq25_summary_json["valid_rows"] == 345226, "AQ2009GM 2/5 s streaming has 345,226 valid PGA/PGV records", rows)
+    check(len(aq25_comparison) == 12, "AQ2009GM 2/5 s comparison has 12 rows across holdout/target/window combinations", rows)
+    check(set(aq25_comparison["early_seconds"]) == {2.0, 5.0}, "AQ2009GM 2/5 s full-manifest covers 2/5 s windows", rows)
+    check((aq25_comparison["group_overlap"] == 0).all(), "AQ2009GM 2/5 s held-out group overlap is zero", rows)
+    check((aq25_comparison["mae_reduction_pct"] > 0).all(), "AQ2009GM 2/5 s combined model improves over metadata-only for every row", rows)
+    check(aq25_figure.exists() and aq25_figure.stat().st_size > 0, "AQ2009GM 2/5 s supplementary figure exists", rows)
+    aq25_im = Image.open(aq25_figure)
+    check(aq25_im.width >= 1000 and aq25_im.height >= 700, f"AQ2009GM 2/5 s supplementary figure opens ({aq25_im.width}x{aq25_im.height})", rows)
 
     esm_feature_summary = Path("outputs/esm_compact_features_full_summary.md")
     esm_feature_path = Path("work/esm_compact_features_full/esm_compact_features.csv.gz")
@@ -312,6 +334,63 @@ def main() -> None:
             check(best_esm.loc["pga", "mae_ratio_vs_within_target"] > 2.0, "10 s external-to-ESM PGA transfer remains above 2x target-domain MAE after offset calibration", rows)
             check(best_esm.loc["pgv", "mae_ratio_vs_within_target"] > 1.5, "10 s external-to-ESM PGV transfer remains above 1.5x target-domain MAE after offset calibration", rows)
 
+    for window in [2, 5]:
+        aq_esm_summary = Path(f"outputs/cross_region_waveform_transfer_aq_esm_{window}s_summary.md")
+        aq_esm_metrics = Path(f"work/cross_region_waveform_transfer_aq_esm_{window}s/cross_region_waveform_transfer_metrics.csv")
+        aq_esm_boundary = Path(f"work/cross_region_waveform_transfer_aq_esm_{window}s/cross_region_waveform_transfer_boundary.csv")
+        aq_esm_split = Path(f"work/cross_region_waveform_transfer_aq_esm_{window}s/cross_region_waveform_transfer_split_info.csv")
+        aq_esm_figure = Path(f"outputs/figures/ground_motion_audit/cross_region_waveform_transfer_aq_esm_{window}s_boundary.png")
+        check(aq_esm_summary.exists() and aq_esm_summary.stat().st_size > 0, f"AQ+ESM four-domain transfer {window}s summary exists", rows)
+        check(aq_esm_metrics.exists() and aq_esm_metrics.stat().st_size > 0, f"AQ+ESM four-domain transfer {window}s metrics exist", rows)
+        check(aq_esm_boundary.exists() and aq_esm_boundary.stat().st_size > 0, f"AQ+ESM four-domain transfer {window}s boundary table exists", rows)
+        check(aq_esm_figure.exists() and aq_esm_figure.stat().st_size > 0, f"AQ+ESM four-domain transfer {window}s figure exists", rows)
+        aq_esm_im = Image.open(aq_esm_figure)
+        check(aq_esm_im.width >= 1000 and aq_esm_im.height >= 700, f"AQ+ESM four-domain transfer {window}s figure opens ({aq_esm_im.width}x{aq_esm_im.height})", rows)
+        aq_esm_split_df = pd.read_csv(aq_esm_split)
+        check(set(aq_esm_split_df["dataset"]) == {"instancegm", "knet", "aq2009gm", "esm"}, f"AQ+ESM transfer {window}s split covers all four domains", rows)
+        check((aq_esm_split_df["group_overlap"] == 0).all(), f"AQ+ESM four-domain transfer {window}s split group overlap is zero", rows)
+        aq_esm_boundary_df = pd.read_csv(aq_esm_boundary)
+        check((aq_esm_boundary_df["source_dataset"] != aq_esm_boundary_df["test_dataset"]).all(), f"AQ+ESM four-domain transfer {window}s boundary contains only cross-domain rows", rows)
+        check((aq_esm_boundary_df["mae_ratio_vs_within_target"] > 1.0).all(), f"AQ+ESM four-domain transfer {window}s rows remain worse than target-domain training", rows)
+
+    boundary_summary = Path("outputs/nc_boundary_sensitivity_summary.md")
+    conformal_path = Path("work/nc_boundary_sensitivity/conformal_boundary.csv")
+    tail_path = Path("work/nc_boundary_sensitivity/tail_underprediction.csv")
+    robust_path = Path("work/nc_boundary_sensitivity/seed_robustness.csv")
+    check(boundary_summary.exists() and boundary_summary.stat().st_size > 0, "NC boundary sensitivity summary exists", rows)
+    conformal = pd.read_csv(conformal_path)
+    tail = pd.read_csv(tail_path)
+    robust = pd.read_csv(robust_path)
+    check(len(conformal) == 258, "NC boundary conformal table has expected rows", rows)
+    check(len(tail) == 516, "NC strong-motion tail table has expected rows", rows)
+    check(len(robust) == 8, "NC three-seed robustness table has expected rows", rows)
+    coverage = conformal.groupby(["early_seconds", "mode"])["coverage90"].median()
+    check(coverage.loc[(2.0, "target_domain")] > 0.88 and coverage.loc[(5.0, "target_domain")] > 0.88, "target-domain conformal coverage is near nominal", rows)
+    check(coverage.loc[(2.0, "zero_shot_source_conformal")] < 0.55 and coverage.loc[(5.0, "zero_shot_source_conformal")] < 0.40, "source-domain conformal transfer under-covers target domains", rows)
+    check(coverage.loc[(2.0, "target_offset_conformal")] > 0.88 and coverage.loc[(5.0, "target_offset_conformal")] > 0.88, "target-offset conformal transfer restores near-nominal coverage", rows)
+    top5 = tail[tail["tail_quantile"].eq(0.95)].groupby(["early_seconds", "mode"])["under_factor2_rate"].median()
+    check(top5.loc[(2.0, "target_domain")] > top5.loc[(5.0, "target_domain")], "5 s reduces target-domain top-tail underprediction relative to 2 s", rows)
+    offset_robust = robust[robust["mode"].eq("target_offset_conformal")]
+    check(((offset_robust["ratio_max"] - offset_robust["ratio_min"]) < 0.12).all(), "offset-calibrated transfer penalties are stable across three seeds", rows)
+
+    core_summary = Path("outputs/nc_core_predictability_boundary_summary.md")
+    core_table_path = Path("outputs/nc_core_predictability_boundary_table.csv")
+    core_figure = Path("outputs/figures/nc_core_predictability_boundary.png")
+    check(core_summary.exists() and core_summary.stat().st_size > 0, "NC core predictability-boundary summary exists", rows)
+    check(core_table_path.exists() and core_table_path.stat().st_size > 0, "NC core predictability-boundary table exists", rows)
+    check(core_figure.exists() and core_figure.stat().st_size > 0, "NC core predictability-boundary figure exists", rows)
+    core_im = Image.open(core_figure)
+    check(core_im.width >= 1000 and core_im.height >= 700, f"NC core predictability-boundary figure opens ({core_im.width}x{core_im.height})", rows)
+    core = pd.read_csv(core_table_path)
+    check(set(core["window_s"]) == {1, 2, 3, 5, 10}, "NC core boundary table covers 1/2/3/5/10 s windows", rows)
+    check(core["main_held_station_gain_pct"].gt(0).all(), "NC core boundary table has positive main held-station gains", rows)
+    check(core["aq_station_gain_pct"].gt(0).all(), "NC core boundary table has positive AQ station gains", rows)
+    check(core["zero_shot_transfer_ratio"].is_monotonic_increasing, "NC core boundary zero-shot transfer penalty increases with window length", rows)
+    check(core["offset_transfer_ratio"].is_monotonic_increasing, "NC core boundary offset transfer penalty increases with window length", rows)
+    core_by_window = core.set_index("window_s")
+    check(core_by_window.loc[5, "zero_shot_conformal_coverage"] < core_by_window.loc[2, "zero_shot_conformal_coverage"], "NC core boundary source conformal coverage worsens from 2 s to 5 s", rows)
+    check(core_by_window.loc[5, "target_domain_top5_under_factor2_rate"] < core_by_window.loc[2, "target_domain_top5_under_factor2_rate"], "NC core boundary target-domain top-tail underprediction improves from 2 s to 5 s", rows)
+
     window_summary = Path("outputs/cross_region_waveform_transfer_window_scan_summary.md")
     window_csv = Path("work/cross_region_waveform_transfer_window_scan.csv")
     window_figure = Path("outputs/figures/ground_motion_audit/cross_region_waveform_transfer_window_scan.png")
@@ -347,10 +426,12 @@ def main() -> None:
         for idx in range(1, 7):
             check(f"figure{idx}_" in text, f"{doc} references Figure {idx}", rows)
         check("AQ2009GM" in text, f"{doc} references AQ2009GM supplementary check", rows)
+        check("nc_core_predictability_boundary" in text, f"{doc} references Figure 7 core boundary synthesis", rows)
     article = Path("outputs/nc_article_draft_v1.md").read_text()
     for phrase in [
         "Figure 1. Cross-dataset waveform-task benchmark",
         "Figure 6. Phase-label transfer audit",
+        "Figure 7. Predictability-boundary synthesis",
         "2,460,425 manifest records",
         "35.5% for InstanceGM PGA",
         "52.6% for InstanceGM PGV",

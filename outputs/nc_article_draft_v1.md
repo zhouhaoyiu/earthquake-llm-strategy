@@ -70,7 +70,7 @@ The residual panels show P-aligned ZNE waveforms, observed targets, predictions,
 
 PNWAccelerometers provides a supplementary accelerometer check. The local HDF5 records component order ENZ and lacks waveform units. The target is full-record peak horizontal waveform amplitude. Across 5,981 earthquake records, metadata plus early waveform features reduce held-station MAE by 33.4% at 1 s and 45.7% at 3 s. The 10 s reduction exceeds 90%, consistent with peak capture in small or nearby events. Official PGA use requires unit documentation.
 
-AQ2009GM provides a separate SeisBench ground-motion check with official metadata targets. We evaluated all 254 chunks listed in the local SeisBench AQ2009GM manifest using chunk-streaming: each chunk was downloaded, converted into compact early-window velocity features and PGA/PGV targets, and then the raw HDF5 and metadata files were deleted. The retained feature tables contain 345,226 valid PGA/PGV records from 60,310 events and 66 stations. Metadata plus early velocity features reduce log10 MAE for PGA and PGV under held-event, held-station, and held-time splits. At 3 s, reductions are 46.8% for event-held PGA, 54.8% for event-held PGV, 43.9% for station-held PGA, and 50.4% for station-held PGV. The retained AQ2009GM evidence consists of compact feature tables, split files, metrics, and figures after raw chunk deletion.
+AQ2009GM provides a separate SeisBench ground-motion check with official metadata targets. We evaluated all 254 chunks listed in the local SeisBench AQ2009GM manifest using chunk-streaming: each chunk was downloaded, converted into compact early-window velocity features and PGA/PGV targets, and then the raw HDF5 and metadata files were deleted. The retained feature tables contain 345,226 valid PGA/PGV records from 60,310 events and 66 stations. Metadata plus early velocity features reduce log10 MAE for PGA and PGV under held-event, held-station, and held-time splits. At 2 s, reductions are 37.6% for event-held PGA, 40.5% for event-held PGV, 33.9% for station-held PGA, and 42.1% for station-held PGV. At 5 s, the corresponding reductions are 57.8%, 74.9%, 55.8%, and 71.9%. The retained AQ2009GM evidence consists of compact feature tables, split files, metrics, and figures after raw chunk deletion.
 
 ESM provides an external European strong-motion check from local ASCII zip packages. The compact feature table covers 951 zip files, 134,250 early-window rows, 861 events, and 1,568 stations, with zero read errors. ESM headers in the local packages do not provide explicit P arrivals, so windows use a deterministic theoretical P-onset estimate from origin time, first sample time, distance, depth, and a fixed 6 km/s P velocity. Held-station ESM results show that P-only features improve over the median baseline for PGA and PGV at 1, 2, 3, 5, and 10 s. Adding distance and site terms further reduces 10 s MAE to 0.197 for PGA and 0.214 for PGV.
 
@@ -78,7 +78,11 @@ ESM provides an external European strong-motion check from local ASCII zip packa
 
 We tested early-waveform-only transfer across InstanceGM, K-NET, AQ2009GM, and ESM using held-out target-domain test records. The transfer model uses waveform features only and excludes source distance, site terms, event identifiers, and station identifiers. The target-domain baseline trains and tests within the target domain under the same split family. The cross-domain setting trains on a source domain and evaluates on the held-out target-domain test set. A second setting applies a scalar offset estimated from the target-domain training split.
 
-All cross-domain rows have higher MAE than target-domain training. In the three-domain scan, median zero-shot MAE penalties are 1.49x at 1 s, 1.74x at 3 s, and 2.84x at 10 s relative to target-domain training. Adding ESM gives median zero-shot penalties of 2.25x, 2.83x, 2.98x, 3.81x, and 4.27x at 1, 2, 3, 5, and 10 s. Target-train offset calibration reduces these medians to 1.40x, 1.55x, 1.67x, 1.84x, and 2.46x. The 2 s and 5 s ESM-extension runs use InstanceGM, K-NET, and ESM because the current AQ2009GM compact table contains 1, 3, and 10 s windows. External transfer into ESM remains penalized at 10 s after offset calibration: the best external-to-ESM ratio is 2.53x for PGA and 1.58x for PGV. The increasing penalty with window length indicates that longer early-window amplitude structure carries stronger regional and measurement-system dependence.
+All cross-domain rows have higher MAE than target-domain training. In the three-domain scan, median zero-shot MAE penalties are 1.49x at 1 s, 1.74x at 3 s, and 2.84x at 10 s relative to target-domain training. Adding ESM gives median zero-shot penalties of 2.25x, 2.98x, and 4.27x at 1, 3, and 10 s. Target-train offset calibration reduces these medians to 1.40x, 1.67x, and 2.46x. The AQ2009GM 2 s and 5 s feature tables complete the four-domain transfer check at the intermediate windows, with median zero-shot penalties of 2.65x and 3.38x and offset-calibrated penalties of 1.55x and 1.85x. External transfer into ESM remains penalized at 10 s after offset calibration: the best external-to-ESM ratio is 2.53x for PGA and 1.58x for PGV. The increasing penalty with window length indicates that longer early-window amplitude structure carries stronger regional and measurement-system dependence.
+
+A boundary sensitivity check links transfer penalties to uncertainty and strong-motion tails. Source-domain conformal intervals under-cover target domains, with median 90% coverage of 0.468 at 2 s and 0.298 at 5 s. Target-train offset conformal calibration restores median coverage to about 0.90, with wider intervals. In the top 5% target tail, target-domain models still underpredict by more than a factor of two in 0.520 of 2 s rows and 0.320 of 5 s rows. Three-seed repeats keep the offset-calibrated median transfer penalty in narrow ranges: 1.54-1.58 for 2 s PGA, 1.40-1.42 for 2 s PGV, 1.81-1.85 for 5 s PGA, and 1.87-1.98 for 5 s PGV.
+
+A synthesis panel summarizes the measured boundary across four axes: within-domain information gain, cross-region transfer penalty, conformal coverage loss, and strong-motion tail underprediction. The figure is generated from the validated result tables and is used as a compact map of where early P-wave information helps and where it remains unreliable.
 
 ## Discussion
 
@@ -172,14 +176,18 @@ Residual diagnostics and high-residual waveform examples. Panels show distance-d
 
 Cross-dataset P and S picking errors, q95 tails, and missing-pick rates from pretrained PhaseNet and EQTransformer models. The audit supports P alignment and identifies dataset-dependent S-phase limits.
 
+### Figure 7. Predictability-boundary synthesis
+
+Four-axis summary of the public strong-motion evidence. Panels show 1/2/3/5/10 s within-domain information gain, cross-region transfer penalty, 2/5 s conformal coverage under transfer, and 2/5 s top-tail factor-2 underprediction.
+
 ### Supplementary Figure 1. PNW accelerometer peak-amplitude check
 
 Held-event and held-station peak-amplitude results for PNWAccelerometers at 1 s, 3 s, and 10 s. The target is peak horizontal waveform amplitude.
 
 ### Supplementary Figure 2. AQ2009GM full-manifest chunk-streaming early velocity check
 
-Held-event, held-station, and held-time PGA/PGV results for all 254 chunks listed in the local SeisBench AQ2009GM manifest at 1 s, 3 s, and 10 s. The validation retains compact feature tables and generated metrics after deleting raw chunk files.
+Held-event, held-station, and held-time PGA/PGV results for all 254 chunks listed in the local SeisBench AQ2009GM manifest at 1 s, 2 s, 3 s, 5 s, and 10 s. The validation retains compact feature tables and generated metrics after deleting raw chunk files.
 
 ### Supplementary Figure 3. Cross-region early-waveform transfer boundary
 
-Early-waveform-only transfer penalties across InstanceGM, K-NET, AQ2009GM, and ESM at 1 s, 2 s, 3 s, 5 s, and 10 s. AQ2009GM contributes to the 1 s, 3 s, and 10 s panels. Panels compare zero-shot transfer and target-train offset calibration against target-domain training.
+Early-waveform-only transfer penalties across InstanceGM, K-NET, AQ2009GM, and ESM at 1 s, 2 s, 3 s, 5 s, and 10 s. AQ2009GM contributes to all evaluated windows through retained 1/3/10 s and 2/5 s compact feature tables. Panels compare zero-shot transfer and target-train offset calibration against target-domain training.
