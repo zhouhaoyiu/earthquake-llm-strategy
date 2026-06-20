@@ -17,6 +17,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: methods provenance table covers ESM P-onset sensitivity audit
 - PASS: methods provenance table covers ESM waveform P-onset spot audit
 - PASS: methods provenance table covers matched held-station gain audit
+- PASS: methods provenance table covers held-station bootstrap CI audit
 - PASS: methods provenance table covers uncertainty boundary note
 - PASS: methods provenance table covers regional GMM boundary note
 - PASS: methods provenance table covers main figure redraw and style audit
@@ -28,6 +29,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: method script exists: work/scripts/audit_knet_prepeak_subset.py
 - PASS: method script exists: work/scripts/run_ground_motion_heldout_baseline.py
 - PASS: method script exists: work/scripts/audit_matched_station_gain.py
+- PASS: method script exists: work/scripts/audit_held_station_bootstrap_ci.py
 - PASS: method script exists: work/scripts/run_attenuation_reference.py
 - PASS: method script exists: work/scripts/audit_regional_gmm_readiness.py
 - PASS: method script exists: work/scripts/run_openquake_pga_reference.py
@@ -53,6 +55,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: reviewer risk matrix covers: group leakage
 - PASS: reviewer risk matrix covers: distribution artifacts
 - PASS: reviewer risk matrix covers: matched-support audit
+- PASS: reviewer risk matrix covers: sampling stability
 - PASS: reviewer risk matrix covers: attenuation-shaped
 - PASS: reviewer risk matrix covers: fully specified regional GMM
 - PASS: reviewer risk matrix covers: AQ2009GM supplement
@@ -162,6 +165,14 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: matched held-station gain audit has 6 matched target rows
 - PASS: matched held-station gain audit retains at least 70% of test rows for every target
 - PASS: matched held-station gain audit keeps positive early-waveform gains for every target
+- PASS: held-station bootstrap CI summary exists
+- PASS: held-station bootstrap CI metrics exist
+- PASS: held-station bootstrap CI figure exists
+- PASS: held-station bootstrap CI figure opens (2310x1364)
+- PASS: held-station bootstrap CI has 6 target rows
+- PASS: held-station bootstrap CI observed reductions are positive
+- PASS: held-station bootstrap CI lower bounds are positive for every target
+- PASS: held-station bootstrap CI has near-zero nonpositive-gain bootstrap mass
 - PASS: attenuation-shaped reference summary exists
 - PASS: attenuation-shaped reference has 6 balanced held-station target rows
 - PASS: regional GMM readiness audit exists
@@ -327,6 +338,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/nc_minimum_submission_package.md references ESM P-onset boundary
 - PASS: outputs/nc_minimum_submission_package.md references ESM waveform onset-proxy spot audit
 - PASS: outputs/nc_minimum_submission_package.md references matched held-station gain audit
+- PASS: outputs/nc_minimum_submission_package.md references held-station bootstrap CI audit
 - PASS: outputs/nc_minimum_submission_package.md references extended waveform case audit
 - PASS: outputs/nc_minimum_submission_package.md references Figure 7 core boundary synthesis
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 1
@@ -339,6 +351,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references ESM P-onset boundary
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references ESM waveform onset-proxy spot audit
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references matched held-station gain audit
+- PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references held-station bootstrap CI audit
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references extended waveform case audit
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 7 core boundary synthesis
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 1
@@ -351,6 +364,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/nc_evidence_packet_zh.md references ESM P-onset boundary
 - PASS: outputs/nc_evidence_packet_zh.md references ESM waveform onset-proxy spot audit
 - PASS: outputs/nc_evidence_packet_zh.md references matched held-station gain audit
+- PASS: outputs/nc_evidence_packet_zh.md references held-station bootstrap CI audit
 - PASS: outputs/nc_evidence_packet_zh.md references extended waveform case audit
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 7 core boundary synthesis
 - PASS: article draft contains bounded claim: Figure 1. Cross-Dataset Waveform-Task Benchmark
@@ -366,6 +380,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: article draft contains bounded claim: A Vp sensitivity audit
 - PASS: article draft contains bounded claim: waveform-envelope onset-proxy spot audit
 - PASS: article draft contains bounded claim: median absolute offset 1.223 s
+- PASS: article draft contains bounded claim: 95% bootstrap CI lower bounds remain positive
 - PASS: article draft contains bounded claim: theoretical P-onset estimate
 - PASS: article draft contains bounded claim: 2.53x for PGA and 1.58x for PGV
 - PASS: article draft contains bounded claim: Python 3.12.13

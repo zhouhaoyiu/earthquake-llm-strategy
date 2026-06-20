@@ -116,6 +116,24 @@ K-NET pre-peak 子集审计已生成：`outputs/knet_prepeak_subset_audit.md`。
 支撑图：`outputs/figures/ground_motion_audit/matched_station_gain_audit.png`
 CSV：`work/ground_motion_balanced_station_10s/matched_station_gain_audit.csv`
 
+### 3d. Held-station bootstrap CI 审计
+
+已补一个配对 bootstrap 稳定性审计：`outputs/held_station_bootstrap_ci_summary.md`。它在同一批 balanced held-station 测试样本上重采样记录，比较 metadata-only 与 metadata + 早窗波形的 MAE 降幅。
+
+| 数据集 | 目标 | MAE 降幅 | 95% bootstrap CI | P(降幅<=0) |
+|---|---|---:|---:|---:|
+| InstanceGM | PGA | 35.5% | 32.1-39.0% | 0.000 |
+| InstanceGM | PGV | 52.6% | 49.6-55.6% | 0.000 |
+| InstanceGM | SA03 | 26.0% | 22.3-29.6% | 0.000 |
+| InstanceGM | SA10 | 20.9% | 16.9-24.9% | 0.000 |
+| InstanceGM | SA30 | 27.8% | 23.9-31.3% | 0.000 |
+| K-NET | PGA | 49.9% | 46.6-53.1% | 0.000 |
+
+解释：六个主 held-station 目标的 CI 下界全部大于 0，最小下界为 16.9%。这层证据回答“增益是不是一次测试抽样的偶然结果”。它不是前瞻验证，也不是因果证明。
+
+支撑图：`outputs/figures/ground_motion_audit/held_station_bootstrap_ci.png`
+CSV：`work/ground_motion_balanced_station_10s/held_station_bootstrap_ci.csv`
+
 ### 4. OpenQuake Boore2014 参考
 
 已补充一个低参数 attenuation-shaped ridge 参考：`outputs/attenuation_reference_summary.md`。它只用震级、log10 hypocentral-distance 形状、深度和可用 Vs30，在 balanced held-station 上拟合。InstanceGM 这个 split 有 Vs30；K-NET 没有 Vs30，所以 K-NET attenuation 参考不是 site-corrected。metadata + 早窗波形在所有 6 个目标上都优于这个参考，相对降幅为 17.5-51.6%。这个结果只作为 baseline check，不替代完整区域 GMM。
@@ -442,15 +460,15 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
 ## 当前 NC 概率判断
 
-当前已验证主图证据包、AQ2009GM full-manifest chunk-streaming、ESM 欧洲强震动外部验证、ESM P-onset sensitivity、ESM waveform-onset spot audit 和 matched held-station 增益审计：**70-73%**。
+当前已验证主图证据包、AQ2009GM full-manifest chunk-streaming、ESM 欧洲强震动外部验证、ESM P-onset sensitivity、ESM waveform-onset spot audit、matched held-station 增益审计和 held-station bootstrap CI 审计：**71-74%**。
 
 如果再做投稿级图文细修和人工 ESM P 到时抽查：**70-74%**。
 
-已完成：主图 1-6 重画、NC 主边界合成图、held-out 证据、OpenQuake/conformal、残差/波形审计、phase audit、AQ2009GM full-manifest、ESM compact features、ESM held-out baseline、ESM P-onset sensitivity、四域 transfer、cross-region conformal/tail/seed sensitivity、uncertainty boundary note、regional GMM boundary note、formal Methods draft 压缩版、figure style audit、evidence verifier。
+已完成：主图 1-6 重画、NC 主边界合成图、held-out 证据、matched-support 审计、bootstrap CI 审计、OpenQuake/conformal、残差/波形审计、phase audit、AQ2009GM full-manifest、ESM compact features、ESM held-out baseline、ESM P-onset sensitivity、四域 transfer、cross-region conformal/tail/seed sensitivity、uncertainty boundary note、regional GMM boundary note、formal Methods draft 压缩版、figure style audit、evidence verifier。
 
 如果加入完整区域 GMM 对照或更强物理残差解释：**73-78%**。
 
-现在可以诚实说站上 70%。原因是 ESM 提供了欧洲强震动外部测试域，四域 transfer 给出清晰退化边界，ESM P-onset sensitivity 和 waveform-onset spot audit 已经把主要相位风险量化，matched held-station 审计降低了分布伪影解释。限制仍然明确：ESM 还不是人工 P pick，当前还没有完整区域 GMM 对照。
+现在可以诚实说站上 70%。原因是 ESM 提供了欧洲强震动外部测试域，四域 transfer 给出清晰退化边界，ESM P-onset sensitivity 和 waveform-onset spot audit 已经把主要相位风险量化，matched held-station 审计降低了分布伪影解释，bootstrap CI 审计降低了抽样偶然性解释。限制仍然明确：ESM 还不是人工 P pick，当前还没有完整区域 GMM 对照。
 
 ## 下一步
 

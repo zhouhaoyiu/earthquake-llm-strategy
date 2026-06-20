@@ -40,6 +40,8 @@ The held-station split contains real distribution shift. InstanceGM test records
 
 A matched-support audit trims held-station test records to the training set 5-95% support for magnitude, distance, and target amplitude. The retained subsets keep 73.0-77.8% of test records. All targets remain positive, with matched MAE reductions from 17.2% to 52.1%. This audit reduces the risk that the observed gain is only a station-test distribution artifact, but it remains a post-hoc audit because target amplitude is part of the trimming rule.
 
+A paired bootstrap audit resamples the same balanced held-station test records. The 95% bootstrap CI lower bounds remain positive for all six main targets, with the weakest lower bound at 16.9% for InstanceGM SA10. This supports sampling stability of the observed gain.
+
 ### Classical References and Uncertainty Define Boundaries
 
 An attenuation-shaped ridge reference uses magnitude, log10 hypocentral-distance, depth, and log10 Vs30 where available. The metadata plus early-waveform model improves over this reference across all balanced held-station targets, with relative MAE reductions from 17.5% to 51.6%.

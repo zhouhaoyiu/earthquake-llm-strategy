@@ -37,6 +37,7 @@ METHOD_SCRIPTS = [
     "work/scripts/audit_knet_prepeak_subset.py",
     "work/scripts/run_ground_motion_heldout_baseline.py",
     "work/scripts/audit_matched_station_gain.py",
+    "work/scripts/audit_held_station_bootstrap_ci.py",
     "work/scripts/run_attenuation_reference.py",
     "work/scripts/audit_regional_gmm_readiness.py",
     "work/scripts/run_openquake_pga_reference.py",
@@ -99,6 +100,7 @@ def main() -> None:
     check("ESM P-onset sensitivity audit" in provenance_text, "methods provenance table covers ESM P-onset sensitivity audit", rows)
     check("ESM waveform P-onset spot audit" in provenance_text, "methods provenance table covers ESM waveform P-onset spot audit", rows)
     check("Matched held-station gain audit" in provenance_text, "methods provenance table covers matched held-station gain audit", rows)
+    check("Held-station bootstrap CI audit" in provenance_text, "methods provenance table covers held-station bootstrap CI audit", rows)
     check("Uncertainty boundary note" in provenance_text, "methods provenance table covers uncertainty boundary note", rows)
     check("Regional GMM boundary note" in provenance_text, "methods provenance table covers regional GMM boundary note", rows)
     check("Main figure redraw and style audit" in provenance_text, "methods provenance table covers main figure redraw and style audit", rows)
@@ -114,6 +116,7 @@ def main() -> None:
         "group leakage",
         "distribution artifacts",
         "matched-support audit",
+        "sampling stability",
         "attenuation-shaped",
         "fully specified regional GMM",
         "AQ2009GM supplement",
@@ -297,6 +300,20 @@ def main() -> None:
     check(len(matched_scope) == 6, "matched held-station gain audit has 6 matched target rows", rows)
     check(matched_scope["retained_fraction"].min() >= 0.70, "matched held-station gain audit retains at least 70% of test rows for every target", rows)
     check((matched_scope["mae_reduction_pct"] > 0).all(), "matched held-station gain audit keeps positive early-waveform gains for every target", rows)
+
+    bootstrap_summary_path = Path("outputs/held_station_bootstrap_ci_summary.md")
+    bootstrap_metrics_path = Path("work/ground_motion_balanced_station_10s/held_station_bootstrap_ci.csv")
+    bootstrap_figure = Path("outputs/figures/ground_motion_audit/held_station_bootstrap_ci.png")
+    check(bootstrap_summary_path.exists() and bootstrap_summary_path.stat().st_size > 0, "held-station bootstrap CI summary exists", rows)
+    check(bootstrap_metrics_path.exists() and bootstrap_metrics_path.stat().st_size > 0, "held-station bootstrap CI metrics exist", rows)
+    check(bootstrap_figure.exists() and bootstrap_figure.stat().st_size > 0, "held-station bootstrap CI figure exists", rows)
+    bootstrap_im = Image.open(bootstrap_figure)
+    check(bootstrap_im.width >= 1000 and bootstrap_im.height >= 700, f"held-station bootstrap CI figure opens ({bootstrap_im.width}x{bootstrap_im.height})", rows)
+    bootstrap = pd.read_csv(bootstrap_metrics_path)
+    check(len(bootstrap) == 6, "held-station bootstrap CI has 6 target rows", rows)
+    check((bootstrap["observed_reduction_pct"] > 0).all(), "held-station bootstrap CI observed reductions are positive", rows)
+    check((bootstrap["ci95_low_pct"] > 0).all(), "held-station bootstrap CI lower bounds are positive for every target", rows)
+    check((bootstrap["bootstrap_p_le_zero"] <= 0.001).all(), "held-station bootstrap CI has near-zero nonpositive-gain bootstrap mass", rows)
 
     attenuation_summary = Path("outputs/attenuation_reference_summary.md")
     check(attenuation_summary.exists() and attenuation_summary.stat().st_size > 0, "attenuation-shaped reference summary exists", rows)
@@ -525,6 +542,7 @@ def main() -> None:
         check("ESM" in text and "P-onset" in text, f"{doc} references ESM P-onset boundary", rows)
         check("esm_waveform_p_pick_spotcheck" in text, f"{doc} references ESM waveform onset-proxy spot audit", rows)
         check("matched_station_gain_audit" in text, f"{doc} references matched held-station gain audit", rows)
+        check("held_station_bootstrap_ci" in text, f"{doc} references held-station bootstrap CI audit", rows)
         check("extended_waveform_case_audit" in text, f"{doc} references extended waveform case audit", rows)
         check("nc_core_predictability_boundary" in text, f"{doc} references Figure 7 core boundary synthesis", rows)
     article = Path("outputs/nc_article_draft_v1.md").read_text()
@@ -542,6 +560,7 @@ def main() -> None:
         "A Vp sensitivity audit",
         "waveform-envelope onset-proxy spot audit",
         "median absolute offset 1.223 s",
+        "95% bootstrap CI lower bounds remain positive",
         "theoretical P-onset estimate",
         "2.53x for PGA and 1.58x for PGV",
         "Python 3.12.13",
