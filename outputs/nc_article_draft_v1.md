@@ -38,7 +38,7 @@ Balanced held-station splits exclude selected stations from training and hold ou
 
 The held-station split contains real distribution shift. InstanceGM test records are farther and weaker than the training records: median distance increases from 44.27 km to 70.61 km, and median log10 PGA decreases from -1.68 to -2.11. K-NET train and test distributions overlap more closely for distance and PGA. The split audit supports a measured generalization claim, not a distribution-matched transfer claim.
 
-A matched-support audit trims held-station test records to the training set 5-95% support for magnitude, distance, and target amplitude. The retained subsets keep 73.0-77.8% of test records. All targets remain positive, with matched MAE reductions from 17.2% to 52.1%. This audit reduces the risk that the observed gain is only a station-test distribution artifact, but it remains a post-hoc audit because target amplitude is part of the trimming rule.
+A matched-support audit first trims held-station test records to the training set 5-95% support for magnitude and distance only. The source-path support subsets keep 82.4-83.9% of test records. All targets remain positive, with MAE reductions from 20.1% to 54.5%. A stricter target-matched support check also remains positive, with reductions from 17.2% to 52.1%; this check is post-hoc because target amplitude is part of the trimming rule.
 
 A paired bootstrap audit resamples the same balanced held-station test records. The 95% bootstrap CI lower bounds remain positive for all six main targets, with the weakest lower bound at 16.9% for InstanceGM SA10. This supports sampling stability of the observed gain.
 

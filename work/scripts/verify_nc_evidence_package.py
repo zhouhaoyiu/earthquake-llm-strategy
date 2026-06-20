@@ -116,6 +116,7 @@ def main() -> None:
         "group leakage",
         "distribution artifacts",
         "matched-support audit",
+        "source-path support",
         "sampling stability",
         "attenuation-shaped",
         "fully specified regional GMM",
@@ -296,7 +297,11 @@ def main() -> None:
     matched_im = Image.open(matched_figure)
     check(matched_im.width >= 1000 and matched_im.height >= 700, f"matched held-station gain audit figure opens ({matched_im.width}x{matched_im.height})", rows)
     matched = pd.read_csv(matched_compact_path)
+    source_path_scope = matched[matched["scope"] == "source_path_support"]
     matched_scope = matched[matched["scope"] == "matched_train_support"]
+    check(len(source_path_scope) == 6, "matched held-station gain audit has 6 source-path support target rows", rows)
+    check(source_path_scope["retained_fraction"].min() >= 0.80, "source-path support audit retains at least 80% of test rows for every target", rows)
+    check((source_path_scope["mae_reduction_pct"] > 0).all(), "source-path support audit keeps positive early-waveform gains for every target", rows)
     check(len(matched_scope) == 6, "matched held-station gain audit has 6 matched target rows", rows)
     check(matched_scope["retained_fraction"].min() >= 0.70, "matched held-station gain audit retains at least 70% of test rows for every target", rows)
     check((matched_scope["mae_reduction_pct"] > 0).all(), "matched held-station gain audit keeps positive early-waveform gains for every target", rows)

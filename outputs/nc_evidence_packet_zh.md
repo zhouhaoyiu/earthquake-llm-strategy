@@ -100,18 +100,18 @@ K-NET pre-peak 子集审计已生成：`outputs/knet_prepeak_subset_audit.md`。
 
 ### 3c. Matched held-station 增益审计
 
-已补一个全自动事后审计：`outputs/matched_station_gain_audit_summary.md`。它把 held-station 测试样本裁到训练集震级、距离和目标幅值的 5-95% 覆盖范围内，再重新评估 metadata-only 与 metadata + 早窗波形。
+已补一个全自动支持范围审计：`outputs/matched_station_gain_audit_summary.md`。它先把 held-station 测试样本裁到训练集震级和距离的 5-95% 覆盖范围内，不使用目标幅值；然后再做一个加入目标幅值的 target-matched 事后检查。
 
-| 数据集 | 目标 | matched 保留比例 | full 降幅 | matched 降幅 |
-|---|---|---:|---:|---:|
-| InstanceGM | PGA | 0.730 | 35.5% | 38.4% |
-| InstanceGM | PGV | 0.753 | 52.6% | 52.1% |
-| InstanceGM | SA03 | 0.772 | 26.0% | 26.6% |
-| InstanceGM | SA10 | 0.778 | 20.9% | 17.2% |
-| InstanceGM | SA30 | 0.751 | 27.8% | 24.9% |
-| K-NET | PGA | 0.767 | 49.9% | 50.4% |
+| 数据集 | 目标 | source-path 保留比例 | full 降幅 | source-path 降幅 | target-matched 降幅 |
+|---|---|---:|---:|---:|---:|
+| InstanceGM | PGA | 0.833 | 35.5% | 37.7% | 38.4% |
+| InstanceGM | PGV | 0.833 | 52.6% | 54.5% | 52.1% |
+| InstanceGM | SA03 | 0.836 | 26.0% | 27.2% | 26.6% |
+| InstanceGM | SA10 | 0.833 | 20.9% | 20.1% | 17.2% |
+| InstanceGM | SA30 | 0.839 | 27.8% | 29.4% | 24.9% |
+| K-NET | PGA | 0.824 | 49.9% | 51.2% | 50.4% |
 
-解释：所有 matched 子集仍为正增益，最小 matched 降幅为 17.2%。这个结果降低了“增益只来自 held-station 测试集分布异常”的风险。因为裁剪使用目标幅值，它只能作为分布伪影审计，不能当成可部署预警模型评估。
+解释：只按震级和距离裁剪时，所有子集仍为正增益，最小降幅为 20.1%，最小保留比例为 0.824。加入目标幅值裁剪后仍全部为正，但它只能作为分布伪影审计，不能当成可部署预警模型评估。
 
 支撑图：`outputs/figures/ground_motion_audit/matched_station_gain_audit.png`
 CSV：`work/ground_motion_balanced_station_10s/matched_station_gain_audit.csv`
@@ -468,7 +468,7 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
 如果加入完整区域 GMM 对照或更强物理残差解释：**73-78%**。
 
-现在可以诚实说站上 70%。原因是 ESM 提供了欧洲强震动外部测试域，四域 transfer 给出清晰退化边界，ESM P-onset sensitivity 和 waveform-onset spot audit 已经把主要相位风险量化，matched held-station 审计降低了分布伪影解释，bootstrap CI 审计降低了抽样偶然性解释。限制仍然明确：ESM 还不是人工 P pick，当前还没有完整区域 GMM 对照。
+现在可以诚实说站上 70%。原因是 ESM 提供了欧洲强震动外部测试域，四域 transfer 给出清晰退化边界，ESM P-onset sensitivity 和 waveform-onset spot audit 已经把主要相位风险量化，source-path support 审计降低了分布伪影解释，bootstrap CI 审计降低了抽样偶然性解释。限制仍然明确：ESM 还不是人工 P pick，当前还没有完整区域 GMM 对照。
 
 ## 下一步
 

@@ -55,6 +55,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: reviewer risk matrix covers: group leakage
 - PASS: reviewer risk matrix covers: distribution artifacts
 - PASS: reviewer risk matrix covers: matched-support audit
+- PASS: reviewer risk matrix covers: source-path support
 - PASS: reviewer risk matrix covers: sampling stability
 - PASS: reviewer risk matrix covers: attenuation-shaped
 - PASS: reviewer risk matrix covers: fully specified regional GMM
@@ -162,6 +163,9 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: matched held-station gain audit compact table exists
 - PASS: matched held-station gain audit figure exists
 - PASS: matched held-station gain audit figure opens (2420x1430)
+- PASS: matched held-station gain audit has 6 source-path support target rows
+- PASS: source-path support audit retains at least 80% of test rows for every target
+- PASS: source-path support audit keeps positive early-waveform gains for every target
 - PASS: matched held-station gain audit has 6 matched target rows
 - PASS: matched held-station gain audit retains at least 70% of test rows for every target
 - PASS: matched held-station gain audit keeps positive early-waveform gains for every target

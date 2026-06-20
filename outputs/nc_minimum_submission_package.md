@@ -24,7 +24,7 @@ Public strong-motion archives can be organized into a reproducible benchmark for
 | Held-event | done | rules out ordinary event leakage |
 | Balanced held-station | done | station-transfer evidence across 50 held-out stations per strong-motion dataset |
 | Held-station 1/2/3/5/10 scan | done | direct information-gain curve for the first 5 seconds and the 10 s reference |
-| Matched held-station gain audit | done | post-hoc train-support matching shows positive early-waveform gains are not only a station-test distribution artifact |
+| Matched held-station gain audit | done | source-path support matching shows positive early-waveform gains are not only a station-test distribution artifact |
 | Held-station bootstrap CI audit | done | paired bootstrap shows balanced held-station gains are stable to test-record resampling |
 | Classical references | done | attenuation-shaped ridge, BooreEtAl2014, and K-NET Japanese GMM screening |
 | Regional GMM readiness | done | field audit explains why full regional GMM claim is not yet supported |
@@ -149,7 +149,7 @@ Message:
 
 Held-event and balanced held-station tests show that the early waveform gain persists after event and station separation. The distribution audit shows that the station-held tests still contain source-path-target shift, so the result should be framed as held-out robustness with explicit split provenance.
 
-The matched held-station gain audit trims test records to train 5-95% support for magnitude, distance, and target amplitude. Matched subsets retain 73.0-77.8% of test records and remain positive for every target, with the weakest matched reduction at 17.2% for InstanceGM SA10. This is a post-hoc distribution-artifact audit because it uses target amplitude for matching.
+The matched held-station gain audit first trims test records to train 5-95% support for magnitude and distance only. These source-path support subsets retain 82.4-83.9% of test records and remain positive for every target, with the weakest reduction at 20.1% for InstanceGM SA10. A stricter target-matched support check also remains positive, with the weakest reduction at 17.2%. The target-matched check is post-hoc because it uses target amplitude.
 
 The paired bootstrap audit uses the same balanced held-station test rows and resamples records to quantify MAE-reduction stability. All six main targets keep positive 95% CI lower bounds; the weakest lower bound is 16.9% for InstanceGM SA10. Current files: `outputs/held_station_bootstrap_ci_summary.md` and `work/ground_motion_balanced_station_10s/held_station_bootstrap_ci.csv`.
 

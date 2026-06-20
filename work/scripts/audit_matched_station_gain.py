@@ -35,8 +35,14 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
         writer.writerows(rows)
 
 
-def support_mask(train: pd.DataFrame, test: pd.DataFrame, target: str) -> tuple[pd.Series, dict[str, float]]:
-    cols = [c for c in MATCH_COLUMNS + [f"target_log10_{target}"] if c in train.columns and c in test.columns]
+def support_mask(
+    train: pd.DataFrame,
+    test: pd.DataFrame,
+    target: str,
+    include_target: bool,
+) -> tuple[pd.Series, dict[str, float]]:
+    cols = MATCH_COLUMNS + ([f"target_log10_{target}"] if include_target else [])
+    cols = [c for c in cols if c in train.columns and c in test.columns]
     mask = pd.Series(True, index=test.index)
     bounds: dict[str, float] = {}
     for col in cols:
@@ -71,12 +77,14 @@ def collect_rows(args: argparse.Namespace) -> list[dict[str, Any]]:
             target_col = f"target_log10_{target}"
             if target_col not in train.columns or train[target_col].notna().sum() == 0 or test[target_col].notna().sum() == 0:
                 continue
-            mask, bounds = support_mask(train, test, target)
+            path_mask, path_bounds = support_mask(train, test, target, include_target=False)
+            target_mask, target_bounds = support_mask(train, test, target, include_target=True)
             scopes = {
-                "full_test": test,
-                "matched_train_support": test.loc[mask].copy(),
+                "full_test": (test, {}),
+                "source_path_support": (test.loc[path_mask].copy(), path_bounds),
+                "matched_train_support": (test.loc[target_mask].copy(), target_bounds),
             }
-            for scope, scoped_test in scopes.items():
+            for scope, (scoped_test, bounds) in scopes.items():
                 for feature_set in FEATURE_SETS:
                     result = train_eval(
                         train,
@@ -121,9 +129,15 @@ def summary_rows(metrics: pd.DataFrame) -> pd.DataFrame:
 
 
 def write_markdown(summary: pd.DataFrame, path: Path, figure_path: Path, csv_path: Path) -> None:
+    path_support = summary[summary["scope"] == "source_path_support"].copy()
     matched = summary[summary["scope"] == "matched_train_support"].copy()
     full = summary[summary["scope"] == "full_test"].copy()
-    merged = matched.merge(
+    merged_path = path_support.merge(
+        full[["dataset", "target", "mae_reduction_pct"]].rename(columns={"mae_reduction_pct": "full_reduction_pct"}),
+        on=["dataset", "target"],
+        how="left",
+    )
+    merged_matched = matched.merge(
         full[["dataset", "target", "mae_reduction_pct"]].rename(columns={"mae_reduction_pct": "full_reduction_pct"}),
         on=["dataset", "target"],
         how="left",
@@ -135,29 +149,45 @@ def write_markdown(summary: pd.DataFrame, path: Path, figure_path: Path, csv_pat
         "",
         "## 定位",
         "",
-        "这个自动审计只回答一个问题：把 held-station 测试样本裁到训练集震级、距离和目标幅值的 5-95% 覆盖范围内以后，早窗波形增益是否仍然存在。",
+        "这个自动审计回答两个问题：只把 held-station 测试样本裁到训练集震级和距离的 5-95% 覆盖范围内以后，早窗波形增益是否仍然存在；再加入目标幅值裁剪以后结果是否一致。",
         "",
-        "裁剪使用目标幅值，因此它是事后分布伪影审计，不是可部署预警模型评估。",
+        "`source_path_support` 不使用目标幅值。`matched_train_support` 使用目标幅值，因此后者是事后分布伪影审计，不是可部署预警模型评估。",
         "",
-        "## 结果",
+        "## Source-path support 结果",
         "",
-        "| 数据集 | 目标 | matched 保留比例 | full reduction % | matched reduction % | matched rows |",
+        "| 数据集 | 目标 | 保留比例 | full reduction % | source-path reduction % | rows |",
         "|---|---|---:|---:|---:|---:|",
     ]
-    for row in merged.to_dict("records"):
+    for row in merged_path.to_dict("records"):
         lines.append(
             f"| {row['dataset']} | {row['target']} | {row['retained_fraction']:.3f} | "
             f"{row['full_reduction_pct']:.1f} | {row['mae_reduction_pct']:.1f} | {int(row['test_rows_scope'])} |"
         )
+    lines += [
+        "",
+        "## Target-matched 结果",
+        "",
+        "| 数据集 | 目标 | 保留比例 | full reduction % | target-matched reduction % | rows |",
+        "|---|---|---:|---:|---:|---:|",
+    ]
+    for row in merged_matched.to_dict("records"):
+        lines.append(
+            f"| {row['dataset']} | {row['target']} | {row['retained_fraction']:.3f} | "
+            f"{row['full_reduction_pct']:.1f} | {row['mae_reduction_pct']:.1f} | {int(row['test_rows_scope'])} |"
+        )
+    path_min_gain = float(path_support["mae_reduction_pct"].min())
+    path_min_retained = float(path_support["retained_fraction"].min())
     min_gain = float(matched["mae_reduction_pct"].min())
     min_retained = float(matched["retained_fraction"].min())
     lines += [
         "",
         "## 解释",
         "",
-        f"所有 matched 子集仍为正增益，最小 matched MAE 降幅为 {min_gain:.1f}%。最小保留比例为 {min_retained:.3f}。",
+        f"只按震级和距离裁剪时，所有子集仍为正增益，最小 MAE 降幅为 {path_min_gain:.1f}%。最小保留比例为 {path_min_retained:.3f}。",
         "",
-        "这个结果降低了“增益只来自 held-station 测试集分布异常”的风险。正文仍应保守表述为 source-path-target shift 下的稳健性证据，不能写成完全 distribution-matched transfer。",
+        f"加入目标幅值裁剪后，所有 matched 子集仍为正增益，最小 matched MAE 降幅为 {min_gain:.1f}%。最小保留比例为 {min_retained:.3f}。",
+        "",
+        "这个结果降低了“增益只来自 held-station 测试集分布异常”的风险。正文仍应保守表述为 source-path shift 下的稳健性证据，不能写成完全 distribution-matched transfer。",
         "",
         f"CSV：`{csv_path}`",
         f"图：`{figure_path}`",
@@ -169,14 +199,16 @@ def write_markdown(summary: pd.DataFrame, path: Path, figure_path: Path, csv_pat
 
 def plot_summary(summary: pd.DataFrame, path: Path) -> None:
     full = summary[summary["scope"] == "full_test"].set_index(["dataset", "target"])
+    path_support = summary[summary["scope"] == "source_path_support"].set_index(["dataset", "target"])
     matched = summary[summary["scope"] == "matched_train_support"].set_index(["dataset", "target"])
     keys = list(matched.index)
     labels = [f"{ds}\n{target}" for ds, target in keys]
     x = np.arange(len(keys))
-    width = 0.36
+    width = 0.27
     fig, ax1 = plt.subplots(figsize=(11, 6.5))
-    ax1.bar(x - width / 2, [full.loc[k, "mae_reduction_pct"] for k in keys], width, label="full test")
-    ax1.bar(x + width / 2, [matched.loc[k, "mae_reduction_pct"] for k in keys], width, label="matched support")
+    ax1.bar(x - width, [full.loc[k, "mae_reduction_pct"] for k in keys], width, label="full test")
+    ax1.bar(x, [path_support.loc[k, "mae_reduction_pct"] for k in keys], width, label="source-path support")
+    ax1.bar(x + width, [matched.loc[k, "mae_reduction_pct"] for k in keys], width, label="target-matched support")
     ax1.axhline(0, color="black", linewidth=0.8)
     ax1.set_ylabel("MAE reduction vs metadata-only (%)")
     ax1.set_xticks(x)
@@ -186,8 +218,9 @@ def plot_summary(summary: pd.DataFrame, path: Path) -> None:
     ax1.legend(loc="upper right", frameon=False)
 
     ax2 = ax1.twinx()
-    ax2.plot(x, [matched.loc[k, "retained_fraction"] for k in keys], color="black", marker="o", linewidth=1.5)
-    ax2.set_ylabel("Matched test retained fraction")
+    ax2.plot(x, [path_support.loc[k, "retained_fraction"] for k in keys], color="black", marker="o", linewidth=1.5)
+    ax2.plot(x, [matched.loc[k, "retained_fraction"] for k in keys], color="black", marker="s", linewidth=1.2, linestyle="--")
+    ax2.set_ylabel("Retained fraction")
     ax2.set_ylim(0, 1.05)
     fig.tight_layout()
     path.parent.mkdir(parents=True, exist_ok=True)
