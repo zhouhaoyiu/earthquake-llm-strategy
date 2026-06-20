@@ -226,9 +226,13 @@ Held-event and balanced held-station performance for InstanceGM and K-NET. The d
 
 Bias-corrected OpenQuake BooreEtAl2014 comparison and split-conformal interval results. The figure pairs point-prediction improvement with station-shift calibration limits. Current file: `outputs/figures/figure4_classical_uncertainty.png`.
 
-### Figure 5. Residual and waveform audit
+### Figure 5. Residual diagnostics
 
-Residual diagnostics and high-residual waveform examples. Panels show distance-dependent K-NET PGA tails and repeated InstanceGM residual cases across targets. Current file: `outputs/figures/figure5_residual_waveform_audit.png`.
+Residual diagnostics for the 10 s combined model. Panels show error reduction, distance-dependent K-NET PGA tails, and repeated InstanceGM residual structure across targets. Current file: `outputs/figures/figure5_residual_waveform_audit.png`.
+
+### Extended Data Figure. High-residual waveform case audit
+
+Repeated InstanceGM high-residual records and K-NET PGA high-residual waveform cases. The figure is an audit supplement for inspectability, not physical attribution. Current file: `outputs/figures/extended_waveform_case_audit.png`.
 
 ### Figure 6. Phase-label transfer audit
 
@@ -280,9 +284,8 @@ Keep these limits explicit:
 
 ## Remaining Work Before Submission
 
-1. Add exact software, data-access, split, and random-seed provenance to the compressed Methods draft.
-2. Check the redrawn figures at page scale, especially whether the vertical Figure 5 audit packet should be split for submission.
-3. Decide whether to add another independent strong-motion archive with clear units beyond AQ2009GM and ESM.
-4. Decide whether PNWAccelerometers stays in supplement or receives documented unit support.
-5. Add a stronger independent strong-motion dataset or fully specified regional GMPE/GMM comparison if rupture class, rupture distance, and site terms become available.
-6. Audit manuscript language to keep claims direct and evidence-bounded.
+1. Check the redrawn figures at page scale, especially Figure 5 and the extended waveform case audit.
+2. Run a small ESM waveform-level P-pick spot audit to reduce the theoretical-onset weakness.
+3. Decide whether PNWAccelerometers stays in supplement or receives documented unit support.
+4. Add a stronger independent strong-motion dataset or fully specified regional GMPE/GMM comparison only after rupture class, rupture distance, and site terms become available.
+5. Audit manuscript language to keep claims direct and evidence-bounded.

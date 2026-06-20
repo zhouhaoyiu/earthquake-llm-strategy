@@ -147,7 +147,7 @@ Split conformal nominal coverage 为 90%。
 
 ### 5b. 残差和波形审计
 
-主图已生成：`outputs/figures/figure5_residual_waveform_audit.png`。这张图合并 10 秒残差诊断、InstanceGM 重复高残差记录和 K-NET PGA 高残差记录。
+主图已生成：`outputs/figures/figure5_residual_waveform_audit.png`。这张图现在只保留 10 秒残差诊断，适合主文页面阅读。InstanceGM 重复高残差记录和 K-NET PGA 高残差波形案例已拆到扩展审计图：`outputs/figures/extended_waveform_case_audit.png`。
 
 写法：残差图说明哪些记录和距离/幅值区间需要审计；不要把单变量残差结构写成物理因果。
 
@@ -362,7 +362,9 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
 已补区域 GMM 边界说明：`outputs/regional_gmm_boundary_note.md`。当前能支撑 classical-reference screening：attenuation-shaped ridge、BooreEtAl2014、K-NET Japanese GMM screening 和 readiness audit。当前不能支撑完整区域 GMPE/GMM 优越性声明，因为 K-NET 缺 Vs30、rupture distance 和 focal mechanism，InstanceGM focal-mechanism 覆盖很低。
 
-已补主图重画和风格审计：`work/scripts/redraw_nc_main_figures.py` 重画 Figure 1-6，`outputs/nc_figure_style_audit.md` 记录 Figure 1-7 尺寸，contact sheet 为 `outputs/figures/nc_main_figure_contact_sheet.png`。Figure 5 仍是纵向 audit packet，其余主图已统一为紧凑多面板风格。
+已补主图重画和风格审计：`work/scripts/redraw_nc_main_figures.py` 重画 Figure 1-6，`outputs/nc_figure_style_audit.md` 记录 Figure 1-7 尺寸，contact sheet 为 `outputs/figures/nc_main_figure_contact_sheet.png`。Figure 5 已拆成主文残差诊断图和扩展波形案例图，其余主图已统一为紧凑多面板风格。
+
+下一步实验判断已写入：`outputs/nc_next_experiment_decision.md`。现在优先做小规模 ESM waveform-level P-pick spot audit，用来替代纯理论 P onset 的最弱环节。完整区域 GMPE/GMM 暂缓，直到 rupture distance、site terms 和 tectonic 或 focal-mechanism metadata 可用。
 
 ### 8. PNWAccelerometers 补充检查
 
@@ -409,8 +411,8 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
 ### 必补
 
-1. 给 `outputs/nc_methods_formal_draft.md` 补软件版本和数据访问细节。
-2. 对重画后的 Figure 1-6 做人工版式细修，重点检查 Figure 5 纵向 audit packet 在期刊页面里的拆分方式。
+1. 对重画后的 Figure 1-6 做人工版式细修，重点检查 Figure 5 主文残差诊断图和扩展波形案例图在期刊页面里的可读性。
+2. 做小规模 ESM waveform-level P-pick spot audit，检查理论 P onset 对 1/2 秒窗口的影响。
 3. PNWAccelerometers 若进入正文，需要补充单位来源；否则只放补充材料。
 
 ### 可选

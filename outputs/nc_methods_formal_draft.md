@@ -20,6 +20,8 @@ Random splits measure baseline information gain. Held-event splits remove select
 
 The main regressor is `HistGradientBoostingRegressor` with fixed settings across experiments. Feature sets include median-only, metadata-only, early-waveform-only, and metadata plus early-waveform models. Metadata features include magnitude, depth, distance, station elevation, Vs30 where available, year, and sample count. Cross-region transfer uses early waveform features only and excludes distance, magnitude, site terms, event identifiers, and station identifiers.
 
+Random seeds are fixed in the released scripts. Main random-split sampling uses seed 19. Held-event and held-station strong-motion splits use seed 31, with a +101 offset for station holdout. AQ2009GM streaming validation uses seed 43, ESM held-out validation uses seed 71, PNWAccelerometers uses seed 83, phase-audit sampling uses seed 7, conformal intervals use seed 17, and the 2/5 s boundary sensitivity repeats seeds 17, 59, and 101. Sampling scripts write split-info tables with train groups, test groups, and overlap counts.
+
 ## Classical References
 
 Classical references include an attenuation-shaped ridge model, bias-corrected OpenQuake BooreEtAl2014, and K-NET Japanese GMM screening. BooreEtAl2014 uses source distance as an Rjb proxy, rake fixed at 0, missing Vs30 set to 760 m/s, and train-set median bias correction. K-NET GMM screening uses source distance as an Rrup proxy and missing Vs30 defaults. These comparisons are reference checks under documented metadata limits. A fully specified regional GMPE/GMM comparison requires curated rupture distance, site terms, and tectonic or focal-mechanism metadata.
@@ -29,3 +31,7 @@ Classical references include an attenuation-shaped ridge model, bias-corrected O
 Split-conformal intervals use a proper-training and calibration split within training records. Coverage is evaluated on held-station test records. The exchangeability condition is explicit: calibration and test residuals must come from the same residual distribution for finite-sample marginal coverage to apply. Source-domain conformal transfer intentionally violates this condition and measures the uncertainty-transfer boundary. Target-offset conformal calibration uses the target-domain training split before target test evaluation.
 
 Residuals are predicted log10 target minus observed log10 target. Residual audits evaluate binned behavior by source, path, station, and early waveform variables, then select high-residual cases for waveform-level inspection. Figure-style audits record Figure 1-7 dimensions and provide a contact sheet for final production review.
+
+## Software and Local Data Access
+
+Analyses were run in the local `zhy` environment with Python 3.12.13, numpy 2.4.4, pandas 3.0.2, scikit-learn 1.8.0, matplotlib 3.10.8, Pillow 12.2.0, h5py 3.16.0, SeisBench 0.11.5, and OpenQuake engine 3.25.1. SeisBench caches are read from `/Users/yojironoda/.seisbench/datasets`. K-NET is read from `/Users/yojironoda/Downloads/s7rk7bj3zn-1/knet_1530`. ESM zip packages are read from `/Users/yojironoda/Documents/New project 2/outputs/strong_motion_downloads/欧洲_ESM`. Raw data redistribution must follow each source archive license; reproducible release files should include scripts, split files, figure tables, verifier output, and derived feature tables where licensing allows.

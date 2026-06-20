@@ -190,29 +190,56 @@ def arial(size: int) -> ImageFont.ImageFont:
 
 
 def figure5() -> None:
-    inputs = [
-        ("A. Residual diagnostics", Path("outputs/figures/ground_motion_audit/ground_motion_residual_diagnostic_panel.png")),
-        ("B. Repeated InstanceGM high-residual records", Path("outputs/figures/ground_motion_audit/instancegm_repeated_residual_audit_panel.png")),
-        ("C. K-NET PGA high-residual records", Path("outputs/figures/ground_motion_audit/knet_pga_worst_residual_audit_panel.png")),
+    main_panel = Path("outputs/figures/ground_motion_audit/ground_motion_residual_diagnostic_panel.png")
+    case_panels = [
+        ("A. Repeated InstanceGM high-residual records", Path("outputs/figures/ground_motion_audit/instancegm_repeated_residual_audit_panel.png")),
+        ("B. K-NET PGA high-residual records", Path("outputs/figures/ground_motion_audit/knet_pga_worst_residual_audit_panel.png")),
     ]
     target_w = 2200
     pad, title_h, label_h = 36, 100, 56
     title_font, label_font = arial(54), arial(36)
-    panels = []
-    for label, path in inputs:
-        im = Image.open(path).convert("RGB")
-        scale = target_w / im.width
-        panels.append((label, im.resize((target_w, round(im.height * scale)), Image.Resampling.LANCZOS)))
-    total_h = title_h + sum(im.height + label_h + pad for _, im in panels) + pad
+
+    im = Image.open(main_panel).convert("RGB")
+    im = im.resize((target_w, round(im.height * target_w / im.width)), Image.Resampling.LANCZOS)
+    total_h = title_h + label_h + im.height + pad
     canvas = Image.new("RGB", (target_w + 2 * pad, total_h), "white")
     draw = ImageDraw.Draw(canvas)
-    draw.text((pad, 22), "Residual and waveform audit", fill="black", font=title_font)
-    y = title_h
-    for label, im in panels:
-        draw.text((pad, y + 8), label, fill="black", font=label_font)
-        canvas.paste(im, (pad, y + label_h))
-        y += im.height + label_h + pad
+    draw.text((pad, 22), "Residual diagnostics", fill="black", font=title_font)
+    draw.text((pad, title_h + 8), "A. Error reduction, residual tails, and residual structure", fill="black", font=label_font)
+    canvas.paste(im, (pad, title_h + label_h))
     canvas.save(OUT / "figure5_residual_waveform_audit.png")
+
+    panels = []
+    for label, path in case_panels:
+        case = Image.open(path).convert("RGB")
+        scale = target_w / case.width
+        panels.append((label, case.resize((target_w, round(case.height * scale)), Image.Resampling.LANCZOS)))
+    total_h = title_h + sum(panel.height + label_h + pad for _, panel in panels) + pad
+    cases = Image.new("RGB", (target_w + 2 * pad, total_h), "white")
+    draw = ImageDraw.Draw(cases)
+    draw.text((pad, 22), "Waveform case audit", fill="black", font=title_font)
+    y = title_h
+    for label, panel in panels:
+        draw.text((pad, y + 8), label, fill="black", font=label_font)
+        cases.paste(panel, (pad, y + label_h))
+        y += panel.height + label_h + pad
+    cases.save(OUT / "extended_waveform_case_audit.png")
+
+    Path("outputs/figure5_residual_waveform_audit_summary.md").write_text(
+        "\n".join(
+            [
+                "# Figure 5 Residual Diagnostics",
+                "",
+                "Figure 5 now contains the residual diagnostic panel only, keeping the main text figure readable.",
+                "",
+                "- Main figure: `outputs/figures/figure5_residual_waveform_audit.png`",
+                "- Extended waveform cases: `outputs/figures/extended_waveform_case_audit.png`",
+                "",
+                "The extended figure retains repeated InstanceGM high-residual records and K-NET PGA high-residual waveform cases.",
+                "",
+            ]
+        )
+    )
 
 
 def figure6() -> None:

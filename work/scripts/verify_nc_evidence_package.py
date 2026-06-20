@@ -21,6 +21,9 @@ FIGURES = [
     "outputs/figures/figure5_residual_waveform_audit.png",
     "outputs/figures/figure6_phase_label_audit.png",
 ]
+EXTENDED_FIGURES = [
+    "outputs/figures/extended_waveform_case_audit.png",
+]
 DOCS = [
     "outputs/nc_minimum_submission_package.md",
     "outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md",
@@ -95,6 +98,7 @@ def main() -> None:
     check("Uncertainty boundary note" in provenance_text, "methods provenance table covers uncertainty boundary note", rows)
     check("Regional GMM boundary note" in provenance_text, "methods provenance table covers regional GMM boundary note", rows)
     check("Main figure redraw and style audit" in provenance_text, "methods provenance table covers main figure redraw and style audit", rows)
+    check("Next experiment decision" in provenance_text, "methods provenance table covers next experiment decision", rows)
     for script in METHOD_SCRIPTS:
         check(Path(script).exists(), f"method script exists: {script}", rows)
 
@@ -215,6 +219,11 @@ def main() -> None:
         check(path.exists() and path.stat().st_size > 0, f"{fig} exists", rows)
         im = Image.open(path)
         check(im.width >= 1000 and im.height >= 700, f"{fig} opens as a nontrivial image ({im.width}x{im.height})", rows)
+    for fig in EXTENDED_FIGURES:
+        path = Path(fig)
+        check(path.exists() and path.stat().st_size > 0, f"{fig} exists", rows)
+        im = Image.open(path)
+        check(im.width >= 1000 and im.height >= 1000, f"{fig} opens as an extended audit image ({im.width}x{im.height})", rows)
 
     fig2 = pd.read_csv("outputs/figure2_early_window_performance.csv")
     check(len(fig2) == 18 and set(fig2["window_s"]) == {1, 3, 10}, "Figure 2 table has 18 rows across 1/3/10 s windows", rows)
@@ -414,6 +423,7 @@ def main() -> None:
     formal_methods = Path("outputs/nc_methods_formal_draft.md")
     uncertainty_note = Path("outputs/nc_uncertainty_boundary_note.md")
     gmm_boundary_note = Path("outputs/regional_gmm_boundary_note.md")
+    next_decision = Path("outputs/nc_next_experiment_decision.md")
     figure_style_summary = Path("outputs/nc_figure_style_audit.md")
     figure_style_path = Path("outputs/nc_figure_style_audit.csv")
     figure_contact = Path("outputs/figures/nc_main_figure_contact_sheet.png")
@@ -425,6 +435,10 @@ def main() -> None:
     check("exchangeability" in uncertainty_note.read_text().lower(), "NC uncertainty boundary note states exchangeability condition", rows)
     check(gmm_boundary_note.exists() and gmm_boundary_note.stat().st_size > 0, "regional GMM boundary note exists", rows)
     check("fully specified regional" in gmm_boundary_note.read_text(), "regional GMM boundary note limits full regional GMM claims", rows)
+    check(next_decision.exists() and next_decision.stat().st_size > 0, "NC next experiment decision note exists", rows)
+    next_text = next_decision.read_text()
+    check("ESM waveform-level P-pick" in next_text, "NC next experiment decision prioritizes ESM waveform-level P-pick audit", rows)
+    check("Defer" in next_text and "regional GMPE/GMM" in next_text, "NC next experiment decision defers full regional GMPE/GMM", rows)
     check(figure_style_summary.exists() and figure_style_summary.stat().st_size > 0, "NC figure style audit summary exists", rows)
     check(figure_style_path.exists() and figure_style_path.stat().st_size > 0, "NC figure style audit table exists", rows)
     figure_style = pd.read_csv(figure_style_path)
@@ -470,24 +484,24 @@ def main() -> None:
             check(f"figure{idx}_" in text, f"{doc} references Figure {idx}", rows)
         check("AQ2009GM" in text, f"{doc} references AQ2009GM supplementary check", rows)
         check("ESM" in text and "P-onset" in text, f"{doc} references ESM P-onset boundary", rows)
+        check("extended_waveform_case_audit" in text, f"{doc} references extended waveform case audit", rows)
         check("nc_core_predictability_boundary" in text, f"{doc} references Figure 7 core boundary synthesis", rows)
     article = Path("outputs/nc_article_draft_v1.md").read_text()
     for phrase in [
-        "Figure 1. Cross-dataset waveform-task benchmark",
-        "Figure 6. Phase-label transfer audit",
-        "Figure 7. Predictability-boundary synthesis",
+        "Figure 1. Cross-Dataset Waveform-Task Benchmark",
+        "Figure 6. Phase-Label Transfer Audit",
+        "Figure 7. Predictability-Boundary Synthesis",
         "2,460,425 manifest records",
         "35.5% for InstanceGM PGA",
         "52.6% for InstanceGM PGV",
         "49.9% for K-NET PGA",
-        "0.925 coverage for K-NET PGA",
-        "The retained AQ2009GM evidence consists of compact feature tables",
+        "0.925 conformal coverage",
+        "retained feature tables contain 345,226 valid PGA/PGV records",
         "ESM provides an external European strong-motion check",
-        "ESM P-onset sensitivity audit",
+        "A Vp sensitivity audit",
         "theoretical P-onset estimate",
-        "exchangeability",
         "2.53x for PGA and 1.58x for PGV",
-        "formal Methods draft",
+        "Python 3.12.13",
     ]:
         check(phrase in article, f"article draft contains bounded claim: {phrase}", rows)
 
@@ -496,9 +510,9 @@ def main() -> None:
             "",
             "## Current Acceptance-Probability Status",
             "",
-            "The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, cross-region waveform-transfer boundary, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, phase-label auditing, full-manifest AQ2009GM feature-table validation, ESM European strong-motion compact-feature validation, ESM P-onset sensitivity auditing, formal Methods drafting, and figure-style auditing.",
+            "The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, cross-region waveform-transfer boundary, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, extended waveform case auditing, phase-label auditing, full-manifest AQ2009GM feature-table validation, ESM European strong-motion compact-feature validation, ESM P-onset sensitivity auditing, formal Methods drafting, next-experiment triage, and figure-style auditing.",
             "",
-            "The remaining gap is empirical and presentational: a fully specified regional GMM comparison, waveform-level ESM P-pick auditing, stronger physical residual mechanism, final Methods polishing, or unified journal-style figure redraw would raise the confidence of the NC route.",
+            "The next empirical step is a small waveform-level ESM P-pick audit. A fully specified regional GMM comparison remains deferred until rupture distance, site terms, and tectonic or focal-mechanism metadata are available.",
             "",
         ]
     )

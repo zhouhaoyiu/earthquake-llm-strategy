@@ -1,11 +1,8 @@
-# Figure 5 Residual And Waveform Audit
+# Figure 5 Residual Diagnostics
 
-Date: 2026-06-18
+Figure 5 now contains the residual diagnostic panel only, keeping the main text figure readable.
 
-Figure 5 combines the residual diagnostic panel, repeated InstanceGM high-residual waveform cases, and K-NET PGA high-residual waveform cases.
+- Main figure: `outputs/figures/figure5_residual_waveform_audit.png`
+- Extended waveform cases: `outputs/figures/extended_waveform_case_audit.png`
 
-- The diagnostic panel shows mean and tail error reduction plus residual structure by distance, depth, and early amplitude.
-- The InstanceGM audit panel highlights records that recur across high-residual target lists.
-- The K-NET audit panel highlights independent PGA high-residual records.
-
-Figure: `outputs/figures/figure5_residual_waveform_audit.png`
+The extended figure retains repeated InstanceGM high-residual records and K-NET PGA high-residual waveform cases.

@@ -30,7 +30,7 @@ Public strong-motion archives can be organized into a reproducible benchmark for
 | Predictability boundary | done | 10 s random performance, held-event and held-station residual floors, robust held-out gains, and conformal coverage gaps |
 | Cross-region transfer boundary | done | early-waveform-only transfer across InstanceGM, K-NET, and AQ2009GM quantifies regional and measurement-system penalties |
 | Core boundary synthesis | done | one four-panel map linking information gain, transfer penalty, uncertainty failure, and tail underprediction |
-| Residual panels | done | audit cases and distance-tail diagnostics |
+| Residual panels | done | main-text residual diagnostics plus extended waveform audit cases |
 | AQ2009GM full-manifest streaming | supplementary done | SeisBench aftershock ground-motion check over all 254 local manifest chunks with velocity waveforms and official PGA/PGV metadata targets |
 | ESM European strong-motion supplement | done | local ASCII package check with PGA/PGV targets, held-out baseline, four-domain transfer, and theoretical P-onset boundary |
 | ESM P-onset sensitivity | done | Vp 5.5/6.0/6.5 km/s timing audit; retained-window validity above 0.994 across 1/2/3/5/10 s |
@@ -38,7 +38,8 @@ Public strong-motion archives can be organized into a reproducible benchmark for
 | Formal Methods draft | done | submission Methods skeleton for data, features, targets, splits, models, references, uncertainty, and residual audits |
 | Uncertainty boundary note | done | exchangeability condition and source-domain conformal transfer boundary |
 | Regional GMM boundary note | done | separates classical-reference screening from a fully specified regional GMPE/GMM comparison |
-| Main figure redraw and style audit | done | Figures 1-6 redrawn from verified tables or audit panels; Figure 1-7 dimension audit and contact sheet updated |
+| Main figure redraw and style audit | done | Figures 1-6 redrawn from verified tables or audit panels; Figure 5 split into main residual diagnostics and extended waveform cases; Figure 1-7 dimension audit and contact sheet updated |
+| Next experiment decision | done | prioritize ESM waveform-level P-pick spot audit; defer full regional GMPE/GMM until required metadata are available |
 | Reviewer risk matrix | done | likely reviewer objections mapped to evidence and claim limits |
 | Evidence verification | done | generated figures, key tables, split overlap, and document references pass verifier |
 
@@ -160,19 +161,27 @@ Message:
 
 The early waveform model improves over a low-parameter attenuation-shaped reference and a bias-corrected BooreEtAl2014 reference. On K-NET PGA, it also improves over the best screened Japanese GMM candidate under stated distance, Vs30, and tectonic-class approximations. Uncertainty calibration remains target-dependent under station shift.
 
-### Figure 5. Residual and waveform audit
+### Figure 5. Residual diagnostics
 
 Use:
 
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/figure5_residual_waveform_audit.png`
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figure5_residual_waveform_audit_summary.md`
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/ground_motion_audit/ground_motion_residual_diagnostic_panel.png`
+
+Message:
+
+Residual tails expose inspectable records and remaining distance/path/site/label audit targets.
+
+Extended waveform case audit:
+
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/extended_waveform_case_audit.png`
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/ground_motion_audit/instancegm_repeated_residual_audit_panel.png`
 - `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/ground_motion_audit/knet_pga_worst_residual_audit_panel.png`
 
 Message:
 
-Residual tails expose inspectable records and remaining distance/path/site/label audit targets.
+Repeated InstanceGM high-residual records and K-NET PGA waveform cases are audit examples. They support inspectability and should stay outside the main-text residual diagnostic figure.
 
 ### Figure 6. Phase label-domain audit
 
@@ -344,11 +353,11 @@ Avoid:
 
 Must do before submission:
 
-1. Add exact software versions and data-access notes to `outputs/nc_methods_formal_draft.md`.
-2. Do a page-level readability check for the redrawn figures, especially the vertical Figure 5 audit packet.
+1. Do a page-level readability check for the redrawn figures, especially Figure 5 and the extended waveform case audit.
+2. Run a small ESM waveform-level P-pick spot audit to reduce the theoretical-onset weakness.
 3. Audit manuscript wording against the claim boundaries in `outputs/nc_evidence_packet_zh.md`.
 4. Decide whether phase audit stays at 1,000/dataset or is expanded.
-5. Decide whether to add another independent strong-motion archive with clear units beyond AQ2009GM.
+5. Decide whether PNWAccelerometers stays in supplement or receives documented unit support.
 
 Optional:
 
