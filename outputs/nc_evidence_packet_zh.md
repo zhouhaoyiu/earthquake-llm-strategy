@@ -253,7 +253,9 @@ AQ2009GM 已按本地 SeisBench chunk manifest 完成流式验证：254 个 chun
 
 ESM P-onset sensitivity 审计已补：`outputs/esm_p_onset_sensitivity_audit.md`。审计没有重新提取波形特征，而是在已保留的 ESM compact feature table 上检查理论到时对 Vp 选择的敏感性。Vp 从 6.0 km/s 改到 5.5 km/s 时，理论 P onset 中位延后 2.517 秒；改到 6.5 km/s 时，中位提前 2.130 秒。所有 1/2/3/5/10 秒窗口在 5.5、6.0、6.5 km/s 下的 retained-window valid fraction 都大于 0.994。
 
-解释：ESM retained-row 定义对合理 Vp 扰动稳定，但 2 秒量级的 onset shift 对 1-2 秒窗口很大。论文里可以把 ESM 写成欧洲强震动外部域和 transfer-domain check，不能把它写成 catalog P pick 下的 lead-time 严格证明。
+ESM waveform-level onset-proxy spot audit 已补：`outputs/esm_waveform_p_pick_spotcheck.md`。它从 ESM feature table 中按距离和 PGA 分层抽取 200 个事件-台站样本，回读本地 ACC.AP 波形，用三分量加速度 envelope 阈值检测 onset proxy。200 个样本中 105 个检测到 onset proxy，其中 86 个为 high-confidence。high-confidence 子集中，proxy onset 相对 theoretical 6 km/s onset 的 median absolute offset 为 1.223 秒，q90 为 3.338 秒，q95 为 3.960 秒，98.8% 在 5 秒内。
+
+解释：ESM retained-row 定义对合理 Vp 扰动稳定，自动波形 onset proxy 也没有显示理论到时存在灾难性系统偏差。论文里可以把 ESM 写成欧洲强震动外部域和 transfer-domain check，并说明有 waveform-onset sanity check；仍不能把它写成 catalog/manual P pick 下的 lead-time 严格证明。
 
 ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
@@ -364,7 +366,7 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
 已补主图重画和风格审计：`work/scripts/redraw_nc_main_figures.py` 重画 Figure 1-6，`outputs/nc_figure_style_audit.md` 记录 Figure 1-7 尺寸，contact sheet 为 `outputs/figures/nc_main_figure_contact_sheet.png`。Figure 5 已拆成主文残差诊断图和扩展波形案例图，其余主图已统一为紧凑多面板风格。
 
-下一步实验判断已写入：`outputs/nc_next_experiment_decision.md`。现在优先做小规模 ESM waveform-level P-pick spot audit，用来替代纯理论 P onset 的最弱环节。完整区域 GMPE/GMM 暂缓，直到 rupture distance、site terms 和 tectonic 或 focal-mechanism metadata 可用。
+下一步实验判断已写入：`outputs/nc_next_experiment_decision.md`。小规模 ESM waveform-level onset-proxy spot audit 已完成，用来降低纯理论 P onset 的最弱环节。完整区域 GMPE/GMM 暂缓，直到 rupture distance、site terms 和 tectonic 或 focal-mechanism metadata 可用。
 
 ### 8. PNWAccelerometers 补充检查
 
@@ -394,7 +396,7 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 7. ESM 欧洲强震动数据提供独立外部区域验证，但 P onset 是理论估计。
 8. 跨区域 early-waveform transfer 提供 predictability boundary 证据，主文按边界结果表述。
 9. PNWAccelerometers 可作为补充 robustness 结果，但不能写成官方 PGA 验证。
-10. ESM P-onset sensitivity 已量化：retained-row 稳定，但 1-2 秒窗口对 Vp 假设敏感。
+10. ESM P-onset sensitivity 和 waveform-level onset-proxy spot audit 已量化：retained-row 稳定，high-confidence onset proxy q95 offset 为 3.960 秒，但 ESM 仍不是 catalog/manual P pick 数据。
 
 ## 不能写的 claim
 
@@ -405,33 +407,32 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 5. 不能写全面优于区域调优 GMPE/GMM。
 6. 不能写成“完整 raw AQ2009GM 已下载并保留”；应写成“对本地 SeisBench AQ2009GM manifest 的 full-manifest chunk-streaming 验证”。
 7. 不能把 PNWAccelerometers 的峰值振幅目标写成已验证物理单位 PGA。
-8. 不能把 ESM theoretical P onset 写成 catalog/manual P pick。
+8. 不能把 ESM theoretical P onset 或 automated onset proxy 写成 catalog/manual P pick。
 
 ## 还缺什么
 
 ### 必补
 
 1. 对重画后的 Figure 1-6 做人工版式细修，重点检查 Figure 5 主文残差诊断图和扩展波形案例图在期刊页面里的可读性。
-2. 做小规模 ESM waveform-level P-pick spot audit，检查理论 P onset 对 1/2 秒窗口的影响。
-3. PNWAccelerometers 若进入正文，需要补充单位来源；否则只放补充材料。
+2. PNWAccelerometers 若进入正文，需要补充单位来源；否则只放补充材料。
 
 ### 可选
 
-1. 给 ESM 做 waveform-level phase picker 或人工 P 到时抽查，以替代理论 P onset。
+1. 给 ESM 做人工 P 到时抽查，以替代 automated onset proxy。
 2. 做 magnitude-distance-balanced station split。
 3. 在有 rupture class、rupture distance 和 site terms 后做完整区域 GMPE/GMM 对照。
 
 ## 当前 NC 概率判断
 
-当前已验证主图证据包、AQ2009GM full-manifest chunk-streaming、ESM 欧洲强震动外部验证和 ESM P-onset sensitivity：**62-66%**。
+当前已验证主图证据包、AQ2009GM full-manifest chunk-streaming、ESM 欧洲强震动外部验证、ESM P-onset sensitivity 和 ESM waveform-onset spot audit：**68-72%**。
 
-如果补齐软件版本、数据访问细节并对图件做投稿级细修：**64-68%**。
+如果再做投稿级图文细修和人工 ESM P 到时抽查：**70-74%**。
 
 已完成：主图 1-6 重画、NC 主边界合成图、held-out 证据、OpenQuake/conformal、残差/波形审计、phase audit、AQ2009GM full-manifest、ESM compact features、ESM held-out baseline、ESM P-onset sensitivity、四域 transfer、cross-region conformal/tail/seed sensitivity、uncertainty boundary note、regional GMM boundary note、formal Methods draft 压缩版、figure style audit、evidence verifier。
 
-如果加入完整区域 GMM 对照、ESM waveform-level P 到时审计或更强物理残差解释：**67-72%**。
+如果加入完整区域 GMM 对照或更强物理残差解释：**73-78%**。
 
-现在可以诚实说 60% 中段。原因是 ESM 提供了欧洲强震动外部测试域，四域 transfer 给出清晰退化边界，ESM P-onset sensitivity 已经把主要相位风险量化。限制仍然明确：ESM P onset 是理论估计，当前还没有完整区域 GMM 对照。
+现在可以诚实说接近 70%。原因是 ESM 提供了欧洲强震动外部测试域，四域 transfer 给出清晰退化边界，ESM P-onset sensitivity 和 waveform-onset spot audit 已经把主要相位风险量化。限制仍然明确：ESM 还不是人工 P pick，当前还没有完整区域 GMM 对照。
 
 ## 下一步
 

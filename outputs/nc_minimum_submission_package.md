@@ -34,12 +34,13 @@ Public strong-motion archives can be organized into a reproducible benchmark for
 | AQ2009GM full-manifest streaming | supplementary done | SeisBench aftershock ground-motion check over all 254 local manifest chunks with velocity waveforms and official PGA/PGV metadata targets |
 | ESM European strong-motion supplement | done | local ASCII package check with PGA/PGV targets, held-out baseline, four-domain transfer, and theoretical P-onset boundary |
 | ESM P-onset sensitivity | done | Vp 5.5/6.0/6.5 km/s timing audit; retained-window validity above 0.994 across 1/2/3/5/10 s |
+| ESM waveform P-onset spot audit | done | 200-record waveform-envelope onset-proxy check; high-confidence median absolute offset 1.223 s and q95 3.960 s |
 | PNWAccelerometers robustness | supplementary done | SeisBench accelerometer peak-amplitude check; local HDF5 lacks waveform units |
 | Formal Methods draft | done | submission Methods skeleton for data, features, targets, splits, models, references, uncertainty, and residual audits |
 | Uncertainty boundary note | done | exchangeability condition and source-domain conformal transfer boundary |
 | Regional GMM boundary note | done | separates classical-reference screening from a fully specified regional GMPE/GMM comparison |
 | Main figure redraw and style audit | done | Figures 1-6 redrawn from verified tables or audit panels; Figure 5 split into main residual diagnostics and extended waveform cases; Figure 1-7 dimension audit and contact sheet updated |
-| Next experiment decision | done | prioritize ESM waveform-level P-pick spot audit; defer full regional GMPE/GMM until required metadata are available |
+| Next experiment decision | done | ESM waveform-level onset-proxy spot audit complete; defer full regional GMPE/GMM until required metadata are available |
 | Reviewer risk matrix | done | likely reviewer objections mapped to evidence and claim limits |
 | Evidence verification | done | generated figures, key tables, split overlap, and document references pass verifier |
 
@@ -288,6 +289,14 @@ ESM P-onset sensitivity:
 
 Vp 5.5 km/s delays the theoretical onset by a median 2.517 s relative to 6.0 km/s; Vp 6.5 km/s advances it by a median 2.130 s. Retained-window validity remains above 0.994 across all tested windows and velocities. ESM should be written as an external supplement and transfer-domain check, with explicit theoretical-P wording.
 
+ESM waveform-level onset-proxy spot audit:
+
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/esm_waveform_p_pick_spotcheck.md`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/esm_waveform_p_pick_spotcheck.csv`
+- `/Users/yojironoda/Documents/Codex/2026-06-11/earthquake-llm-strategy/outputs/figures/ground_motion_audit/esm_waveform_p_pick_spotcheck.png`
+
+The spot audit samples 200 ESM event-station records across distance and PGA quantiles. It detects automated waveform-envelope onset proxies in 105 records, with 86 high-confidence detections. In the high-confidence subset, the median absolute offset from the theoretical 6 km/s onset is 1.223 s, q90 is 3.338 s, q95 is 3.960 s, and 98.8% are within 5 s. This is a waveform timing sanity check, not a manual or catalog P-pick validation.
+
 ### Ground-motion targets
 
 Targets were modeled in log10 units. InstanceGM targets included PGA, PGV, SA03, SA10, and SA30. K-NET provided PGA. K-NET PGA values were treated as cm/s2 after unit verification from NIED documentation.
@@ -354,10 +363,9 @@ Avoid:
 Must do before submission:
 
 1. Do a page-level readability check for the redrawn figures, especially Figure 5 and the extended waveform case audit.
-2. Run a small ESM waveform-level P-pick spot audit to reduce the theoretical-onset weakness.
-3. Audit manuscript wording against the claim boundaries in `outputs/nc_evidence_packet_zh.md`.
-4. Decide whether phase audit stays at 1,000/dataset or is expanded.
-5. Decide whether PNWAccelerometers stays in supplement or receives documented unit support.
+2. Audit manuscript wording against the claim boundaries in `outputs/nc_evidence_packet_zh.md`.
+3. Decide whether phase audit stays at 1,000/dataset or is expanded.
+4. Decide whether PNWAccelerometers stays in supplement or receives documented unit support.
 
 Optional:
 

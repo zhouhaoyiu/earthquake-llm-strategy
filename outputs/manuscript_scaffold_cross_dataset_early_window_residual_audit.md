@@ -88,7 +88,9 @@ Metadata plus early velocity features reduce log10 MAE for PGA and PGV under hel
 
 ESM provides an external European strong-motion check from local ASCII zip packages. The retained compact feature table covers 951 zip files, 134,250 early-window rows, 861 events, 1,568 stations, and 26,850 event-station samples, with zero read errors. The feature builder computes full-record PGA and PGV targets from paired acceleration and velocity streams and extracts 1/2/3/5/10 s early-window features.
 
-The local ESM headers do not provide explicit P arrivals. ESM windows use a theoretical P-onset estimate from origin time, first sample time, distance, depth, and Vp = 6 km/s. The P-onset sensitivity audit tests Vp = 5.5 and 6.5 km/s on the retained feature table. The retained-window validity remains above 0.994 across all tested windows, while the median onset shift is about +2.52 s for 5.5 km/s and -2.13 s for 6.5 km/s. ESM is an external strong-motion and transfer-domain check with explicit theoretical-onset wording.
+The local ESM headers do not provide explicit P arrivals. ESM windows use a theoretical P-onset estimate from origin time, first sample time, distance, depth, and Vp = 6 km/s. The P-onset sensitivity audit tests Vp = 5.5 and 6.5 km/s on the retained feature table. The retained-window validity remains above 0.994 across all tested windows, while the median onset shift is about +2.52 s for 5.5 km/s and -2.13 s for 6.5 km/s.
+
+A waveform-level spot audit tests this theoretical onset against an automated envelope-onset proxy in 200 ESM event-station records sampled across distance and PGA quantiles. It detects 105 onset proxies, including 86 high-confidence cases. In the high-confidence subset, the median absolute offset is 1.223 s, q90 is 3.338 s, q95 is 3.960 s, and 98.8% are within 5 s. ESM is an external strong-motion and transfer-domain check with explicit theoretical-onset and onset-proxy wording.
 
 ### Cross-region early-waveform transfer boundary
 
@@ -123,6 +125,8 @@ ESM was evaluated as a local European strong-motion supplement from ASCII zip pa
 Waveforms were aligned to catalog P arrivals where catalog picks are available. Early windows were extracted at 1, 2, 3, 5, and 10 s where retained feature tables are available. The main random-split figures use 1, 3, and 10 s; the held-station scan, AQ2009GM, ESM, and transfer synthesis include 2 and 5 s. Features included component absolute maximum, RMS, standard deviation, 95th-percentile absolute amplitude, horizontal maximum, vector maximum, and vector RMS. Full-record peak features were excluded from the main ground-motion models.
 
 ESM windows use a deterministic theoretical P onset because the local ASCII headers lack explicit P arrivals. The sensitivity audit recomputes onset timing for Vp 5.5/6.0/6.5 km/s on retained compact features and reports both timing shift and retained-window validity.
+
+The ESM waveform-onset spot audit uses a three-component acceleration envelope threshold detector on local ACC.AP streams. It is a timing sanity check and should not be described as manual or catalog P picking.
 
 The early-window peak-capture audit compares `h_early_absmax` with full-record PGA targets in the generated test feature tables. The comparison is used as an interpretation audit. It is not used as a training feature.
 
@@ -250,9 +254,9 @@ Held-event and held-station peak-amplitude results for PNWAccelerometers at 1 s,
 
 Held-event, held-station, and held-time PGA/PGV results for all 254 chunks listed in the local SeisBench AQ2009GM manifest at 1 s, 2 s, 3 s, 5 s, and 10 s. The caption should state that the evidence comes from retained feature tables after raw chunk files were deleted. Current files: `outputs/figures/ground_motion_audit/aq2009gm_full_stream_panel.png` and `outputs/figures/ground_motion_audit/aq2009gm_full_stream_2s5s_panel.png`.
 
-### Supplementary Table. ESM P-onset sensitivity
+### Supplementary Table. ESM P-onset sensitivity and waveform-onset spot audit
 
-Theoretical P-onset sensitivity for Vp 5.5, 6.0, and 6.5 km/s in the retained ESM compact feature table. The table should report onset shift relative to 6.0 km/s and retained-window validity for 1/2/3/5/10 s windows. Current file: `outputs/esm_p_onset_sensitivity_audit.csv`.
+Theoretical P-onset sensitivity for Vp 5.5, 6.0, and 6.5 km/s in the retained ESM compact feature table, plus the 200-record waveform-envelope onset-proxy spot audit. Current files: `outputs/esm_p_onset_sensitivity_audit.csv` and `outputs/esm_waveform_p_pick_spotcheck.csv`.
 
 ### Supplementary Figure. Cross-region early-waveform transfer boundary
 
@@ -285,7 +289,6 @@ Keep these limits explicit:
 ## Remaining Work Before Submission
 
 1. Check the redrawn figures at page scale, especially Figure 5 and the extended waveform case audit.
-2. Run a small ESM waveform-level P-pick spot audit to reduce the theoretical-onset weakness.
-3. Decide whether PNWAccelerometers stays in supplement or receives documented unit support.
-4. Add a stronger independent strong-motion dataset or fully specified regional GMPE/GMM comparison only after rupture class, rupture distance, and site terms become available.
-5. Audit manuscript language to keep claims direct and evidence-bounded.
+2. Decide whether PNWAccelerometers stays in supplement or receives documented unit support.
+3. Add a stronger independent strong-motion dataset or fully specified regional GMPE/GMM comparison only after rupture class, rupture distance, and site terms become available.
+4. Audit manuscript language to keep claims direct and evidence-bounded.

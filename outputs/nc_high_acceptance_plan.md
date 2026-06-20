@@ -12,13 +12,13 @@ Lead with the public benchmark, held-out early-window gains, uncertainty calibra
 
 ## Probability
 
-Current verified figure-ready package plus AQ2009GM full-manifest chunk-streaming and cross-region transfer boundary: **50-59%**.
+Current verified figure-ready package plus AQ2009GM full-manifest chunk-streaming, ESM European strong-motion validation, four-domain transfer boundary, and ESM waveform-onset spot audit: **68-72%**.
 
-With final manuscript prose, Methods provenance, and careful caveats: **50-59%**.
+With final manuscript prose, page-scale figure polish, and careful caveats: **70-74%**.
 
-With a fully specified regional GMM comparison, broader multi-region strong-motion validation, or a stronger physical residual mechanism: **52-59%**.
+With a fully specified regional GMM comparison, manual ESM P picks, or a stronger physical residual mechanism: **73-78%**.
 
-Treat **60%** as unproven. AQ2009GM full-manifest chunk-streaming supports early-window information in another SeisBench ground-motion dataset with official PGA/PGV metadata targets. Cross-region transfer across InstanceGM, K-NET, and AQ2009GM adds a measurable boundary: zero-shot median MAE penalty rises from 1.49x at 1 s to 2.84x at 10 s. Publication-grade high-confidence validation still needs broader multi-region coverage, a fully specified regional GMM layer, or a stronger physical residual mechanism.
+Treat **80%** as unproven. AQ2009GM full-manifest chunk-streaming supports early-window information in another SeisBench ground-motion dataset with official PGA/PGV metadata targets. ESM adds an external European strong-motion domain. Four-domain transfer adds a measurable boundary: zero-shot median MAE penalty rises from 2.25x at 1 s to 4.27x at 10 s. The ESM waveform-onset spot audit reduces the theoretical-onset weakness, but publication-grade 80% confidence still needs manual ESM P picks, a fully specified regional GMM layer, or a stronger physical residual mechanism.
 
 ## Must-Have Work
 
@@ -70,7 +70,11 @@ Treat **60%** as unproven. AQ2009GM full-manifest chunk-streaming supports early
 
    Done as a supplementary SeisBench accelerometer check. It uses 5,981 earthquake records, held-event and held-station splits, and 1/3/10 s windows. The local file lacks waveform units, so the target is full-record peak horizontal waveform amplitude.
 
-9. **Figure polish**
+9. **ESM European strong-motion validation**
+
+   Done as an external strong-motion check from local ASCII zip packages. The compact feature table covers 951 zip files, 134,250 early-window rows, 861 events, 1,568 stations, and 26,850 event-station samples. ESM held-station baselines and four-domain transfer are complete. The P-onset sensitivity audit quantifies Vp dependence, and the waveform-onset spot audit samples 200 event-station records. In 86 high-confidence onset-proxy detections, median absolute offset from the theoretical 6 km/s onset is 1.223 s and q95 is 3.960 s.
+
+10. **Figure polish**
 
    Done for the current evidence package. Main figures now cover:
 
@@ -81,7 +85,7 @@ Treat **60%** as unproven. AQ2009GM full-manifest chunk-streaming supports early
    - residual diagnostics and waveform audit cases;
    - phase-label transfer audit.
 
-10. **Evidence verification**
+11. **Evidence verification**
 
    Done. `outputs/nc_evidence_verification_report.md` verifies generated artifacts, figure files, key CSV row counts, held-out group overlap, OpenQuake comparison direction, conformal probability bounds, and document references.
 

@@ -14,6 +14,8 @@ Targets were modeled in log10 units. InstanceGM targets include PGA, PGV, SA03, 
 
 ESM headers do not provide explicit P arrivals. ESM windows use a theoretical onset from origin time, first sample time, epicentral distance, depth, and `Vp = 6 km/s`. The sensitivity audit tested `Vp = 5.5` and `6.5 km/s`; retained-window validity stayed above 0.99, while median onset shifts were about 2.1-2.5 s. ESM is used as an external supplement and transfer-domain check.
 
+An ESM waveform-onset spot audit sampled 200 event-station records across distance and PGA quantiles and compared the theoretical onset with an automated three-component acceleration-envelope onset proxy. The audit detected 86 high-confidence proxies with median absolute offset 1.223 s and q95 absolute offset 3.960 s. This check supports ESM as an external timing sanity check. It is not a manual or catalog P-pick validation.
+
 ## Splits and Models
 
 Random splits measure baseline information gain. Held-event splits remove selected events from training. Held-station splits remove selected stations from training. Balanced held-station splits hold out 50 stations per main strong-motion dataset and sample test records while preserving station coverage. Split files record train groups, test groups, and group overlap; verified held-out overlap is zero.

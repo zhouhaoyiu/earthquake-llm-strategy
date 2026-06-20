@@ -15,6 +15,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: methods provenance table covers core boundary synthesis
 - PASS: methods provenance table covers boundary sensitivity checks
 - PASS: methods provenance table covers ESM P-onset sensitivity audit
+- PASS: methods provenance table covers ESM waveform P-onset spot audit
 - PASS: methods provenance table covers uncertainty boundary note
 - PASS: methods provenance table covers regional GMM boundary note
 - PASS: methods provenance table covers main figure redraw and style audit
@@ -34,6 +35,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: method script exists: work/scripts/stream_aq2009gm_full_validation.py
 - PASS: method script exists: work/scripts/build_esm_compact_features.py
 - PASS: method script exists: work/scripts/audit_esm_p_onset_sensitivity.py
+- PASS: method script exists: work/scripts/audit_esm_waveform_p_pick_spotcheck.py
 - PASS: method script exists: work/scripts/run_esm_compact_baseline.py
 - PASS: method script exists: work/scripts/run_pnw_accelerometer_peak_baseline.py
 - PASS: method script exists: work/scripts/build_predictability_boundary_table.py
@@ -101,6 +103,16 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: ESM P-onset sensitivity covers 1/2/3/5/10 s windows
 - PASS: ESM P-onset retained-window validity remains above 0.99
 - PASS: ESM P-onset sensitivity records multi-second timing shifts for plausible Vp values
+- PASS: ESM waveform onset-proxy spot-audit summary exists
+- PASS: ESM waveform onset-proxy spot-audit table exists
+- PASS: ESM waveform onset-proxy spot-audit JSON exists
+- PASS: ESM waveform onset-proxy spot-audit figure exists
+- PASS: ESM waveform onset-proxy spot-audit figure opens (2880x864)
+- PASS: ESM waveform onset-proxy spot audit has 200 sampled records
+- PASS: ESM waveform onset-proxy spot audit detects at least 100 records
+- PASS: ESM waveform onset-proxy spot audit has at least 80 high-confidence records
+- PASS: ESM high-confidence onset proxies have median absolute offset below 1.5 s
+- PASS: ESM high-confidence onset proxies have q95 absolute offset below 5 s
 - PASS: ESM held-out baseline summary exists
 - PASS: ESM held-out baseline has 80 rows across holdout/window/target/feature-set combinations
 - PASS: ESM held-out baseline covers 1/2/3/5/10 s windows
@@ -274,7 +286,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: regional GMM boundary note exists
 - PASS: regional GMM boundary note limits full regional GMM claims
 - PASS: NC next experiment decision note exists
-- PASS: NC next experiment decision prioritizes ESM waveform-level P-pick audit
+- PASS: NC next experiment decision marks ESM waveform onset audit complete
 - PASS: NC next experiment decision defers full regional GMPE/GMM
 - PASS: NC figure style audit summary exists
 - PASS: NC figure style audit table exists
@@ -302,6 +314,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/nc_minimum_submission_package.md references Figure 6
 - PASS: outputs/nc_minimum_submission_package.md references AQ2009GM supplementary check
 - PASS: outputs/nc_minimum_submission_package.md references ESM P-onset boundary
+- PASS: outputs/nc_minimum_submission_package.md references ESM waveform onset-proxy spot audit
 - PASS: outputs/nc_minimum_submission_package.md references extended waveform case audit
 - PASS: outputs/nc_minimum_submission_package.md references Figure 7 core boundary synthesis
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 1
@@ -312,6 +325,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 6
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references AQ2009GM supplementary check
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references ESM P-onset boundary
+- PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references ESM waveform onset-proxy spot audit
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references extended waveform case audit
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 7 core boundary synthesis
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 1
@@ -322,6 +336,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 6
 - PASS: outputs/nc_evidence_packet_zh.md references AQ2009GM supplementary check
 - PASS: outputs/nc_evidence_packet_zh.md references ESM P-onset boundary
+- PASS: outputs/nc_evidence_packet_zh.md references ESM waveform onset-proxy spot audit
 - PASS: outputs/nc_evidence_packet_zh.md references extended waveform case audit
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 7 core boundary synthesis
 - PASS: article draft contains bounded claim: Figure 1. Cross-Dataset Waveform-Task Benchmark
@@ -335,12 +350,14 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: article draft contains bounded claim: retained feature tables contain 345,226 valid PGA/PGV records
 - PASS: article draft contains bounded claim: ESM provides an external European strong-motion check
 - PASS: article draft contains bounded claim: A Vp sensitivity audit
+- PASS: article draft contains bounded claim: waveform-envelope onset-proxy spot audit
+- PASS: article draft contains bounded claim: median absolute offset 1.223 s
 - PASS: article draft contains bounded claim: theoretical P-onset estimate
 - PASS: article draft contains bounded claim: 2.53x for PGA and 1.58x for PGV
 - PASS: article draft contains bounded claim: Python 3.12.13
 
 ## Current Acceptance-Probability Status
 
-The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, cross-region waveform-transfer boundary, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, extended waveform case auditing, phase-label auditing, full-manifest AQ2009GM feature-table validation, ESM European strong-motion compact-feature validation, ESM P-onset sensitivity auditing, formal Methods drafting, next-experiment triage, and figure-style auditing.
+The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, cross-region waveform-transfer boundary, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, extended waveform case auditing, phase-label auditing, full-manifest AQ2009GM feature-table validation, ESM European strong-motion compact-feature validation, ESM P-onset sensitivity auditing, ESM waveform onset-proxy spot auditing, formal Methods drafting, and figure-style auditing.
 
-The next empirical step is a small waveform-level ESM P-pick audit. A fully specified regional GMM comparison remains deferred until rupture distance, site terms, and tectonic or focal-mechanism metadata are available.
+The next high-impact empirical gap is no longer ESM timing sanity checking; it is either manual ESM P-pick annotation, stronger residual mechanism evidence, or a fully specified regional GMM comparison once rupture distance, site terms, and tectonic or focal-mechanism metadata are available.

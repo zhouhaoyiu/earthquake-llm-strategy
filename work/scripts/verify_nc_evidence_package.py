@@ -45,6 +45,7 @@ METHOD_SCRIPTS = [
     "work/scripts/stream_aq2009gm_full_validation.py",
     "work/scripts/build_esm_compact_features.py",
     "work/scripts/audit_esm_p_onset_sensitivity.py",
+    "work/scripts/audit_esm_waveform_p_pick_spotcheck.py",
     "work/scripts/run_esm_compact_baseline.py",
     "work/scripts/run_pnw_accelerometer_peak_baseline.py",
     "work/scripts/build_predictability_boundary_table.py",
@@ -95,6 +96,7 @@ def main() -> None:
     check("Core boundary synthesis" in provenance_text, "methods provenance table covers core boundary synthesis", rows)
     check("Boundary sensitivity checks" in provenance_text, "methods provenance table covers boundary sensitivity checks", rows)
     check("ESM P-onset sensitivity audit" in provenance_text, "methods provenance table covers ESM P-onset sensitivity audit", rows)
+    check("ESM waveform P-onset spot audit" in provenance_text, "methods provenance table covers ESM waveform P-onset spot audit", rows)
     check("Uncertainty boundary note" in provenance_text, "methods provenance table covers uncertainty boundary note", rows)
     check("Regional GMM boundary note" in provenance_text, "methods provenance table covers regional GMM boundary note", rows)
     check("Main figure redraw and style audit" in provenance_text, "methods provenance table covers main figure redraw and style audit", rows)
@@ -200,6 +202,24 @@ def main() -> None:
     esm_vp55 = esm_onset[esm_onset["vp_km_s"] == 5.5]["delta_vs_6s_median"].median()
     esm_vp65 = esm_onset[esm_onset["vp_km_s"] == 6.5]["delta_vs_6s_median"].median()
     check(esm_vp55 > 2.0 and esm_vp65 < -2.0, "ESM P-onset sensitivity records multi-second timing shifts for plausible Vp values", rows)
+
+    esm_spot_summary = Path("outputs/esm_waveform_p_pick_spotcheck.md")
+    esm_spot_path = Path("outputs/esm_waveform_p_pick_spotcheck.csv")
+    esm_spot_json = Path("outputs/esm_waveform_p_pick_spotcheck.json")
+    esm_spot_figure = Path("outputs/figures/ground_motion_audit/esm_waveform_p_pick_spotcheck.png")
+    check(esm_spot_summary.exists() and esm_spot_summary.stat().st_size > 0, "ESM waveform onset-proxy spot-audit summary exists", rows)
+    check(esm_spot_path.exists() and esm_spot_path.stat().st_size > 0, "ESM waveform onset-proxy spot-audit table exists", rows)
+    check(esm_spot_json.exists() and esm_spot_json.stat().st_size > 0, "ESM waveform onset-proxy spot-audit JSON exists", rows)
+    check(esm_spot_figure.exists() and esm_spot_figure.stat().st_size > 0, "ESM waveform onset-proxy spot-audit figure exists", rows)
+    esm_spot_im = Image.open(esm_spot_figure)
+    check(esm_spot_im.width >= 1000 and esm_spot_im.height >= 700, f"ESM waveform onset-proxy spot-audit figure opens ({esm_spot_im.width}x{esm_spot_im.height})", rows)
+    esm_spot = pd.read_csv(esm_spot_path)
+    check(len(esm_spot) == 200, "ESM waveform onset-proxy spot audit has 200 sampled records", rows)
+    check(esm_spot["detected"].astype(bool).sum() >= 100, "ESM waveform onset-proxy spot audit detects at least 100 records", rows)
+    hi = esm_spot[esm_spot["high_confidence"].fillna(False).astype(bool)]
+    check(len(hi) >= 80, "ESM waveform onset-proxy spot audit has at least 80 high-confidence records", rows)
+    check(hi["abs_delta_s"].median() < 1.5, "ESM high-confidence onset proxies have median absolute offset below 1.5 s", rows)
+    check(hi["abs_delta_s"].quantile(0.95) < 5.0, "ESM high-confidence onset proxies have q95 absolute offset below 5 s", rows)
 
     esm_heldout_summary = Path("outputs/esm_heldout_baseline_summary.md")
     esm_heldout_metrics = pd.read_csv("work/esm_heldout_baseline/esm_heldout_metrics.csv")
@@ -437,7 +457,7 @@ def main() -> None:
     check("fully specified regional" in gmm_boundary_note.read_text(), "regional GMM boundary note limits full regional GMM claims", rows)
     check(next_decision.exists() and next_decision.stat().st_size > 0, "NC next experiment decision note exists", rows)
     next_text = next_decision.read_text()
-    check("ESM waveform-level P-pick" in next_text, "NC next experiment decision prioritizes ESM waveform-level P-pick audit", rows)
+    check("spot audit is now complete" in next_text, "NC next experiment decision marks ESM waveform onset audit complete", rows)
     check("Defer" in next_text and "regional GMPE/GMM" in next_text, "NC next experiment decision defers full regional GMPE/GMM", rows)
     check(figure_style_summary.exists() and figure_style_summary.stat().st_size > 0, "NC figure style audit summary exists", rows)
     check(figure_style_path.exists() and figure_style_path.stat().st_size > 0, "NC figure style audit table exists", rows)
@@ -484,6 +504,7 @@ def main() -> None:
             check(f"figure{idx}_" in text, f"{doc} references Figure {idx}", rows)
         check("AQ2009GM" in text, f"{doc} references AQ2009GM supplementary check", rows)
         check("ESM" in text and "P-onset" in text, f"{doc} references ESM P-onset boundary", rows)
+        check("esm_waveform_p_pick_spotcheck" in text, f"{doc} references ESM waveform onset-proxy spot audit", rows)
         check("extended_waveform_case_audit" in text, f"{doc} references extended waveform case audit", rows)
         check("nc_core_predictability_boundary" in text, f"{doc} references Figure 7 core boundary synthesis", rows)
     article = Path("outputs/nc_article_draft_v1.md").read_text()
@@ -499,6 +520,8 @@ def main() -> None:
         "retained feature tables contain 345,226 valid PGA/PGV records",
         "ESM provides an external European strong-motion check",
         "A Vp sensitivity audit",
+        "waveform-envelope onset-proxy spot audit",
+        "median absolute offset 1.223 s",
         "theoretical P-onset estimate",
         "2.53x for PGA and 1.58x for PGV",
         "Python 3.12.13",
@@ -510,9 +533,9 @@ def main() -> None:
             "",
             "## Current Acceptance-Probability Status",
             "",
-            "The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, cross-region waveform-transfer boundary, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, extended waveform case auditing, phase-label auditing, full-manifest AQ2009GM feature-table validation, ESM European strong-motion compact-feature validation, ESM P-onset sensitivity auditing, formal Methods drafting, next-experiment triage, and figure-style auditing.",
+            "The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, cross-region waveform-transfer boundary, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, extended waveform case auditing, phase-label auditing, full-manifest AQ2009GM feature-table validation, ESM European strong-motion compact-feature validation, ESM P-onset sensitivity auditing, ESM waveform onset-proxy spot auditing, formal Methods drafting, and figure-style auditing.",
             "",
-            "The next empirical step is a small waveform-level ESM P-pick audit. A fully specified regional GMM comparison remains deferred until rupture distance, site terms, and tectonic or focal-mechanism metadata are available.",
+            "The next high-impact empirical gap is no longer ESM timing sanity checking; it is either manual ESM P-pick annotation, stronger residual mechanism evidence, or a fully specified regional GMM comparison once rupture distance, site terms, and tectonic or focal-mechanism metadata are available.",
             "",
         ]
     )

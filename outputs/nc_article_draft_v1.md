@@ -54,7 +54,7 @@ Residual diagnostics show remaining structure after early waveform information i
 
 AQ2009GM provides a separate SeisBench ground-motion check with official metadata targets. Full-manifest chunk streaming covers all 254 local AQ2009GM chunks, extracts compact early-window velocity features and PGA/PGV targets, and deletes raw HDF5 and metadata files after feature extraction. The retained feature tables contain 345,226 valid PGA/PGV records from 60,310 events and 66 stations. At 5 s, metadata plus early velocity features reduce held-station MAE by 55.8% for PGA and 71.9% for PGV.
 
-ESM provides an external European strong-motion check from local ASCII zip packages. The compact feature table covers 951 zip files, 134,250 early-window rows, 861 events, and 1,568 stations. Local ESM headers do not provide explicit P arrivals, so windows use a theoretical P-onset estimate. A Vp sensitivity audit shows that changing Vp from 6.0 to 5.5 km/s delays onset by a median 2.517 s, and changing it to 6.5 km/s advances onset by a median 2.130 s. Retained-window validity remains above 0.994 across tested windows. ESM supports external-domain validation and transfer analysis; catalog-P lead-time claims stay tied to datasets with explicit P labels.
+ESM provides an external European strong-motion check from local ASCII zip packages. The compact feature table covers 951 zip files, 134,250 early-window rows, 861 events, and 1,568 stations. Local ESM headers do not provide explicit P arrivals, so windows use a theoretical P-onset estimate. A Vp sensitivity audit shows that changing Vp from 6.0 to 5.5 km/s delays onset by a median 2.517 s, and changing it to 6.5 km/s advances onset by a median 2.130 s. Retained-window validity remains above 0.994 across tested windows. A 200-record waveform-envelope onset-proxy spot audit detects 86 high-confidence cases with median absolute offset 1.223 s and q95 3.960 s relative to the theoretical 6 km/s onset. ESM supports external-domain validation and transfer analysis; catalog-P lead-time claims stay tied to datasets with explicit P labels.
 
 ### Cross-Region Transfer Measures the Predictability Boundary
 
@@ -122,6 +122,6 @@ Four-axis summary of within-domain information gain, cross-region transfer penal
 
 Repeated InstanceGM high-residual records and K-NET PGA high-residual waveform cases.
 
-### Supplementary Table. ESM P-Onset Sensitivity
+### Supplementary Table. ESM P-Onset Sensitivity and Waveform-Onset Spot Audit
 
-Theoretical P-onset sensitivity for Vp 5.5, 6.0, and 6.5 km/s in the retained ESM compact feature table.
+Theoretical P-onset sensitivity for Vp 5.5, 6.0, and 6.5 km/s in the retained ESM compact feature table, plus a waveform-envelope onset-proxy spot audit.
