@@ -68,6 +68,23 @@ Key values to report:
 - K-NET PGA held-station reduction: 11.3% at 1 s, 23.3% at 5 s and 49.9% at 10 s.
 - InstanceGM PGV held-station reduction: 40.1% at 1 s, 45.4% at 5 s and 52.6% at 10 s.
 
+## Supplementary Note 4a. Feature-group ablation
+
+Purpose: separate the contributions of early P-window features, source-path metadata, distance and site information.
+
+Current evidence files:
+
+- `outputs/feature_group_ablation_summary.md`
+- `outputs/feature_group_ablation_table.csv`
+- `outputs/figures/ground_motion_audit/feature_group_ablation.png`
+
+Key values to report:
+
+- In InstanceGM/K-NET held-station tests, P-only information improves over a median baseline at every tested window, with median reductions rising from 29.6% at 1 s to 43.7% at 10 s.
+- Adding P-window features to metadata improves over metadata-only at every tested window, with median reductions from 20.2% at 1 s to 31.6% at 10 s.
+- In ESM held-station tests, distance gives a large additional gain over P-only features at short windows, while site metadata gives a smaller split- and window-dependent increment.
+- In AQ2009GM, metadata plus P-window features reduce held-station error by 38.0% at 2 s and 63.8% at 5 s.
+
 ## Supplementary Note 5. Support, bootstrap and tail audits
 
 Purpose: separate robust information gain from distribution artifacts and high-tail failure modes.
@@ -144,13 +161,14 @@ Key values to report:
 
 - Supplementary Fig. 1: dataset-task matrix and target availability.
 - Supplementary Fig. 2: held-station 1/2/3/5/10 window scan.
-- Supplementary Fig. 3: source-path support audit.
-- Supplementary Fig. 4: paired bootstrap confidence intervals.
-- Supplementary Fig. 5: strong-tail MAE and factor-of-two underprediction audit.
-- Supplementary Fig. 6: classical reference comparison.
-- Supplementary Fig. 7: uncertainty transfer boundary.
-- Supplementary Fig. 8: target-domain calibration sample-size audit.
-- Supplementary Fig. 9: ESM and AQ2009GM supporting transfer evidence.
+- Supplementary Fig. 3: feature-group ablation.
+- Supplementary Fig. 4: source-path support audit.
+- Supplementary Fig. 5: paired bootstrap confidence intervals.
+- Supplementary Fig. 6: strong-tail MAE and factor-of-two underprediction audit.
+- Supplementary Fig. 7: classical reference comparison.
+- Supplementary Fig. 8: uncertainty transfer boundary.
+- Supplementary Fig. 9: target-domain calibration sample-size audit.
+- Supplementary Fig. 10: ESM and AQ2009GM supporting transfer evidence.
 
 ## Supplementary Tables
 
@@ -158,11 +176,12 @@ Key values to report:
 - Supplementary Table 2: feature definitions.
 - Supplementary Table 3: split definitions and overlap checks.
 - Supplementary Table 4: held-station window-scan metrics.
-- Supplementary Table 5: bootstrap confidence intervals.
-- Supplementary Table 6: strong-tail audit metrics.
-- Supplementary Table 7: conformal coverage metrics.
-- Supplementary Table 8: target-domain calibration sample-size metrics.
-- Supplementary Table 9: cross-regional transfer ratios.
+- Supplementary Table 5: feature-group ablation metrics.
+- Supplementary Table 6: bootstrap confidence intervals.
+- Supplementary Table 7: strong-tail audit metrics.
+- Supplementary Table 8: conformal coverage metrics.
+- Supplementary Table 9: target-domain calibration sample-size metrics.
+- Supplementary Table 10: cross-regional transfer ratios.
 
 ## Source data plan
 

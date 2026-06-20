@@ -24,6 +24,7 @@ Public strong-motion archives can be organized into a reproducible benchmark for
 | Held-event | done | rules out ordinary event leakage |
 | Balanced held-station | done | station-transfer evidence across 50 held-out stations per strong-motion dataset |
 | Held-station 1/2/3/5/10 scan | done | direct information-gain curve for the first 5 seconds and the 10 s reference |
+| Feature-group ablation | done | separates P-only, metadata, distance, site, and combined feature contributions across InstanceGM/K-NET, ESM, and AQ2009GM |
 | Matched held-station gain audit | done | source-path support matching shows positive early-waveform gains are not only a station-test distribution artifact |
 | Held-station bootstrap CI audit | done | paired bootstrap shows balanced held-station gains are stable to test-record resampling |
 | Held-station strong-tail audit | done | top 10% and top 5% target rows show tail MAE gains while preserving factor-2 underprediction as a boundary |
@@ -129,10 +130,14 @@ Extended 1/2/3/5/10 scan:
 
 - `outputs/held_station_window_scan_summary.md`
 - `outputs/figures/ground_motion_audit/held_station_window_scan.png`
+- `outputs/feature_group_ablation_summary.md`
+- `outputs/figures/ground_motion_audit/feature_group_ablation.png`
 
 Message:
 
 The held-station scan gives the direct 1-5 s information-gain curve. K-NET PGA rises from 11.3% at 1 s to 23.3% at 5 s, then 49.9% at 10 s. InstanceGM PGV is already strong at 1 s and increases from 40.1% to 45.4% at 5 s.
+
+The feature-group ablation separates information sources. In InstanceGM/K-NET held-station tests, P-only features improve over a median baseline at every tested window, and metadata plus P-window features improve over metadata-only at every tested window. ESM shows that distance adds a large short-window gain over P-only features, while site metadata has a smaller and split-dependent effect. AQ2009GM confirms metadata plus P-window gains under event, station, and time splits.
 
 ### Figure 3. Generalization under held-out splits
 
