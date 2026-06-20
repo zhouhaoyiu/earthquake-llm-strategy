@@ -54,6 +54,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: method script exists: work/scripts/audit_nc_figure_style.py
 - PASS: method script exists: work/scripts/build_figure5_source_data.py
 - PASS: method script exists: work/scripts/build_nc_source_data_workbook.mjs
+- PASS: method script exists: work/scripts/build_nc_manuscript_pdf.py
 - PASS: NC reviewer risk matrix exists
 - PASS: reviewer risk matrix covers: 10 s window
 - PASS: reviewer risk matrix covers: group leakage
@@ -405,6 +406,9 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/nc_evidence_packet_zh.md references held-station strong-tail audit
 - PASS: outputs/nc_evidence_packet_zh.md references extended waveform case audit
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 7 core boundary synthesis
+- PASS: minimum package describes Figure 7 coverage gaps and interval width
+- PASS: supplement describes coverage-gap and interval-width metrics
+- PASS: Chinese evidence packet uses Figure 7 coverage-gap columns
 - PASS: article draft contains bounded claim: Figure 1. Cross-Dataset Waveform-Task Benchmark
 - PASS: article draft contains bounded claim: Figure 6. Phase-Label Transfer Audit
 - PASS: article draft contains bounded claim: Figure 7. Predictability-Boundary Synthesis
@@ -413,6 +417,8 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: article draft contains bounded claim: 52.6% for InstanceGM PGV
 - PASS: article draft contains bounded claim: 49.9% for K-NET PGA
 - PASS: article draft contains bounded claim: 0.925 conformal coverage
+- PASS: article draft contains bounded claim: coverage gaps of 0.432 and 0.602
+- PASS: article draft contains bounded claim: conformal coverage gap with interval width
 - PASS: article draft contains bounded claim: retained feature tables contain 345,226 valid PGA/PGV records
 - PASS: article draft contains bounded claim: ESM provides an external European strong-motion check
 - PASS: article draft contains bounded claim: A Vp sensitivity audit
@@ -423,6 +429,14 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: article draft contains bounded claim: theoretical P-onset estimate
 - PASS: article draft contains bounded claim: 2.53x for PGA and 1.58x for PGV
 - PASS: article draft contains bounded claim: Python 3.12.13
+- PASS: main manuscript reports transfer coverage gaps
+- PASS: main manuscript legend defines Figure 7 coverage-gap axis
+- PASS: outputs/pdf/nc_manuscript_main_v1.pdf exists
+- PASS: outputs/pdf/nc_manuscript_main_v1.pdf includes updated coverage-gap text
+- PASS: outputs/pdf/nc_manuscript_main_v1.pdf includes updated Figure 7 axis text
+- PASS: outputs/pdf/nc_manuscript_nc_official_template_v1.pdf exists
+- PASS: outputs/pdf/nc_manuscript_nc_official_template_v1.pdf includes updated coverage-gap text
+- PASS: outputs/pdf/nc_manuscript_nc_official_template_v1.pdf includes updated Figure 7 axis text
 
 ## Current Acceptance-Probability Status
 

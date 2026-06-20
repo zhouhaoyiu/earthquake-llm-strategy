@@ -60,7 +60,7 @@ These checks keep the interpretation narrow. The early waveform is not replacing
 
 Point prediction gains are only useful if their uncertainty can be trusted. We evaluate 90% prediction intervals using target-domain conformal calibration and source-domain transfer calibration. Target-domain conformal intervals are close to nominal coverage in the main held-station tests: K-NET PGA reaches 0.925 coverage, InstanceGM PGV reaches 0.898, and the other main targets range from 0.820 to 0.876. These values show that reasonable coverage is achievable when calibration data come from the same target domain.
 
-The same conformal procedure fails under direct regional transfer. When intervals calibrated in the source domain are applied to the target domain, coverage drops strongly. In the 2 s and 5 s transfer tests, source-domain conformal coverage is 0.468 and 0.298. A target-offset calibration restores coverage near the intended 0.90 level. The boundary is clear: source-region residuals do not provide reliable target-region uncertainty without target-region calibration.
+The same conformal procedure fails under direct regional transfer. When intervals calibrated in the source domain are applied to the target domain, coverage drops strongly. In the 2 s and 5 s transfer tests, source-domain conformal coverage is 0.468 and 0.298, giving coverage gaps of 0.432 and 0.602 relative to nominal 0.90. Target-offset calibration restores coverage near the intended level with median interval width 2.177 log10 units. The boundary is clear: source-region residuals do not provide reliable target-region uncertainty without target-region calibration.
 
 The transfer error curves show the same effect. In zero-shot Japan-to-Europe transfer, median error ratios increase from 2.25 at 1 s to 4.27 at 10 s. Target-offset calibration reduces the ratios but does not remove the penalty, with ratios from 1.40 at 1 s to 2.46 at 10 s. On the ESM external set, the best 10 s target-offset transfer still leaves error ratios of 2.53 for PGA and 1.58 for PGV. More early waveform information improves in-domain prediction, yet it can also amplify learned regional differences when moved without calibration.
 
@@ -166,7 +166,7 @@ The authors declare no competing interests. [Confirm before submission.]
 
 **Figure 6 | Cross-regional transfer error boundary.** Japan-to-Europe and Japan-to-Australia transfer ratios across P-window lengths. Separate zero-shot and target-offset calibrated results. The figure should show that transfer penalties increase without target calibration.
 
-**Figure 7 | Uncertainty transfer boundary.** Conformal interval coverage for target-domain, source-domain and target-offset calibration at 2 s and 5 s. The nominal 90% line should be visible and labels should avoid overlap.
+**Figure 7 | Predictability-boundary synthesis.** Within-domain information gain, cross-region transfer penalty, conformal coverage gap with interval width, and strong-motion tail underprediction. The uncertainty panel reports `0.90 - observed coverage`, so direct source-domain under-coverage appears as a positive gap.
 
 **Figure 8 | External dataset support.** Summary of ESM and AQ2009GM supporting tests, including processed sample counts, station/event coverage and external held-station gains. This figure should clearly label AQ2009GM as current processed-feature evidence if the full stream is not complete.
 

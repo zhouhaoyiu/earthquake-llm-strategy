@@ -119,7 +119,7 @@ Current evidence files:
 
 ## Supplementary Note 7. Uncertainty calibration
 
-Purpose: provide full conformal and transfer-coverage metrics.
+Purpose: provide conformal coverage, coverage-gap, and interval-width metrics.
 
 Current evidence files:
 
@@ -134,8 +134,8 @@ Key values to report:
 - K-NET PGA target-domain conformal coverage: 0.925.
 - InstanceGM PGV target-domain conformal coverage: 0.898.
 - Other main target-domain coverages: 0.820-0.876.
-- Source-domain conformal transfer coverage: 0.468 at 2 s and 0.298 at 5 s in the current transfer boundary test.
-- Target-domain offset conformal calibration recovers median coverage near 0.90 at 2 s and 5 s.
+- Source-domain conformal transfer coverage: 0.468 at 2 s and 0.298 at 5 s, equivalent to 0.432 and 0.602 coverage gaps to nominal 0.90.
+- Target-domain offset conformal calibration recovers median coverage near 0.90 at 2 s and 5 s, with median interval width 2.177 log10 units.
 - In the calibration-size audit, 50 target-domain calibration records meet the tested IQR stability criterion, and 100 records place both windows close to 0.90 median coverage.
 
 ## Supplementary Note 8. Cross-regional transfer

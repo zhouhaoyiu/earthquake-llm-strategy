@@ -400,15 +400,15 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
 已生成一张压缩主图：`outputs/figures/nc_core_predictability_boundary.png`。对应表为 `outputs/nc_core_predictability_boundary_table.csv`，摘要为 `outputs/nc_core_predictability_boundary_summary.md`。
 
-| Window | 主 held-station 增益 | AQ station 增益 | ESM station 增益 | zero-shot transfer | offset transfer | source conformal coverage | top5 漏报率 |
-|---:|---:|---:|---:|---:|---:|---:|---:|
-| 1s | 20.2% | 32.4% | 45.9% | 2.25x | 1.40x | NA | NA |
-| 2s | 21.2% | 38.0% | 35.5% | 2.65x | 1.55x | 0.468 | 0.520 |
-| 3s | 22.9% | 47.2% | 49.6% | 2.98x | 1.67x | NA | NA |
-| 5s | 24.8% | 63.8% | 47.4% | 3.38x | 1.85x | 0.298 | 0.320 |
-| 10s | 31.6% | 77.5% | 66.2% | 4.27x | 2.46x | NA | NA |
+| Window | 主 held-station 增益 | AQ station 增益 | ESM station 增益 | zero-shot transfer | offset transfer | source coverage gap | offset gap | offset width | top5 漏报率 |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 1s | 20.2% | 32.4% | 45.9% | 2.25x | 1.40x | NA | NA | NA | NA |
+| 2s | 21.2% | 38.0% | 35.5% | 2.65x | 1.55x | 0.432 | -0.005 | 2.177 | 0.520 |
+| 3s | 22.9% | 47.2% | 49.6% | 2.98x | 1.67x | NA | NA | NA | NA |
+| 5s | 24.8% | 63.8% | 47.4% | 3.38x | 1.85x | 0.602 | -0.003 | 2.177 | 0.320 |
+| 10s | 31.6% | 77.5% | 66.2% | 4.27x | 2.46x | NA | NA | NA | NA |
 
-解释：这张图把论文主线压成四个面板：早窗信息增益、跨区域迁移退化、不确定性迁移失配、强震动尾部漏报。它不是新实验，而是从已验证输出自动汇总，适合作为“边界测量”主图。
+解释：这张图把论文主线压成四个面板：早窗信息增益、跨区域迁移退化、不确定性覆盖缺口和区间宽度、强震动尾部漏报。它从已验证输出自动汇总，适合作为“边界测量”主图。
 
 ### 7g. Methods、理论边界、GMM 边界和图风格补丁
 

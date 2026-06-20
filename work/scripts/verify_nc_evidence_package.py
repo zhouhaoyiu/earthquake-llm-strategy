@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from pathlib import Path
 from xml.etree import ElementTree as ET
 from zipfile import ZipFile
@@ -63,6 +64,7 @@ METHOD_SCRIPTS = [
     "work/scripts/audit_nc_figure_style.py",
     "work/scripts/build_figure5_source_data.py",
     "work/scripts/build_nc_source_data_workbook.mjs",
+    "work/scripts/build_nc_manuscript_pdf.py",
 ]
 SOURCE_DATA_SHEETS = {
     "README",
@@ -108,6 +110,10 @@ def file_contains_casefold(path: Path, needle: str) -> bool:
     else:
         data = path.read_bytes()
     return needle.lower().encode() in data.lower()
+
+
+def pdf_text(path: Path) -> str:
+    return subprocess.check_output(["pdftotext", str(path), "-"], text=True)
 
 
 def main() -> None:
@@ -651,6 +657,12 @@ def main() -> None:
         check("held_station_tail_audit" in text, f"{doc} references held-station strong-tail audit", rows)
         check("extended_waveform_case_audit" in text, f"{doc} references extended waveform case audit", rows)
         check("nc_core_predictability_boundary" in text, f"{doc} references Figure 7 core boundary synthesis", rows)
+    minimum_text = Path("outputs/nc_minimum_submission_package.md").read_text()
+    supplement_text = Path("outputs/nc_supplementary_information_v1.md").read_text()
+    zh_text = Path("outputs/nc_evidence_packet_zh.md").read_text()
+    check("coverage gaps" in minimum_text and "wider intervals" in minimum_text, "minimum package describes Figure 7 coverage gaps and interval width", rows)
+    check("coverage-gap" in supplement_text and "2.177 log10 units" in supplement_text, "supplement describes coverage-gap and interval-width metrics", rows)
+    check("source coverage gap" in zh_text and "offset width" in zh_text, "Chinese evidence packet uses Figure 7 coverage-gap columns", rows)
     article = Path("outputs/nc_article_draft_v1.md").read_text()
     for phrase in [
         "Figure 1. Cross-Dataset Waveform-Task Benchmark",
@@ -661,6 +673,8 @@ def main() -> None:
         "52.6% for InstanceGM PGV",
         "49.9% for K-NET PGA",
         "0.925 conformal coverage",
+        "coverage gaps of 0.432 and 0.602",
+        "conformal coverage gap with interval width",
         "retained feature tables contain 345,226 valid PGA/PGV records",
         "ESM provides an external European strong-motion check",
         "A Vp sensitivity audit",
@@ -673,6 +687,17 @@ def main() -> None:
         "Python 3.12.13",
     ]:
         check(phrase in article, f"article draft contains bounded claim: {phrase}", rows)
+    manuscript = Path("outputs/nc_manuscript_main_v1.md").read_text()
+    check("coverage gaps of 0.432 and 0.602" in manuscript, "main manuscript reports transfer coverage gaps", rows)
+    check("0.90 - observed coverage" in manuscript, "main manuscript legend defines Figure 7 coverage-gap axis", rows)
+    for pdf in [
+        Path("outputs/pdf/nc_manuscript_main_v1.pdf"),
+        Path("outputs/pdf/nc_manuscript_nc_official_template_v1.pdf"),
+    ]:
+        check(pdf.exists() and pdf.stat().st_size > 40_000, f"{pdf} exists", rows)
+        text = pdf_text(pdf)
+        check("coverage gaps of 0.432 and 0.602" in text, f"{pdf} includes updated coverage-gap text", rows)
+        check("0.90 - observed coverage" in text, f"{pdf} includes updated Figure 7 axis text", rows)
 
     rows.extend(
         [

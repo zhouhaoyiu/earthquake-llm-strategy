@@ -235,7 +235,7 @@ Use:
 
 Message:
 
-This figure is the main boundary map. It shows that within-domain early-window gains are positive, cross-region transfer penalties increase from 1 s to 10 s, source-domain conformal intervals under-cover target domains at 2 s and 5 s, and strong-motion tail underprediction remains visible after 5 s.
+This figure is the main boundary map. It shows positive within-domain early-window gains, increasing cross-region transfer penalties from 1 s to 10 s, large source-domain coverage gaps at 2 s and 5 s, near-zero target-offset coverage gaps with wider intervals, and persistent strong-motion tail underprediction.
 
 ### Supplementary Figure. PNWAccelerometers peak-amplitude robustness
 

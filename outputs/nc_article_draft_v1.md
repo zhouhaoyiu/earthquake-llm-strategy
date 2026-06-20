@@ -52,7 +52,7 @@ Bias-corrected OpenQuake BooreEtAl2014 gives a classical reference under limited
 
 K-NET Japanese GMM screening evaluates Kanno2006, Zhao2006, and SiMidorikawa1999 variants. The best screened candidate is Kanno2006Shallow, with MAE 0.242 on the balanced held-station split. The metadata plus early-waveform model reaches MAE 0.111. This is a screening comparison. A fully specified regional GMPE/GMM comparison needs curated rupture distance, site terms, and tectonic or focal-mechanism metadata.
 
-Split-conformal intervals show target-dependent calibration under station shift. At nominal 90% coverage, K-NET PGA reaches 0.925 and InstanceGM PGV reaches 0.898. Other InstanceGM targets under-cover, with coverage from 0.820 to 0.876. Source-domain conformal intervals under-cover target domains in cross-region transfer, with median 90% coverage of 0.468 at 2 s and 0.298 at 5 s. Target-offset conformal calibration restores coverage to about 0.90 with wider intervals.
+Split-conformal intervals show target-dependent calibration under station shift. At nominal 90% coverage, K-NET PGA reaches 0.925 and InstanceGM PGV reaches 0.898. Other InstanceGM targets under-cover, with coverage from 0.820 to 0.876. Source-domain conformal intervals under-cover target domains in cross-region transfer, with median 90% coverage of 0.468 at 2 s and 0.298 at 5 s. These values give coverage gaps of 0.432 and 0.602 relative to nominal 0.90. Target-offset conformal calibration restores coverage to about 0.90 with median interval width 2.177 log10 units.
 
 ### Residual and Supplementary Audits Locate Failure Modes
 
@@ -122,7 +122,7 @@ Cross-dataset P and S picking errors, q95 tails, and missing-pick rates from pre
 
 ### Figure 7. Predictability-Boundary Synthesis
 
-Four-axis summary of within-domain information gain, cross-region transfer penalty, conformal coverage loss, and strong-motion tail underprediction.
+Four-panel synthesis of within-domain information gain, cross-region transfer penalty, conformal coverage gap with interval width, and strong-motion tail underprediction.
 
 ### Extended Data Figure. Waveform Case Audit
 
