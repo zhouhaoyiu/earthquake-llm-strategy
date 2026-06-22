@@ -1,47 +1,45 @@
 # Cover letter draft for Nature Communications
 
-[Date]
+21 June 2026
 
 Dear Editors,
 
-We are pleased to submit the manuscript entitled "Cross regional limits on predicting strong shaking from early P waves" for consideration as an Article in Nature Communications.
+We submit the manuscript entitled "A public-data boundary for forecasting strong shaking from early P waves" for consideration as an Article in Nature Communications.
 
 Earthquake early warning depends on a short interval between the first P-wave observation and the arrival of damaging shaking. This manuscript asks a direct question: how much of later strong shaking is predictable from the first seconds after the P arrival, and where does that predictability break down across stations and regions?
 
-We organize public strong-motion archives into an event-station benchmark and evaluate 1, 2, 3, 5 and 10 s P-wave windows for predicting peak ground acceleration, peak ground velocity and spectral acceleration. The main evidence comes from held-station tests on InstanceGM and K-NET, supported by bootstrap, source-path support, strong-tail, uncertainty and cross-regional transfer audits. The results show that early P-wave features add measurable information beyond source-path metadata, while regional transfer and interval calibration expose a clear uncertainty boundary.
+We organize public strong-motion archives into an event-station benchmark and evaluate 1, 2, 3, 5 and 10 s P-wave windows for predicting peak ground acceleration, peak ground velocity and spectral acceleration. The main evidence comes from held-station tests on InstanceGM and K-NET, supported by AQ2009GM full-manifest streaming validation, European Strong-Motion checks, paired bootstrap, source-path support, strong-tail, uncertainty and cross-regional transfer audits. Early P-wave features add measurable information beyond source-path metadata, while regional transfer and interval calibration expose a clear uncertainty boundary.
 
-The work should be of interest to the broad Nature Communications readership because it links earthquake physics, strong-motion engineering and machine-learning uncertainty into a reproducible benchmark. The central contribution is not a more complex predictor. It is a measured boundary for when early P-wave information can support strong-shaking forecasts and when local calibration remains necessary.
+The contribution is a measured boundary, not a larger predictor. The benchmark shows where early P-wave information improves strong-motion forecasts, where large residuals concentrate, and where target-region calibration remains necessary. This should interest readers working on earthquake physics, strong-motion engineering, hazard modelling and uncertainty-aware machine learning.
 
-The manuscript uses public data sources and derived feature tables. Code, derived tables and source data underlying the figures will be made available to editors and reviewers at submission, with public release on acceptance according to the data-provider terms.
+The manuscript uses public data sources and derived feature tables. Code, derived tables and source data underlying the figures will be made available to editors and reviewers at submission, with public release on acceptance according to the data-provider terms. Raw waveform redistribution will follow the original provider licences.
 
 Corresponding author:
 
-[Name]
+Qiang Ma
 
-[Affiliation]
+Institute of Engineering Mechanics, China Earthquake Administration
 
-[Email]
+maqiang@iem.ac.cn
 
-[ORCID]
+0000-0002-9768-5223
 
 Suggested reviewers:
 
-1. [Name, affiliation, email, expertise]
-2. [Name, affiliation, email, expertise]
-3. [Name, affiliation, email, expertise]
+To be selected manually before submission.
 
 Non-preferred reviewers:
 
-[Name and reason, if any]
+None declared.
 
 Prior discussions with Nature Communications editors:
 
-[None / details]
+None.
 
 Competing interests:
 
-The authors declare no competing interests. [Confirm before submission.]
+The authors declare no competing interests.
 
 Sincerely,
 
-[Corresponding author name]
+Qiang Ma

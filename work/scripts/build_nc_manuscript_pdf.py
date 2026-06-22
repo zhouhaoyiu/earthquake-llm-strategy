@@ -27,15 +27,13 @@ PDFS = [
 ]
 OFFICIAL_PDF = Path("outputs/pdf/nc_manuscript_nc_official_format_v1.pdf")
 OFFICIAL_ABSTRACT = (
-    "Earthquake early warning needs reliable estimates of damaging ground motion before the strongest shaking arrives. "
-    "The first seconds of primary waves carry source and path information, but the cross-regional limit of that information "
-    "remains unclear in public strong-motion data. We build an event-station benchmark from public strong-motion records and "
-    "test whether 1 to 10 seconds of early primary-wave motion improve later peak and spectral ground-motion prediction under "
-    "held-event, held-station and regional-transfer splits. Early-waveform features reduce held-station errors for Japanese "
-    "and global strong-motion targets, with positive bootstrap intervals and persistent gains in the strongest-motion tail. "
-    "Direct regional transfer remains penalized, and prediction intervals calibrated in a source region under-cover target "
-    "regions. Here, we show that early primary waves add reproducible strong-motion information inside calibrated domains "
-    "while defining measurable transfer and uncertainty boundaries across regions."
+    "Earthquake early warning depends on the first seconds of the P wave. "
+    "Those seconds can reveal source, path and site response, but the cross-regional limit for forecasting damaging ground motion is unclear. "
+    "We build a public event-station benchmark for PGA, PGV and spectral acceleration using 1, 2, 3, 5 and 10 s windows after P arrival. "
+    "Across 2,460,425 manifest records, early-waveform features reduce held-station error relative to source-path baselines, including 35.5% for InstanceGM PGA, 52.6% for InstanceGM PGV and 49.9% for K-NET PGA at 10 s. "
+    "Independent AQ2009GM, CWA and ESM checks keep this pattern, and gains remain positive in bootstrap, source-path support and strongest-motion subsets. "
+    "Regional transfer exposes the boundary: source-region conformal intervals under-cover target regions, and target-domain calibration restores coverage with wide intervals. "
+    "The result is a measurable curve linking P-window length, tail risk and regional uncertainty."
 )
 OFFICIAL_SECTIONS = [
     ("Introduction", "Introduction"),
@@ -58,7 +56,8 @@ FIGURE_IMAGES = {
     "Figure 5 |": Path("outputs/figures/figure5_residual_waveform_audit.png"),
     "Figure 6 |": Path("outputs/figures/figure6_phase_label_audit.png"),
     "Figure 7 |": Path("outputs/figures/nc_core_predictability_boundary.png"),
-    "Extended Data Figure |": Path("outputs/figures/extended_waveform_case_audit.png"),
+    "Extended Data Figure 1 |": Path("outputs/figures/extended_waveform_case_audit.png"),
+    "Extended Data Figure 2 |": Path("outputs/figures/ground_motion_audit/residual_mechanism_audit.png"),
 }
 
 
@@ -78,9 +77,13 @@ def clean_inline(text: str) -> str:
     out = []
     for part in parts:
         if part.startswith("**") and part.endswith("**"):
-            out.append(f"<b>{html.escape(part[2:-2])}</b>")
+            escaped = html.escape(part[2:-2])
+            escaped = re.sub(r"\^([0-9,*]+)", r"<super>\1</super>", escaped)
+            out.append(f"<b>{escaped}</b>")
         else:
-            out.append(html.escape(part))
+            escaped = html.escape(part)
+            escaped = re.sub(r"\^([0-9,*]+)", r"<super>\1</super>", escaped)
+            out.append(escaped)
     return "".join(out)
 
 
@@ -106,12 +109,17 @@ def build_story(text: str, styles: dict[str, ParagraphStyle]) -> list:
     for raw in text.splitlines():
         line = raw.strip()
         if not line:
+            if story and isinstance(story[-1], PageBreak):
+                continue
             story.append(Spacer(1, 0.07 * inch))
             continue
         if line.startswith("# "):
             story.append(Paragraph(clean_inline(line[2:]), styles["Title"]))
             story.append(Spacer(1, 0.15 * inch))
         elif line.startswith("## "):
+            if line == "## Figures":
+                story.append(PageBreak())
+                continue
             story.append(Spacer(1, 0.10 * inch))
             story.append(Paragraph(clean_inline(line[3:]), styles["Heading2"]))
         elif line.startswith("### "):
@@ -124,7 +132,7 @@ def build_story(text: str, styles: dict[str, ParagraphStyle]) -> list:
         else:
             figure_path = figure_image_for(line)
             if figure_path:
-                if story:
+                if story and not isinstance(story[-1], PageBreak):
                     story.append(PageBreak())
                 story.append(Paragraph(clean_inline(line), styles["Body"]))
                 story.append(Spacer(1, 0.08 * inch))
@@ -221,18 +229,23 @@ def sections(markdown: str) -> dict[str, str]:
     return out
 
 
+def front_matter(markdown: str) -> str:
+    abstract = re.search(r"^## Abstract$", markdown, re.MULTILINE)
+    if not abstract:
+        return ""
+    lines = markdown[: abstract.start()].splitlines()[1:]
+    return "\n".join(line for line in lines).strip()
+
+
 def build_official_markdown() -> str:
     source = SOURCE.read_text()
     title = source.splitlines()[0].lstrip("# ").strip()
+    front = front_matter(source)
     sec = sections(source)
     parts = [
         f"# {title}",
         "",
-        "[Author names]",
-        "",
-        "[Affiliations]",
-        "",
-        "Correspondence: [corresponding author email]",
+        front,
         "",
         "## Abstract",
         "",
@@ -266,13 +279,14 @@ def main() -> None:
         build_pdf(path)
         text = subprocess.check_output(["pdftotext", str(path), "-"], text=True)
         assert "coverage gaps of 0.432 and 0.602" in text
-        assert "0.90 - observed coverage" in text
+        assert "under-cover target regions" in text
         info = subprocess.check_output(["pdfinfo", str(path)], text=True)
         pages = re.search(r"^Pages:\s+(\d+)$", info, re.MULTILINE)
         print(f"wrote {path} ({pages.group(1) if pages else '?'} pages)")
     build_official_pdf()
     text = subprocess.check_output(["pdftotext", str(OFFICIAL_PDF), "-"], text=True)
-    assert "Here, we show that early primary waves" in text
+    assert "A public-data boundary for forecasting strong shaking" in text
+    assert "measurable curve" in text
     assert text.index("References") < text.index("Acknowledgements")
     assert "Figure 8 |" not in text
     assert "Figure legends" not in text

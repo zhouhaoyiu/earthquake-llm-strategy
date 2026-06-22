@@ -4,7 +4,7 @@ Article draft v2. Evidence status: generated from verified local outputs through
 
 ## Abstract
 
-Earthquake early warning depends on how much final shaking can be inferred from the first seconds after P arrival. We build a public early-window benchmark from STEAD, InstanceGM, Iquique, and a locally converted K-NET archive, then add AQ2009GM full-manifest chunk-streaming and local ESM compact features as independent ground-motion checks. The benchmark contains 2,460,425 manifest records and 22,119 complete K-NET ZNE records with verified acceleration units. Metadata plus early waveform features improve PGA, PGV, and spectral-acceleration prediction across random, held-event, and balanced held-station splits. In balanced held-station evaluation, log10 MAE decreases by 35.5% for InstanceGM PGA, 52.6% for InstanceGM PGV, and 49.9% for K-NET PGA. Bias-corrected OpenQuake and Japanese GMM screening references support the same pattern within stated metadata limits. Split-conformal intervals show target-dependent calibration under station shift. Four-domain early-waveform-only transfer gives a direct predictability boundary: median zero-shot MAE penalties rise from 2.25x at 1 s to 4.27x at 10 s relative to target-domain training. These results define a reproducible benchmark for early strong-motion predictability and its uncertainty boundaries.
+Earthquake early warning depends on how much final shaking can be inferred from the first seconds after P arrival. We build a public early-window benchmark from STEAD, InstanceGM, Iquique, and a locally converted K-NET archive, then add AQ2009GM full-manifest chunk-streaming, CWA official PGA/PGV records, and local ESM compact features as independent ground-motion checks. The benchmark contains 2,460,425 manifest records and 22,119 complete K-NET ZNE records with verified acceleration units. Metadata plus early waveform features improve PGA, PGV, and spectral-acceleration prediction across random, held-event, and balanced held-station splits. In balanced held-station evaluation, log10 MAE decreases by 35.5% for InstanceGM PGA, 52.6% for InstanceGM PGV, and 49.9% for K-NET PGA. Bias-corrected OpenQuake, Japanese GMM, and ESM regional GMM screening references support the same pattern within stated metadata limits. Split-conformal intervals show target-dependent calibration under station shift. Four-domain early-waveform-only transfer gives a direct predictability boundary: median zero-shot MAE penalties rise from 2.25x at 1 s to 4.27x at 10 s relative to target-domain training. These results define a reproducible benchmark for early strong-motion predictability and its uncertainty boundaries.
 
 ## Introduction
 
@@ -12,7 +12,7 @@ The first seconds after the P arrival carry observations of the developing groun
 
 Public seismic archives are now large enough to test early strong-motion predictability across regions and sensor systems. The problem is provenance. Archives differ in waveform units, component conventions, phase-label definitions, source and station metadata, and ground-motion targets. A useful benchmark must keep those differences visible while separating metadata effects, split leakage, waveform information, and uncertainty calibration.
 
-We assemble a unified benchmark from STEAD, InstanceGM, Iquique, and K-NET. STEAD and Iquique provide phase-label transfer settings. InstanceGM provides broad ground-motion targets. K-NET provides an independent strong-motion archive after local BSON conversion. We align records to catalog P arrivals, extract early-window features, compare metadata-only and waveform-informed models, test held-event and held-station generalization, compare against classical references, and measure cross-region transfer across InstanceGM, K-NET, AQ2009GM, and ESM.
+We assemble a unified benchmark from STEAD, InstanceGM, Iquique, and K-NET. STEAD and Iquique provide phase-label transfer settings. InstanceGM provides broad ground-motion targets. K-NET provides an independent strong-motion archive after local BSON conversion. AQ2009GM and CWA add official PGA/PGV metadata-target checks, and ESM adds an external European strong-motion domain. We align records to catalog P arrivals, extract early-window features, compare metadata-only and waveform-informed models, test held-event and held-station generalization, compare against classical references, and measure cross-region transfer across InstanceGM, K-NET, AQ2009GM, and ESM.
 
 ## Results
 
@@ -52,6 +52,8 @@ Bias-corrected OpenQuake BooreEtAl2014 gives a classical reference under limited
 
 K-NET Japanese GMM screening evaluates Kanno2006, Zhao2006, and SiMidorikawa1999 variants. The best screened candidate is Kanno2006Shallow, with MAE 0.242 on the balanced held-station split. The metadata plus early-waveform model reaches MAE 0.111. This is a screening comparison. A fully specified regional GMPE/GMM comparison needs curated rupture distance, site terms, and tectonic or focal-mechanism metadata.
 
+ESM regional GMM screening evaluates BooreEtAl2014, AkkarEtAl2014, BindiEtAl2014, and CauzziEtAl2015 candidates for PGA and PGV on held-station rows. Records without source magnitude are excluded and all predictions receive train-set median bias correction. The early P+distance+site model reduces MAE relative to the best screened regional GMM by 34.8%/23.8% at 2 s, 48.3%/30.2% at 5 s, and 43.1%/30.4% at 10 s for PGA/PGV.
+
 Split-conformal intervals show target-dependent calibration under station shift. At nominal 90% coverage, K-NET PGA reaches 0.925 and InstanceGM PGV reaches 0.898. Other InstanceGM targets under-cover, with coverage from 0.820 to 0.876. Source-domain conformal intervals under-cover target domains in cross-region transfer, with median 90% coverage of 0.468 at 2 s and 0.298 at 5 s. These values give coverage gaps of 0.432 and 0.602 relative to nominal 0.90. Target-offset conformal calibration restores coverage to about 0.90 with median interval width 2.177 log10 units.
 
 ### Residual and Supplementary Audits Locate Failure Modes
@@ -59,6 +61,8 @@ Split-conformal intervals show target-dependent calibration under station shift.
 Residual diagnostics show remaining structure after early waveform information is added. K-NET PGA retains a distance-dependent residual tail. InstanceGM contains repeated high-residual records across PGA, PGV, and spectral-acceleration targets. The main Figure 5 now presents residual diagnostics; waveform case panels are kept as an extended audit figure.
 
 AQ2009GM provides a separate SeisBench ground-motion check with official metadata targets. Full-manifest chunk streaming covers all 254 local AQ2009GM chunks, extracts compact early-window velocity features and PGA/PGV targets, and deletes raw HDF5 and metadata files after feature extraction. The retained feature tables contain 345,226 valid PGA/PGV records from 60,310 events and 66 stations. At 5 s, metadata plus early velocity features reduce held-station MAE by 55.8% for PGA and 71.9% for PGV.
+
+CWA provides an official Taiwan PGA/PGV supplement. The 2011 public benchmark layer retains 5,882 eligible records from 775 events and 705 stations after feature extraction. Held-station reductions are 14.6% for PGA and 17.7% for PGV at 2 s, and 29.9% for PGA and 40.3% for PGV at 5 s. Raw CWA HDF5, metadata, tar archive, and failed-download cache were deleted after the derived table was written. This is a one-year CWA supplement, not full 2011-2021 validation.
 
 ESM provides an external European strong-motion check from local ASCII zip packages. The compact feature table covers 951 zip files, 134,250 early-window rows, 861 events, and 1,568 stations. Local ESM headers do not provide explicit P arrivals, so windows use a theoretical P-onset estimate. A Vp sensitivity audit shows that changing Vp from 6.0 to 5.5 km/s delays onset by a median 2.517 s, and changing it to 6.5 km/s advances onset by a median 2.130 s. Retained-window validity remains above 0.994 across tested windows. A 200-record waveform-envelope onset-proxy spot audit detects 86 high-confidence cases with median absolute offset 1.223 s and q95 3.960 s relative to the theoretical 6 km/s onset. ESM supports external-domain validation and transfer analysis; catalog-P lead-time claims stay tied to datasets with explicit P labels.
 
@@ -72,7 +76,7 @@ This pattern defines the central boundary. Early waveform information is useful 
 
 ## Discussion
 
-This study turns early strong-motion predictability into a public measurement problem. Across InstanceGM and K-NET, early waveform features add information beyond source-path-site metadata. The gain survives held-event and balanced held-station tests with zero group overlap. AQ2009GM and ESM add independent checks with explicit provenance limits.
+This study turns early strong-motion predictability into a public measurement problem. Across InstanceGM and K-NET, early waveform features add information beyond source-path-site metadata. The gain survives held-event and balanced held-station tests with zero group overlap. AQ2009GM, CWA, and ESM add independent checks with explicit provenance limits.
 
 The strongest main evidence is K-NET PGA and InstanceGM PGV. K-NET PGA has a 49.9% robust held-out gain and 0.925 conformal coverage at nominal 90%. InstanceGM PGV has a 52.6% held-station gain and near-nominal coverage at 0.898. Spectral-acceleration targets improve with lower robust gains and stronger under-coverage.
 
@@ -82,17 +86,17 @@ Operational early-warning deployment requires latency, telemetry, prospective va
 
 ## Methods Summary
 
-The benchmark uses SeisBench archives for STEAD, InstanceGM, Iquique, AQ2009GM, and PNWAccelerometers, a local K-NET BSON conversion, and local ESM ASCII zip packages. K-NET conversion maps UD/NS/EW to Z/N/E and uses NIED unit provenance for gal-to-cm/s2 acceleration. ESM compact features are generated without modifying the original zip files.
+The benchmark uses SeisBench archives for STEAD, InstanceGM, Iquique, AQ2009GM, CWA, and PNWAccelerometers, a local K-NET BSON conversion, and local ESM ASCII zip packages. K-NET conversion maps UD/NS/EW to Z/N/E and uses NIED unit provenance for gal-to-cm/s2 acceleration. CWA raw files are deleted after derived feature extraction. ESM compact features are generated without modifying the original zip files.
 
 Early-window features are extracted at 1, 2, 3, 5, and 10 s where retained feature tables are available. Features include component absolute maximum, RMS, standard deviation, 95th-percentile absolute amplitude, horizontal maximum, vector maximum, and vector RMS. Full-record peak features are excluded from predictive feature sets.
 
-Targets are modeled in log10 units. The main regressor is `HistGradientBoostingRegressor`. Random splits use seed 19. Held-event and held-station strong-motion splits use seed 31, with a +101 offset for station holdout. AQ2009GM uses seed 43. ESM uses seed 71. PNWAccelerometers uses seed 83. Phase-audit sampling uses seed 7. Conformal intervals use seed 17. Boundary sensitivity repeats seeds 17, 59, and 101.
+Targets are modeled in log10 units. The main regressor is `HistGradientBoostingRegressor`. Random splits use seed 19. Held-event and held-station strong-motion splits use seed 31, with a +101 offset for station holdout. AQ2009GM uses seed 43. CWA uses seed 47. ESM uses seed 71. PNWAccelerometers uses seed 83. Phase-audit sampling uses seed 7. Conformal intervals use seed 17. Boundary sensitivity repeats seeds 17, 59, and 101.
 
 Analyses were run in the local `zhy` environment with Python 3.12.13, numpy 2.4.4, pandas 3.0.2, scikit-learn 1.8.0, matplotlib 3.10.8, Pillow 12.2.0, h5py 3.16.0, SeisBench 0.11.5, and OpenQuake engine 3.25.1.
 
 ## Data and Code Availability
 
-Raw waveform redistribution should follow each source archive license. SeisBench caches are read from `/Users/yojironoda/.seisbench/datasets`. K-NET is read from `/Users/yojironoda/Downloads/s7rk7bj3zn-1/knet_1530`. ESM zip packages are read from `/Users/yojironoda/Documents/New project 2/outputs/strong_motion_downloads/欧洲_ESM`. The reproducible release should include scripts, split files, figure tables, verifier output, and derived feature tables where licensing allows.
+Raw waveform redistribution should follow each source archive license. SeisBench caches are read from `/Users/yojironoda/.seisbench/datasets`. K-NET is read from `/Users/yojironoda/Downloads/s7rk7bj3zn-1/knet_1530`. ESM zip packages are read from `/Users/yojironoda/Documents/New project 2/outputs/strong_motion_downloads/欧洲_ESM`. CWA raw HDF5, metadata, tar archive, and failed-download cache are not retained after feature extraction. The reproducible release should include scripts, split files, figure tables, verifier output, and derived feature tables where licensing allows.
 
 ## Figure Legends
 

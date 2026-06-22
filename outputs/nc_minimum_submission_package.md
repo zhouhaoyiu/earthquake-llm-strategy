@@ -28,7 +28,7 @@ Public strong-motion archives can be organized into a reproducible benchmark for
 | Matched held-station gain audit | done | source-path support matching shows positive early-waveform gains are not only a station-test distribution artifact |
 | Held-station bootstrap CI audit | done | paired bootstrap shows balanced held-station gains are stable to test-record resampling |
 | Held-station strong-tail audit | done | top 10% and top 5% target rows show tail MAE gains while preserving factor-2 underprediction as a boundary |
-| Classical references | done | attenuation-shaped ridge, BooreEtAl2014, and K-NET Japanese GMM screening |
+| Classical references | done | attenuation-shaped ridge, BooreEtAl2014, K-NET Japanese GMM screening, and ESM regional GMM screening |
 | Regional GMM readiness | done | field audit explains why full regional GMM claim is not yet supported |
 | Uncertainty | done | station-shift calibration is target-dependent |
 | Target calibration sample size | done | 50-100 target-domain calibration rows recover near-nominal cross-region conformal coverage in the 2 s and 5 s audit |
@@ -37,16 +37,18 @@ Public strong-motion archives can be organized into a reproducible benchmark for
 | Core boundary synthesis | done | one four-panel map linking information gain, transfer penalty, uncertainty failure, and tail underprediction |
 | Residual panels | done | main-text residual diagnostics plus extended waveform audit cases |
 | AQ2009GM full-manifest streaming | supplementary done | SeisBench aftershock ground-motion check over all 254 local manifest chunks with velocity waveforms and official PGA/PGV metadata targets |
-| ESM European strong-motion supplement | done | local ASCII package check with PGA/PGV targets, held-out baseline, four-domain transfer, and theoretical P-onset boundary |
+| CWA official PGA/PGV one-year layer | supplementary done | Taiwan 2011 CWA official metadata-target check with 5,882 records; raw CWA files deleted after feature extraction |
+| ESM European strong-motion supplement | done | local ASCII package check with PGA/PGV targets, held-out baseline, regional GMM screening, four-domain transfer, and theoretical P-onset boundary |
 | ESM P-onset sensitivity | done | Vp 5.5/6.0/6.5 km/s timing audit; retained-window validity above 0.994 across 1/2/3/5/10 s |
 | ESM waveform P-onset spot audit | done | 200-record waveform-envelope onset-proxy check; high-confidence median absolute offset 1.223 s and q95 3.960 s |
+| ESM regional GMM screening | done | Boore/Akkar/Bindi/Cauzzi candidates on ESM held-station PGA/PGV rows; early model improves by 23.8-48.3% |
 | PNWAccelerometers robustness | supplementary done | SeisBench accelerometer peak-amplitude check; local HDF5 lacks waveform units |
 | Formal Methods draft | done | submission Methods skeleton for data, features, targets, splits, models, references, uncertainty, and residual audits |
 | Uncertainty boundary note | done | exchangeability condition and source-domain conformal transfer boundary |
-| Regional GMM boundary note | done | separates classical-reference screening from a fully specified regional GMPE/GMM comparison |
+| Regional GMM boundary note | done | separates ESM/K-NET screening references from a fully specified regional GMPE/GMM comparison |
 | Main figure redraw and style audit | done | Figures 1-6 redrawn from verified tables or audit panels; Figure 5 split into main residual diagnostics and extended waveform cases; Figure 1-7 dimension audit and contact sheet updated |
 | Source Data workbook | v1 done | `outputs/source_data/nc_source_data_v1.xlsx` and `outputs/source_data/nc_source_data_manifest.md`; Figure 5 residual source table included |
-| Next experiment decision | done | ESM waveform-level onset-proxy spot audit complete; defer full regional GMPE/GMM until required metadata are available |
+| Next experiment decision | done | ESM waveform-level onset-proxy and regional GMM screening complete; defer full regional GMPE/GMM until required metadata are available |
 | Reviewer risk matrix | done | likely reviewer objections mapped to evidence and claim limits |
 | Evidence verification | done | generated figures, key tables, split overlap, and document references pass verifier |
 
@@ -183,10 +185,13 @@ Use:
 - `outputs/figures/ground_motion_audit/nc_calibration_size_audit.png`
 - `outputs/knet_japan_gmm_reference_summary.md`
 - `work/ground_motion_balanced_station_10s/knet_japan_gmm_reference.csv`
+- `outputs/esm_regional_gmm_screening_summary.md`
+- `outputs/esm_regional_gmm_screening.csv`
+- `outputs/figures/ground_motion_audit/esm_regional_gmm_screening.png`
 
 Message:
 
-The early waveform model improves over a low-parameter attenuation-shaped reference and a bias-corrected BooreEtAl2014 reference. On K-NET PGA, it also improves over the best screened Japanese GMM candidate under stated distance, Vs30, and tectonic-class approximations. Uncertainty calibration remains target-dependent under station shift.
+The early waveform model improves over a low-parameter attenuation-shaped reference and a bias-corrected BooreEtAl2014 reference. On K-NET PGA, it also improves over the best screened Japanese GMM candidate under stated distance, Vs30, and tectonic-class approximations. On ESM held-station PGA/PGV rows, it improves over the best screened Boore/Akkar/Bindi/Cauzzi regional GMM by 23.8-48.3% across 2 s and 5 s and by 30.4-43.1% at 10 s. Uncertainty calibration remains target-dependent under station shift.
 
 The calibration-size audit keeps the source model fixed and varies only target-domain calibration rows for target-offset conformal intervals. Source-domain conformal coverage remains poor at 2 s and 5 s, while target-domain offset calibration recovers near-nominal coverage. In the tested grid, 50 target-domain calibration rows satisfy the IQR stability criterion and 100 rows put both windows near 0.90 median coverage.
 
@@ -249,6 +254,8 @@ Message:
 
 Early-window amplitude information also appears in a separate SeisBench accelerometer dataset under held-event and held-station splits. This is a robustness check only; the local PNWAccelerometers HDF5 lacks waveform units, so the target is full-record peak horizontal waveform amplitude.
 
+Current 2/5/10 s held-station reductions are 39.2%, 68.0% and 90.5% relative to the metadata baseline. The 10 s value should be interpreted cautiously because the full-record peak can already fall inside the early window.
+
 ### Supplementary Figure. AQ2009GM full-manifest chunk-streaming early velocity check
 
 Use:
@@ -263,6 +270,19 @@ Use:
 Message:
 
 AQ2009GM provides a separate SeisBench ground-motion check with official metadata PGA/PGV targets. The validation streams all 254 chunks listed in the local SeisBench AQ2009GM manifest, extracts compact early-window features, and deletes raw chunk files. Metadata plus early velocity features reduce MAE under held-event, held-station, and held-time splits. The retained evidence is full-manifest chunk-streaming feature-table validation after raw chunk deletion.
+
+### Supplementary Figure. CWA official PGA/PGV one-year early waveform check
+
+Use:
+
+- `outputs/figures/ground_motion_audit/cwa_official_pga_pgv_panel.png`
+- `outputs/cwa_official_pga_pgv_summary.md`
+- `work/cwa_official_layer/cwa_official_comparison.csv`
+- `work/cwa_official_layer/cwa_official_features.csv.gz`
+
+Message:
+
+CWA adds a Taiwan official metadata-target check for PGA and PGV. The retained 2011 feature table contains 5,882 eligible records from 775 events and 705 stations. Held-station reductions are 14.6%/17.7% at 2 s and 29.9%/40.3% at 5 s for PGA/PGV. This is a one-year supplement, not full 2011-2021 CWA validation, and the raw HDF5, metadata, tar archive and failed-download cache were deleted after feature extraction.
 
 ### Supplementary Figure. Cross-region early-waveform transfer boundary
 
@@ -285,11 +305,13 @@ Early-waveform-only transfer across InstanceGM, K-NET, AQ2009GM, and ESM is cons
 
 ### Data
 
-We assembled a unified waveform manifest from STEAD, InstanceGM, Iquique, and a locally converted K-NET strong-motion archive. Supplementary strong-motion checks use AQ2009GM through SeisBench chunk streaming and ESM through local ASCII zip packages. The manifest standardizes record identifiers, dataset splits, waveform paths, component order, P and S picks, source metadata, station metadata, and available ground-motion targets.
+We assembled a unified waveform manifest from STEAD, InstanceGM, Iquique, and a locally converted K-NET strong-motion archive. Supplementary strong-motion checks use AQ2009GM through SeisBench chunk streaming, CWA through the public benchmark archive, and ESM through local ASCII zip packages. The manifest standardizes record identifiers, dataset splits, waveform paths, component order, P and S picks, source metadata, station metadata, and available ground-motion targets.
 
 K-NET records were converted from BSON to HDF5 with explicit component mapping `UD -> Z`, `NS -> N`, and `EW -> E`. The converted K-NET archive contains 22,119 records with complete ZNE components. K-NET `pga_gal` was mapped to `pga_cmps2` because NIED documentation states that K-NET acceleration waveforms are stored in gal and `1 gal = 1 cm/s2`.
 
 AQ2009GM was used as a supplementary SeisBench ground-motion check through full-manifest chunk streaming. The script reads the local SeisBench chunk manifest, downloads one chunk at a time, extracts early-window velocity features, metadata fields `trace_pga_cmps2` and `trace_pgv_cmps`, event identifiers, and station identifiers, and deletes raw chunk files. The check used 345,226 valid PGA/PGV records from 60,310 events and 66 stations, with held-event, held-station, and held-time splits.
+
+CWA was used as a one-year official PGA/PGV metadata-target supplement. The 2011 metadata and HDF5 waveform file were extracted from the public benchmark archive, compact 2 s and 5 s post-P waveform features were computed, and the raw HDF5, metadata, tar archive and failed-download cache were deleted after derived features were written. The retained table contains 5,882 valid PGA/PGV records, 775 events and 705 stations.
 
 ESM was used as a local European strong-motion supplement. The feature builder reads local ASCII zip packages, pairs acceleration and velocity streams by event and station, computes full-record PGA/PGV targets, and keeps the original zip files unchanged. ESM windows use a theoretical P-onset estimate because the local headers do not provide explicit P arrivals.
 
@@ -331,6 +353,8 @@ Targets were modeled in log10 units. InstanceGM targets included PGA, PGV, SA03,
 
 AQ2009GM supplementary targets were modeled in log10 units from `trace_pga_cmps2` and `trace_pgv_cmps`. Early-window features were computed from streamed velocity waveforms, so this supplement tests whether early velocity carries information about PGA/PGV targets across the local AQ2009GM chunk manifest.
 
+CWA supplementary targets were modeled in log10 units from `trace_pga_cmps2` and `trace_pgv_cmps`. Early-window features were computed from the 2011 public benchmark waveform file. This layer tests official PGA/PGV metadata targets in Taiwan while keeping the claim limited to a one-year supplement.
+
 ESM supplementary targets were modeled in log10 units from full-record PGA and PGV computed from local ACC.AP and VEL.AP streams.
 
 ### Baselines
@@ -353,6 +377,8 @@ We used OpenQuake hazardlib BooreEtAl2014 as a classical reference for PGA, PGV,
 
 For K-NET PGA, we also screened OpenQuake Japanese or Japan-derived GMMs: Kanno2006, Zhao2006, and SiMidorikawa1999 variants. These predictions used `source_distance_km` as an Rrup proxy, missing Vs30 defaults, and train-set median bias correction. The best candidate was Kanno2006Shallow with MAE 0.242, while the metadata plus early-waveform held-station model had MAE 0.111.
 
+For ESM PGA and PGV, we screened BooreEtAl2014, AkkarEtAl2014, BindiEtAl2014, and CauzziEtAl2015 variants on the same held-station rows used by the early-window comparator. Rows without source magnitude were excluded. Rjb models used `source_distance_km`, Rhyp/Rrup models used `path_hyp_distance_km`, missing Vs30 was set to 760 m/s, and predictions received train-set median bias correction. The early P+distance+site model reduced MAE relative to the best screened regional GMM by 34.8%/23.8% at 2 s, 48.3%/30.2% at 5 s, and 43.1%/30.4% at 10 s for PGA/PGV.
+
 Regional GMM readiness audit shows the current boundary. InstanceGM joins back to metadata for all balanced held-station records and has complete Vs30 in this split, but focal-mechanism strings appear in only 141/5,000 train records and 36/1,000 test records. K-NET has complete source-distance values in the current split, but no Vs30, rupture-distance, or focal-mechanism fields in the approved local package.
 
 ### Uncertainty
@@ -363,6 +389,8 @@ We computed split-conformal intervals on the balanced held-station features. Tra
 
 Residuals were defined as predicted log10 target minus observed log10 target. We evaluated mean residuals, median signed residuals, q90 and q95 absolute residuals, binned residual structure by source and station variables, and high-residual waveform examples.
 
+The residual-mechanism class table maps the dominant shifted covariate in the largest 5% of residuals to path-attenuation, strong-motion-tail, or early-amplitude boundaries. This table is descriptive and should be used as structured residual evidence, not causal attribution.
+
 ## Claims
 
 Use:
@@ -372,9 +400,11 @@ Use:
 3. The effect is visible across InstanceGM targets and K-NET PGA.
 4. A bias-corrected OpenQuake reference is weaker than metadata plus early waveform features.
 5. AQ2009GM full-manifest chunk-streaming gives a supplementary SeisBench check with official PGA/PGV metadata targets.
-6. Cross-region early-waveform transfer quantifies regional and measurement-system predictability penalties.
-7. Residual and conformal analyses expose remaining station-shift and target-dependent uncertainty.
-8. ESM provides an external European strong-motion domain with a quantified theoretical P-onset boundary.
+6. CWA provides a one-year Taiwan supplement with official PGA/PGV metadata targets.
+7. Cross-region early-waveform transfer quantifies regional and measurement-system predictability penalties.
+8. Residual and conformal analyses expose remaining station-shift and target-dependent uncertainty.
+9. ESM provides an external European strong-motion domain with a quantified theoretical P-onset boundary.
+10. ESM regional GMM screening supports the added-information claim against stronger classical references.
 
 Avoid:
 
@@ -384,7 +414,8 @@ Avoid:
 4. Physical causality from residual correlations.
 5. Full superiority over a fully specified regional GMPE/GMM.
 6. Local retention of the full raw AQ2009GM archive.
-7. Catalog/manual P-pick claims for ESM.
+7. Full 2011-2021 CWA validation from the one-year supplement.
+8. Catalog/manual P-pick claims for ESM.
 
 ## Remaining Work
 

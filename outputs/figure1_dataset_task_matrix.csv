@@ -1,7 +1,8 @@
-dataset,records,phase,detect,gm,pga,pgv,sa,supplement
-STEAD,1265657,True,True,False,False,False,False,False
-InstanceGM,1159249,True,True,True,True,True,True,False
-Iquique,13400,True,True,False,False,False,False,False
-K-NET,22119,True,True,True,True,False,False,False
-"PNW Accel.
-(supp.)",5981,True,False,False,False,False,False,True
+dataset,records,role,pwin,pga,pgv,sa,transfer,phase
+InstanceGM,1159223,main global GM,1,1,1,1,0,1
+K-NET,22119,main Japan GM,1,1,0,0,0,1
+AQ2009GM,345226,external GM check,1,1,1,0,1,0
+CWA,5882,external GM check,1,1,1,0,0,0
+ESM,134250,Europe transfer,1,1,1,0,1,0
+STEAD,1265657,phase audit,1,0,0,0,0,1
+Iquique,13400,phase audit,1,0,0,0,0,1

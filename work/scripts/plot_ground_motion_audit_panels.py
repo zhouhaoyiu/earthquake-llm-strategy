@@ -155,12 +155,12 @@ def plot_instancegm_panel(pred: pd.DataFrame, manifest_rows: dict[str, dict[str,
         bound = max(0.8, float(np.nanmax(np.abs(vals))) * 1.18)
         ax_b.set_ylim(-bound, bound)
         for x, val in enumerate(vals):
-            if abs(val) < 0.12:
+            if abs(val) < 0.25:
                 continue
             ax_b.text(x, val * 0.50, f"{val:+.2f}", ha="center", va="center", fontsize=6.4, color="white")
     fig.suptitle("InstanceGM repeated high-residual audit cases, 10 s post-P window", x=0.01, ha="left", fontsize=12)
     fig.tight_layout(rect=[0, 0, 1, 0.98])
-    fig.savefig(out_path)
+    fig.savefig(out_path, bbox_inches="tight", pad_inches=0.08)
     plt.close(fig)
 
 
@@ -192,7 +192,7 @@ def plot_knet_panel(pred: pd.DataFrame, manifest_rows: dict[str, dict[str, str]]
             ax_b.text(x, val, f"{val:.2f}", ha="center", va="bottom", fontsize=7)
     fig.suptitle("K-NET PGA worst residual audit cases, 10 s post-P window", x=0.01, ha="left", fontsize=12)
     fig.tight_layout(rect=[0, 0, 1, 0.98])
-    fig.savefig(out_path)
+    fig.savefig(out_path, bbox_inches="tight", pad_inches=0.08)
     plt.close(fig)
 
 
@@ -259,7 +259,7 @@ def plot_residual_diagnostic(metrics_delta: pd.DataFrame, bins: pd.DataFrame, ou
 
     fig.suptitle("Ground-motion residual diagnostics, 10 s HGB combined baseline", x=0.01, ha="left", fontsize=12)
     fig.tight_layout(rect=[0, 0, 1, 0.96])
-    fig.savefig(out_path)
+    fig.savefig(out_path, bbox_inches="tight", pad_inches=0.08)
     plt.close(fig)
 
 

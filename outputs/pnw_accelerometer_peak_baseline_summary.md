@@ -1,32 +1,31 @@
 # PNW Accelerometer Peak-Amplitude Baseline
 
-日期：2026-06-18
+Date: 2026-06-21
 
-## 定位
+## Position
 
-这是补充 SeisBench 加速度数据检查，不作为正式 PGA 主证据。PNWAccelerometers 本地 HDF5 只记录了 `component_order=ENZ`，没有记录 waveform unit；因此目标写成全记录水平峰值波形振幅，而不是出版级 PGA。
+This is an independent SeisBench accelerometer robustness check. It is not publication-ready PGA evidence because the local PNWAccelerometers HDF5 file records `component_order=ENZ` but no waveform unit field. The target is full-record peak horizontal waveform amplitude.
 
-## 数据和拆分
+## Data and splits
 
-- 可用 earthquake 加速度记录：5,981 条
-- held-event：训练 4,000，测试 1,000，测试事件 552，overlap=0
-- held-station：训练 4,000，测试 1,000，测试台站 40，overlap=0
+- Usable earthquake accelerometer records: 5,981
+- Held-event: train 4,000, test 1,000, test events 552, overlap=0
+- Held-station: train 4,000, test 1,000, test stations 40, overlap=0
 
-## 结果
+## Results
 
-| holdout | window | metadata MAE | combined MAE | 降幅 | combined R2 |
+| holdout | window | metadata MAE | combined MAE | reduction | combined R2 |
 |---|---:|---:|---:|---:|---:|
-| event | 1s | 0.239 | 0.201 | 16.2% | 0.844 |
-| event | 3s | 0.239 | 0.163 | 32.0% | 0.888 |
+| event | 2s | 0.239 | 0.191 | 20.1% | 0.857 |
+| event | 5s | 0.239 | 0.097 | 59.4% | 0.936 |
 | event | 10s | 0.239 | 0.036 | 85.0% | 0.978 |
-| station | 1s | 0.361 | 0.240 | 33.4% | 0.750 |
-| station | 3s | 0.361 | 0.196 | 45.7% | 0.820 |
+| station | 2s | 0.361 | 0.220 | 39.2% | 0.788 |
+| station | 5s | 0.361 | 0.115 | 68.0% | 0.909 |
 | station | 10s | 0.361 | 0.034 | 90.5% | 0.980 |
 
-## 解释
+## Interpretation
 
-1 秒和 3 秒结果支持早窗振幅信息在另一个 SeisBench 加速度数据集上也成立。10 秒结果非常强，但更可能说明小震/近震的峰值经常落在 P 后 10 秒内，因此不能单独作为 lead-time 证据。
+The 2 s and 5 s results support the same qualitative pattern in a separate accelerometer dataset: early waveform amplitude adds information beyond source-path metadata under both held-event and held-station splits. The 10 s results are very strong and should be interpreted cautiously because the full-record peak can already fall inside that window.
 
-这组结果可以放在补充材料或 robustness 小节，用来说明早窗信息不是 InstanceGM/K-NET 特有现象。它不能替代有明确物理单位和官方目标定义的强震动数据。
-
-图：`outputs/figures/ground_motion_audit/pnw_accelerometer_peak_panel.png`
+Figure: `outputs/figures/ground_motion_audit/pnw_accelerometer_peak_panel.png`
+Reduction table: `outputs/pnw_accelerometer_peak_reduction_summary.csv`

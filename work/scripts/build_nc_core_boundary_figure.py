@@ -214,7 +214,7 @@ def draw_figure(table: pd.DataFrame) -> None:
     ax3.plot(x - 0.04, sub["zero_shot_coverage_gap_to_90"], marker="s", color="#b65f2a", label="source gap", zorder=3)
     ax3.plot(x + 0.04, sub["target_offset_coverage_gap_to_90"], marker="^", color="#2f7d4f", label="target-offset gap", zorder=3)
     ax3.set_ylim(-0.08, 0.68)
-    ax3.set_xlim(1.75, 5.55)
+    ax3.set_xlim(1.75, 5.75)
     style_axis(ax3, "C. Uncertainty transfer boundary", "P-window length (s)", "0.90 - observed coverage")
     ax3b = ax3.twinx()
     ax3b.plot(x, sub["zero_shot_interval_width"], marker="s", color="#b65f2a", linestyle=":", label="source width")
@@ -222,11 +222,9 @@ def draw_figure(table: pd.DataFrame) -> None:
     ax3b.set_ylabel("interval width (log10)")
     ax3b.set_ylim(0.5, 2.6)
     ax3b.spines["top"].set_visible(False)
-    end = sub[sub["window_s"].eq(5)].iloc[0]
-    ax3.text(5.08, end["zero_shot_coverage_gap_to_90"], "source gap", color="#b65f2a", va="center", fontsize=7)
-    ax3.text(5.08, end["target_offset_coverage_gap_to_90"], "offset gap", color="#2f7d4f", va="center", fontsize=7)
-    ax3b.text(5.08, end["zero_shot_interval_width"], "source width", color="#b65f2a", va="center", fontsize=7)
-    ax3b.text(5.08, end["target_offset_interval_width"], "offset width", color="#2f7d4f", va="center", fontsize=7)
+    h1, l1 = ax3.get_legend_handles_labels()
+    h2, l2 = ax3b.get_legend_handles_labels()
+    ax3.legend(h1 + h2, l1 + l2, frameon=False, fontsize=7, ncol=2, loc="upper left")
 
     ax4.plot(sub["window_s"], sub["target_domain_top5_under_factor2_rate"], marker="o", label="target-domain")
     ax4.plot(sub["window_s"], sub["zero_shot_top5_under_factor2_rate"], marker="s", label="zero-shot")
@@ -236,7 +234,7 @@ def draw_figure(table: pd.DataFrame) -> None:
 
     for ax in axes.ravel():
         ax.set_xticks(WINDOWS if ax in [ax1, ax2] else [2, 5])
-    fig.tight_layout(h_pad=2.8, w_pad=2.0)
+    fig.tight_layout(h_pad=2.8, w_pad=2.7)
     fig.savefig(OUT_FIG, dpi=240)
     plt.close(fig)
 

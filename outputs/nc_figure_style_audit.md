@@ -4,11 +4,11 @@ This audit records the current main-figure files after the redraw pass and provi
 
 | Figure | Width | Height | Aspect | File |
 |---|---:|---:|---:|---|
-| Figure 1 | 2880 | 1224 | 2.353 | `outputs/figures/figure1_dataset_task_matrix.png` |
+| Figure 1 | 2064 | 2448 | 0.843 | `outputs/figures/figure1_dataset_task_matrix.png` |
 | Figure 2 | 2880 | 1776 | 1.622 | `outputs/figures/figure2_early_window_performance.png` |
 | Figure 3 | 2880 | 1776 | 1.622 | `outputs/figures/figure3_heldout_generalization.png` |
 | Figure 4 | 2880 | 1776 | 1.622 | `outputs/figures/figure4_classical_uncertainty.png` |
-| Figure 5 | 2272 | 1512 | 1.503 | `outputs/figures/figure5_residual_waveform_audit.png` |
+| Figure 5 | 2272 | 1585 | 1.433 | `outputs/figures/figure5_residual_waveform_audit.png` |
 | Figure 6 | 2880 | 1728 | 1.667 | `outputs/figures/figure6_phase_label_audit.png` |
 | Figure 7 | 2688 | 1944 | 1.383 | `outputs/figures/nc_core_predictability_boundary.png` |
 

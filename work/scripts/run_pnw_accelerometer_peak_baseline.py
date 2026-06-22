@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 import h5py
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.dummy import DummyRegressor
@@ -253,6 +254,86 @@ def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
         writer.writerows(rows)
 
 
+def write_summary_and_plot(results: list[dict[str, Any]], split_infos: list[dict[str, Any]], out_dir: Path) -> None:
+    df = pd.DataFrame(results)
+    rows = []
+    for (holdout, seconds), group in df.groupby(["holdout", "early_seconds"]):
+        meta = group[group["feature_set"].eq("metadata_only")].iloc[0]
+        combo = group[group["feature_set"].eq("metadata_plus_early_waveform")].iloc[0]
+        rows.append(
+            {
+                "holdout": holdout,
+                "window_s": float(seconds),
+                "window": f"{seconds:g}s",
+                "metadata_mae": float(meta["mae_log10_target"]),
+                "combined_mae": float(combo["mae_log10_target"]),
+                "reduction_pct": 100
+                * (float(meta["mae_log10_target"]) - float(combo["mae_log10_target"]))
+                / float(meta["mae_log10_target"]),
+                "combined_r2": float(combo["r2_log10_target"]),
+            }
+        )
+    summary = pd.DataFrame(rows).sort_values(["holdout", "window_s"])
+    out_csv = out_dir / "pnw_accelerometer_peak_reduction_summary.csv"
+    summary.to_csv(out_csv, index=False)
+    public_csv = Path("outputs/pnw_accelerometer_peak_reduction_summary.csv")
+    public_csv.parent.mkdir(parents=True, exist_ok=True)
+    summary.to_csv(public_csv, index=False)
+
+    fig, ax = plt.subplots(figsize=(6.5, 3.6))
+    for holdout, group in summary.groupby("holdout"):
+        x = group["window_s"].to_numpy(float)
+        ax.plot(x, group["reduction_pct"], marker="o", linewidth=2, label=f"held-{holdout}")
+    ax.set_xlabel("P-window length (s)")
+    ax.set_ylabel("MAE reduction vs metadata (%)")
+    ax.set_title("PNWAccelerometers peak-amplitude robustness")
+    ax.grid(axis="y", alpha=0.25)
+    ax.legend(frameon=False)
+    fig.tight_layout()
+    fig_path = Path("outputs/figures/ground_motion_audit/pnw_accelerometer_peak_panel.png")
+    fig_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(fig_path, dpi=220)
+    plt.close(fig)
+
+    split = {item["holdout"]: item for item in split_infos}
+    lines = [
+        "# PNW Accelerometer Peak-Amplitude Baseline",
+        "",
+        "Date: 2026-06-21",
+        "",
+        "## Position",
+        "",
+        "This is an independent SeisBench accelerometer robustness check. It is not publication-ready PGA evidence because the local PNWAccelerometers HDF5 file records `component_order=ENZ` but no waveform unit field. The target is full-record peak horizontal waveform amplitude.",
+        "",
+        "## Data and splits",
+        "",
+        f"- Usable earthquake accelerometer records: {split_infos[0]['eligible_rows']:,}",
+        f"- Held-event: train {split['event']['train_rows_selected']:,}, test {split['event']['test_rows_selected']:,}, test events {split['event']['test_groups']:,}, overlap={split['event']['group_overlap']}",
+        f"- Held-station: train {split['station']['train_rows_selected']:,}, test {split['station']['test_rows_selected']:,}, test stations {split['station']['test_groups']:,}, overlap={split['station']['group_overlap']}",
+        "",
+        "## Results",
+        "",
+        "| holdout | window | metadata MAE | combined MAE | reduction | combined R2 |",
+        "|---|---:|---:|---:|---:|---:|",
+    ]
+    for row in rows:
+        lines.append(
+            f"| {row['holdout']} | {row['window']} | {row['metadata_mae']:.3f} | {row['combined_mae']:.3f} | {row['reduction_pct']:.1f}% | {row['combined_r2']:.3f} |"
+        )
+    lines.extend(
+        [
+            "",
+            "## Interpretation",
+            "",
+            "The 2 s and 5 s results support the same qualitative pattern in a separate accelerometer dataset: early waveform amplitude adds information beyond source-path metadata under both held-event and held-station splits. The 10 s results are very strong and should be interpreted cautiously because the full-record peak can already fall inside that window.",
+            "",
+            f"Figure: `{fig_path}`",
+            f"Reduction table: `{public_csv}`",
+        ]
+    )
+    Path("outputs/pnw_accelerometer_peak_baseline_summary.md").write_text("\n".join(lines) + "\n")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--metadata", type=Path, default=Path("/Users/yojironoda/.seisbench/datasets/pnwaccelerometers/metadata.csv"))
@@ -305,6 +386,7 @@ def main() -> None:
     split_path = args.out_dir / "pnw_accelerometer_split_info.csv"
     write_csv(results_path, results)
     write_csv(split_path, split_infos)
+    write_summary_and_plot(results, split_infos, args.out_dir)
     summary = {
         "metadata": str(args.metadata),
         "waveforms": str(args.waveforms),

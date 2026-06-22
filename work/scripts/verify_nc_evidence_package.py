@@ -27,6 +27,7 @@ FIGURES = [
 ]
 EXTENDED_FIGURES = [
     "outputs/figures/extended_waveform_case_audit.png",
+    "outputs/figures/ground_motion_audit/residual_mechanism_audit.png",
 ]
 DOCS = [
     "outputs/nc_minimum_submission_package.md",
@@ -50,10 +51,12 @@ METHOD_SCRIPTS = [
     "work/scripts/run_conformal_intervals.py",
     "work/scripts/analyze_ground_motion_residuals.py",
     "work/scripts/stream_aq2009gm_full_validation.py",
+    "work/scripts/run_cwa_official_layer.py",
     "work/scripts/build_esm_compact_features.py",
     "work/scripts/audit_esm_p_onset_sensitivity.py",
     "work/scripts/audit_esm_waveform_p_pick_spotcheck.py",
     "work/scripts/run_esm_compact_baseline.py",
+    "work/scripts/run_esm_regional_gmm_screening.py",
     "work/scripts/run_pnw_accelerometer_peak_baseline.py",
     "work/scripts/build_predictability_boundary_table.py",
     "work/scripts/summarize_held_station_window_scan.py",
@@ -64,6 +67,8 @@ METHOD_SCRIPTS = [
     "work/scripts/redraw_nc_main_figures.py",
     "work/scripts/audit_nc_figure_style.py",
     "work/scripts/build_figure5_source_data.py",
+    "work/scripts/audit_residual_persistence.py",
+    "work/scripts/audit_residual_mechanism.py",
     "work/scripts/build_nc_source_data_workbook.mjs",
     "work/scripts/build_nc_manuscript_pdf.py",
 ]
@@ -145,7 +150,7 @@ def main() -> None:
         "",
         "Date: 2026-06-20",
         "",
-        "This report verifies generated artifacts only. NC 60% remains an empirical target beyond this verifier.",
+        "This report verifies generated artifacts only. Acceptance probability remains an editorial estimate beyond this verifier.",
         "",
         "## Checks",
         "",
@@ -172,6 +177,7 @@ def main() -> None:
     check("Held-station strong-tail audit" in provenance_text, "methods provenance table covers held-station strong-tail audit", rows)
     check("Uncertainty boundary note" in provenance_text, "methods provenance table covers uncertainty boundary note", rows)
     check("Regional GMM boundary note" in provenance_text, "methods provenance table covers regional GMM boundary note", rows)
+    check("CWA official PGA/PGV supplement" in provenance_text, "methods provenance table covers CWA official PGA/PGV supplement", rows)
     check("Main figure redraw and style audit" in provenance_text, "methods provenance table covers main figure redraw and style audit", rows)
     check("Next experiment decision" in provenance_text, "methods provenance table covers next experiment decision", rows)
     for script in METHOD_SCRIPTS:
@@ -191,19 +197,77 @@ def main() -> None:
         "attenuation-shaped",
         "fully specified regional GMM",
         "AQ2009GM supplement",
+        "CWA 2011",
         "PNW target official PGA",
         "Phase alignment",
         "calibrated under station shift",
         "physical causality",
-        "NC 60%",
+        "NC 70-80%",
     ]:
         check(phrase in risk_text, f"reviewer risk matrix covers: {phrase}", rows)
+
+    gate_audit = Path("outputs/nc_70_80_gate_audit.md")
+    check(gate_audit.exists() and gate_audit.stat().st_size > 0, "NC 70-80 gate audit exists", rows)
+    gate_text = gate_audit.read_text()
+    check("Current defensible probability estimate after adding the CWA official PGA/PGV layer: **65-70%**" in gate_text, "NC 70-80 gate audit keeps current probability bounded", rows)
+    check("Do not present **70-80%** as current" in gate_text, "NC 70-80 gate audit blocks overstated probability claims", rows)
 
     pnw_audit = Path("outputs/pnw_unit_provenance_audit.md")
     check(pnw_audit.exists() and pnw_audit.stat().st_size > 0, "PNW unit provenance audit exists", rows)
     with h5py.File("/Users/yojironoda/.seisbench/datasets/pnwaccelerometers/waveforms.hdf5", "r") as h5:
         data_format_keys = set(h5["data_format"].keys())
     check("component_order" in data_format_keys and "unit" not in data_format_keys, "PNWAccelerometers local HDF5 has component_order but no unit field", rows)
+    pnw_summary = Path("outputs/pnw_accelerometer_peak_baseline_summary.md")
+    pnw_reductions_path = Path("outputs/pnw_accelerometer_peak_reduction_summary.csv")
+    pnw_figure = Path("outputs/figures/ground_motion_audit/pnw_accelerometer_peak_panel.png")
+    check(pnw_summary.exists() and pnw_summary.stat().st_size > 0, "PNW 2/5/10 peak-amplitude summary exists", rows)
+    check(pnw_figure.exists() and pnw_figure.stat().st_size > 0, "PNW 2/5/10 peak-amplitude figure exists", rows)
+    pnw_text = pnw_summary.read_text()
+    check("not publication-ready PGA evidence" in pnw_text, "PNW summary keeps target caveat explicit", rows)
+    pnw_reductions = pd.read_csv(pnw_reductions_path)
+    check(set(pnw_reductions["window_s"]) == {2.0, 5.0, 10.0}, "PNW summary covers 2/5/10 s windows", rows)
+    pnw_station = pnw_reductions[pnw_reductions["holdout"].eq("station")]
+    check(pnw_station["reduction_pct"].gt(0).all(), "PNW held-station peak-amplitude reductions are positive", rows)
+    check(float(pnw_station[pnw_station["window_s"].eq(2.0)]["reduction_pct"].iloc[0]) > 30, "PNW 2 s held-station reduction is substantial", rows)
+    cwa_note = Path("outputs/cwa_external_layer_feasibility.md")
+    cwa_summary_path = Path("outputs/cwa_official_pga_pgv_summary.md")
+    cwa_figure = Path("outputs/figures/ground_motion_audit/cwa_official_pga_pgv_panel.png")
+    cwa_comparison_path = Path("work/cwa_official_layer/cwa_official_comparison.csv")
+    cwa_features_path = Path("work/cwa_official_layer/cwa_official_features.csv.gz")
+    cwa_summary_json_path = Path("work/cwa_official_layer/cwa_official_summary.json")
+    cwa_note_text = cwa_note.read_text() if cwa_note.exists() else ""
+    check(
+        ("one-year" in cwa_note_text or "one CWA year" in cwa_note_text) and "official PGA/PGV" in cwa_note_text,
+        "CWA note documents the one-year official PGA/PGV supplement",
+        rows,
+    )
+    check(cwa_summary_path.exists() and cwa_summary_path.stat().st_size > 0, "CWA official PGA/PGV summary exists", rows)
+    check(cwa_figure.exists() and cwa_figure.stat().st_size > 0, "CWA official PGA/PGV figure exists", rows)
+    cwa_im = Image.open(cwa_figure)
+    check(cwa_im.width >= 1000 and cwa_im.height >= 600, f"CWA official PGA/PGV figure opens ({cwa_im.width}x{cwa_im.height})", rows)
+    check(cwa_comparison_path.exists() and cwa_comparison_path.stat().st_size > 0, "CWA official PGA/PGV comparison table exists", rows)
+    check(cwa_features_path.exists() and cwa_features_path.stat().st_size > 0, "CWA official PGA/PGV feature table exists", rows)
+    cwa_summary = json.load(open(cwa_summary_json_path))
+    check(cwa_summary["eligible_records"] == 5882, "CWA official layer has 5,882 eligible PGA/PGV records", rows)
+    check(cwa_summary["events"] == 775 and cwa_summary["stations"] == 705, "CWA official layer event/station counts match summary", rows)
+    check(cwa_summary["station_test_rows"] == 883 and cwa_summary["station_test_groups"] == 120, "CWA held-station split has 883 test rows and 120 held stations", rows)
+    check(cwa_summary["cleanup_raw"] is True, "CWA run records cleanup_raw=true", rows)
+    cwa_comparison = pd.read_csv(cwa_comparison_path)
+    check(len(cwa_comparison) == 8, "CWA official comparison has 8 rows across holdouts, targets, and windows", rows)
+    check(set(cwa_comparison["holdout"]) == {"event", "station"}, "CWA official comparison includes held-event and held-station splits", rows)
+    check(set(cwa_comparison["target"]) == {"pga", "pgv"}, "CWA official comparison includes PGA and PGV", rows)
+    check(set(cwa_comparison["early_seconds"]) == {2.0, 5.0}, "CWA official comparison covers 2/5 s windows", rows)
+    check((cwa_comparison["group_overlap"] == 0).all(), "CWA official held-out group overlap is zero", rows)
+    check((cwa_comparison["mae_reduction_pct"] > 0).all(), "CWA official early-waveform reductions are positive for every row", rows)
+    cwa_station = cwa_comparison[cwa_comparison["holdout"].eq("station")]
+    check(cwa_station["test_rows"].min() >= 800 and cwa_station["test_groups"].min() >= 120, "CWA official station split has enough held-station coverage", rows)
+    for raw_path in [
+        Path("work/cwa_raw/metadata_2011.csv"),
+        Path("work/cwa_raw/waveforms_2011.hdf5"),
+        Path("work/cwa_raw/merge2011_2014.tar.gz"),
+        Path("work/cwa_raw/.cache"),
+    ]:
+        check(not raw_path.exists(), f"CWA raw/cache artifact deleted: {raw_path}", rows)
 
     aq_summary = Path("outputs/aq2009gm_full_stream_validation_summary.md")
     aq_figure = Path("outputs/figures/ground_motion_audit/aq2009gm_full_stream_panel.png")
@@ -310,6 +374,39 @@ def main() -> None:
     median_esm = station_esm[station_esm["feature_set"] == "median"].set_index(["target", "early_seconds"])["mae_log10_target"]
     site_esm = station_esm[station_esm["feature_set"] == "p_waveform_distance_site"].set_index(["target", "early_seconds"])["mae_log10_target"]
     check((site_esm < median_esm).all(), "ESM held-station P+distance+site model improves over median for every target/window", rows)
+
+    esm_gmm_summary = Path("outputs/esm_regional_gmm_screening_summary.md")
+    esm_gmm_table = Path("outputs/esm_regional_gmm_screening.csv")
+    esm_gmm_figure = Path("outputs/figures/ground_motion_audit/esm_regional_gmm_screening.png")
+    check(esm_gmm_summary.exists() and esm_gmm_summary.stat().st_size > 0, "ESM regional GMM screening summary exists", rows)
+    check(esm_gmm_table.exists() and esm_gmm_table.stat().st_size > 0, "ESM regional GMM screening table exists", rows)
+    check(esm_gmm_figure.exists() and esm_gmm_figure.stat().st_size > 0, "ESM regional GMM screening figure exists", rows)
+    esm_gmm_im = Image.open(esm_gmm_figure)
+    check(esm_gmm_im.width >= 1000 and esm_gmm_im.height >= 700, f"ESM regional GMM figure opens ({esm_gmm_im.width}x{esm_gmm_im.height})", rows)
+    esm_gmm = pd.read_csv(esm_gmm_table)
+    check(len(esm_gmm) == 84, "ESM regional GMM screening has 84 rows across windows, holdouts, targets, and references", rows)
+    check(set(esm_gmm["early_seconds"]) == {2.0, 5.0, 10.0}, "ESM regional GMM screening covers 2/5/10 s windows", rows)
+    check(set(esm_gmm["target"]) == {"pga", "pgv"}, "ESM regional GMM screening covers PGA and PGV", rows)
+    check(set(esm_gmm["holdout"]) == {"event", "station"}, "ESM regional GMM screening includes held-event and held-station splits", rows)
+    check((esm_gmm["group_overlap"] == 0).all(), "ESM regional GMM screening group overlap is zero", rows)
+    station_gmm = esm_gmm[esm_gmm["holdout"].eq("station")]
+    early_gmm = (
+        station_gmm[station_gmm["reference"].eq("early_waveform_distance_site_hgb")]
+        .set_index(["target", "early_seconds"])[["mae_log10_target"]]
+        .rename(columns={"mae_log10_target": "early_mae"})
+    )
+    best_gmm = (
+        station_gmm[station_gmm["model_family"].eq("regional_gmm_bias_corrected")]
+        .sort_values("mae_log10_target")
+        .groupby(["target", "early_seconds"], as_index=True)
+        .first()[["mae_log10_target"]]
+        .rename(columns={"mae_log10_target": "best_gmm_mae"})
+    )
+    gmm_joined = best_gmm.join(early_gmm, how="inner")
+    gmm_reduction = 100 * (gmm_joined["best_gmm_mae"] - gmm_joined["early_mae"]) / gmm_joined["best_gmm_mae"]
+    check(len(gmm_joined) == 6, "ESM regional GMM screening aligns six held-station target/window comparisons", rows)
+    check((gmm_joined["early_mae"] < gmm_joined["best_gmm_mae"]).all(), "ESM early model beats best screened regional GMM for every held-station target/window", rows)
+    check(float(gmm_reduction.min()) > 20.0, "ESM early model gives at least 20% MAE reduction over best screened regional GMM", rows)
 
     for fig in FIGURES:
         path = Path(fig)
@@ -604,7 +701,7 @@ def main() -> None:
     check("fully specified regional" in gmm_boundary_note.read_text(), "regional GMM boundary note limits full regional GMM claims", rows)
     check(next_decision.exists() and next_decision.stat().st_size > 0, "NC next experiment decision note exists", rows)
     next_text = next_decision.read_text()
-    check("spot audit is now complete" in next_text, "NC next experiment decision marks ESM waveform onset audit complete", rows)
+    check("spot audit and the ESM regional GMM screening are now complete" in next_text, "NC next experiment decision marks ESM waveform onset and GMM screening complete", rows)
     check("Defer" in next_text and "regional GMPE/GMM" in next_text, "NC next experiment decision defers full regional GMPE/GMM", rows)
     check(figure_style_summary.exists() and figure_style_summary.stat().st_size > 0, "NC figure style audit summary exists", rows)
     check(figure_style_path.exists() and figure_style_path.stat().st_size > 0, "NC figure style audit table exists", rows)
@@ -652,6 +749,42 @@ def main() -> None:
         "Figure 5 residual source table covers all four diagnostic panels",
         rows,
     )
+    persistence = pd.read_csv("outputs/residual_persistence_audit.csv")
+    check(len(persistence) == 6, "residual-persistence audit covers six dataset-target series", rows)
+    knet_persist = persistence[(persistence["dataset"] == "knet") & (persistence["target"] == "pga")].iloc[0]
+    check(abs(knet_persist["persistent_top5_fraction"] - 0.20) < 1e-9, "K-NET PGA residual persistence audit reports 20% persistent 10 s tail", rows)
+    check(abs(knet_persist["high1_resolved_fraction"] - 0.74) < 1e-9, "K-NET PGA residual persistence audit reports 74% 1 s tail resolution", rows)
+    mechanism_path = Path("outputs/residual_mechanism_audit.csv")
+    mechanism_classes_path = Path("outputs/residual_mechanism_classes.csv")
+    mechanism_fig = Path("outputs/figures/ground_motion_audit/residual_mechanism_audit.png")
+    check(mechanism_path.exists() and mechanism_path.stat().st_size > 0, "residual-mechanism audit CSV exists", rows)
+    check(mechanism_classes_path.exists() and mechanism_classes_path.stat().st_size > 0, "residual-mechanism class CSV exists", rows)
+    check(mechanism_fig.exists() and mechanism_fig.stat().st_size > 0, "residual-mechanism audit figure exists", rows)
+    mechanism = pd.read_csv(mechanism_path)
+    mechanism_classes = pd.read_csv(mechanism_classes_path)
+    check(len(mechanism) == 36, "residual-mechanism audit covers six series and six covariates", rows)
+    check(len(mechanism_classes) == 6, "residual-mechanism class table covers six series", rows)
+    check(
+        {"path_attenuation_boundary", "strong_motion_tail_boundary", "early_amplitude_boundary"}.issubset(
+            set(mechanism_classes["mechanism_class"])
+        ),
+        "residual-mechanism classes include path, tail, and early-amplitude boundaries",
+        rows,
+    )
+    check(
+        mechanism_classes["claim_boundary"].str.contains("not causal attribution", regex=False).all(),
+        "residual-mechanism class table keeps causal boundary explicit",
+        rows,
+    )
+    knet_dist = mechanism[(mechanism["series"] == "knet pga") & (mechanism["feature"] == "distance")].iloc[0]
+    check(knet_dist["iqr_scaled_shift"] > 0.75, "K-NET PGA residual mechanism audit identifies distance-shifted residual tail", rows)
+    inst_sa30_target = mechanism[(mechanism["series"] == "instancegm sa30") & (mechanism["feature"] == "target")].iloc[0]
+    check(inst_sa30_target["iqr_scaled_shift"] > 1.0, "InstanceGM SA30 residual mechanism audit identifies target-amplitude shifted residual tail", rows)
+    check(
+        knet_persist["top5_10s_median_distance_km"] - knet_persist["all_median_distance_km"] > 30,
+        "K-NET PGA remaining 10 s residual tail is farther than the full test set",
+        rows,
+    )
     source_workbook = Path("outputs/source_data/nc_source_data_v1.xlsx")
     source_manifest = Path("outputs/source_data/nc_source_data_manifest.md")
     check(source_workbook.exists() and source_workbook.stat().st_size > 100_000, "NC source-data workbook exists", rows)
@@ -673,6 +806,7 @@ def main() -> None:
         for idx in range(1, 7):
             check(f"figure{idx}_" in text, f"{doc} references Figure {idx}", rows)
         check("AQ2009GM" in text, f"{doc} references AQ2009GM supplementary check", rows)
+        check("CWA" in text and "official" in text, f"{doc} references CWA official PGA/PGV supplement", rows)
         check("ESM" in text and "P-onset" in text, f"{doc} references ESM P-onset boundary", rows)
         check("esm_waveform_p_pick_spotcheck" in text, f"{doc} references ESM waveform onset-proxy spot audit", rows)
         check("matched_station_gain_audit" in text, f"{doc} references matched held-station gain audit", rows)
@@ -699,6 +833,7 @@ def main() -> None:
         "coverage gaps of 0.432 and 0.602",
         "conformal coverage gap with interval width",
         "retained feature tables contain 345,226 valid PGA/PGV records",
+        "CWA provides an official Taiwan PGA/PGV supplement",
         "ESM provides an external European strong-motion check",
         "A Vp sensitivity audit",
         "waveform-envelope onset-proxy spot audit",
@@ -712,17 +847,48 @@ def main() -> None:
         check(phrase in article, f"article draft contains bounded claim: {phrase}", rows)
     manuscript = Path("outputs/nc_manuscript_main_v1.md").read_text()
     for phrase in [
-        "Figure 3 | Held-out generalization and split distribution",
-        "Figure 4 | Classical reference and uncertainty",
-        "Figure 5 | Residual diagnostics",
-        "Figure 6 | Phase-label transfer audit",
-        "Extended Data Figure | Waveform case audit",
+        "Figure 1 | Public-data benchmark design",
+        "Figure 2 | Longer P windows add strong-motion information",
+        "Figure 3 | Held-out tests show that the early-waveform gain survives",
+        "Figure 4 | Early waveform observations improve over available classical references",
+        "Figure 5 | Residual structure marks the part of strong shaking",
+        "Figure 6 | P-window alignment is stable enough",
+        "Figure 7 | The predictability boundary is positive in-domain",
+        "Extended Data Figure 1 | Waveform case audit",
+        "Extended Data Figure 2 | Large residuals concentrate",
     ]:
         check(phrase in manuscript, f"main manuscript legend contains: {phrase}", rows)
     check("Figure 8 |" not in manuscript, "main manuscript does not advertise a missing Figure 8", rows)
     check("coverage gaps of 0.432 and 0.602" in manuscript, "main manuscript reports transfer coverage gaps", rows)
-    check("0.90 - observed coverage" in manuscript, "main manuscript legend defines Figure 7 coverage-gap axis", rows)
-    check("Here, we show" in markdown_sections(manuscript)["Introduction"].splitlines()[-1], "main manuscript Introduction final paragraph follows NC article guidance", rows)
+    check("CWA adds an official Taiwan PGA/PGV check" in manuscript, "main manuscript reports CWA official PGA/PGV supplement", rows)
+    check("source-domain conformal intervals under-cover target regions" in manuscript, "main manuscript legend states Figure 7 transfer under-coverage", rows)
+    for phrase in [
+        "Zhou Haoyu",
+        "Qiang Ma",
+        "0009-0003-8817-1209",
+        "0000-0002-9768-5223",
+        "Funding: none.",
+        "The authors declare no competing interests.",
+        "https://doi.org/10.13127/AI/AQUILA2009",
+        "https://doi.org/10.17598/NIED.0004",
+        "https://doi.org/10.5194/essd-13-5509-2021",
+    ]:
+        check(phrase in manuscript, f"main manuscript metadata/references contain: {phrase}", rows)
+    for placeholder in [
+        "[Author names]",
+        "[Affiliations]",
+        "[corresponding author email]",
+        "[To be completed.]",
+        "References must be completed",
+        "[Confirm before submission.]",
+    ]:
+        check(placeholder not in manuscript, f"main manuscript has no placeholder: {placeholder}", rows)
+    check(
+        "The analysis estimates an information boundary for early P-wave prediction"
+        in markdown_sections(manuscript)["Introduction"],
+        "main manuscript Introduction states the information-boundary claim directly",
+        rows,
+    )
     for pdf in [
         Path("outputs/pdf/nc_manuscript_main_v1.pdf"),
         Path("outputs/pdf/nc_manuscript_nc_official_template_v1.pdf"),
@@ -730,7 +896,7 @@ def main() -> None:
         check(pdf.exists() and pdf.stat().st_size > 40_000, f"{pdf} exists", rows)
         text = pdf_text(pdf)
         check("coverage gaps of 0.432 and 0.602" in text, f"{pdf} includes updated coverage-gap text", rows)
-        check("0.90 - observed coverage" in text, f"{pdf} includes updated Figure 7 axis text", rows)
+        check("under-cover target regions" in text, f"{pdf} includes updated Figure 7 transfer-undercoverage text", rows)
 
     official_md = Path("outputs/nc_manuscript_nc_official_format_v1.md")
     official_pdf = Path("outputs/pdf/nc_manuscript_nc_official_format_v1.pdf")
@@ -739,6 +905,17 @@ def main() -> None:
     check(pdf_pages(official_pdf) >= 18, "NC official-format manuscript PDF has text and embedded figure pages", rows)
     official = official_md.read_text()
     official_sec = markdown_sections(official)
+    for phrase in [
+        "Zhou Haoyu",
+        "Qiang Ma",
+        "0009-0003-8817-1209",
+        "0000-0002-9768-5223",
+        "Funding: none.",
+        "The authors declare no competing interests.",
+    ]:
+        check(phrase in official, f"NC official-format manuscript metadata contains: {phrase}", rows)
+    for placeholder in ["[Author names]", "[Affiliations]", "[corresponding author email]", "[To be completed.]"]:
+        check(placeholder not in official, f"NC official-format manuscript has no placeholder: {placeholder}", rows)
     official_order = [
         "Abstract",
         "Introduction",
@@ -759,7 +936,7 @@ def main() -> None:
     check(word_count(title) <= 15, "NC official-format title has 15 words or fewer", rows)
     abstract = official_sec["Abstract"]
     check(word_count(abstract) <= 150, "NC official-format abstract has 150 words or fewer", rows)
-    check(". Here, we show" in abstract or abstract.startswith("Here, we show"), "NC official-format abstract final sentence uses Here, we show", rows)
+    check("measurable curve" in abstract, "NC official-format abstract states the measurable-boundary claim", rows)
     main_text_words = word_count("\n\n".join(official_sec[name] for name in ["Introduction", "Results", "Discussion"]))
     check(main_text_words >= 3800, "NC official-format main text is no longer a skeletal draft", rows)
     check(main_text_words <= 5000, "NC official-format main text is within the 5,000-word guide", rows)
@@ -767,14 +944,15 @@ def main() -> None:
     official_subheads = re.findall(r"^### (.+)$", official, flags=re.MULTILINE)
     check(official_subheads and all(len(head) <= 60 for head in official_subheads), "NC official-format subheadings are 60 characters or fewer", rows)
     figure_legends = [part for part in official_sec["Figures"].split("\n\n") if part.strip()]
-    check(len(figure_legends) == 8, "NC official-format Figures section has 7 main legends and 1 extended-data legend", rows)
+    check(len(figure_legends) == 9, "NC official-format Figures section has 7 main legends and 2 extended-data legends", rows)
     check(all(word_count(legend) <= 350 for legend in figure_legends), "NC official-format figure legends are 350 words or fewer", rows)
     check("Figure legends" not in official, "NC official-format uses Figures as the display-item heading", rows)
     official_pdf_text = pdf_text(official_pdf)
-    check("Here, we show that early primary waves" in official_pdf_text, "NC official-format PDF includes the short official abstract", rows)
+    check("Earthquake early warning depends" in official_pdf_text and "measurable curve" in official_pdf_text, "NC official-format PDF includes the revised official abstract", rows)
     check("Data Availability" in official_pdf_text and "Code Availability" in official_pdf_text, "NC official-format PDF separates Data and Code Availability", rows)
     check("Figure 1 |" in official_pdf_text and "Figure 7 |" in official_pdf_text, "NC official-format PDF includes embedded main figures", rows)
-    check("Extended Data Figure |" in official_pdf_text, "NC official-format PDF includes embedded extended-data figure", rows)
+    check("Extended Data Figure 1 |" in official_pdf_text, "NC official-format PDF includes embedded waveform extended-data figure", rows)
+    check("Extended Data Figure 2 |" in official_pdf_text, "NC official-format PDF includes embedded residual-mechanism extended-data figure", rows)
     check("Figure 8 |" not in official_pdf_text, "NC official-format PDF does not advertise a missing Figure 8", rows)
     check("Figure legends" not in official_pdf_text, "NC official-format PDF uses Figures as the display-item heading", rows)
     check("\\hat" not in official_pdf_text and "\\mathrm" not in official_pdf_text, "NC official-format PDF has no raw LaTeX equation fragments", rows)
@@ -786,9 +964,9 @@ def main() -> None:
             "",
             "## Current Acceptance-Probability Status",
             "",
-            "The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, cross-region waveform-transfer boundary, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, extended waveform case auditing, phase-label auditing, full-manifest AQ2009GM feature-table validation, ESM European strong-motion compact-feature validation, ESM P-onset sensitivity auditing, ESM waveform onset-proxy spot auditing, formal Methods drafting, and figure-style auditing.",
+            "The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, cross-region waveform-transfer boundary, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, ESM regional GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, residual-persistence auditing, residual-mechanism class auditing, extended waveform case auditing, phase-label auditing, full-manifest AQ2009GM feature-table validation, CWA official PGA/PGV one-year validation, ESM European strong-motion compact-feature validation, ESM P-onset sensitivity auditing, ESM waveform onset-proxy spot auditing, formal Methods drafting, and figure-style auditing.",
             "",
-            "The next high-impact empirical gap is no longer ESM timing sanity checking; it is either manual ESM P-pick annotation, stronger residual mechanism evidence, or a fully specified regional GMM comparison once rupture distance, site terms, and tectonic or focal-mechanism metadata are available.",
+            "The next high-impact empirical gap is no longer ESM timing sanity checking, first-pass residual mechanism evidence, or regional screening GMM evidence; it is either manual ESM P-pick annotation or a fully specified regional GMM comparison once rupture distance, site terms, and tectonic or focal-mechanism metadata are available.",
             "",
         ]
     )

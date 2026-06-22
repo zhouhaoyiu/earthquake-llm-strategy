@@ -1,6 +1,6 @@
 # NC High-Acceptance Plan
 
-Date: 2026-06-18
+Date: 2026-06-21
 
 ## Position
 
@@ -12,13 +12,13 @@ Lead with the public benchmark, held-out early-window gains, uncertainty calibra
 
 ## Probability
 
-Current verified figure-ready package plus AQ2009GM full-manifest chunk-streaming, ESM European strong-motion validation, four-domain transfer boundary, and ESM waveform-onset spot audit: **68-72%**.
+Current verified figure-ready package plus AQ2009GM full-manifest chunk-streaming, CWA official PGA/PGV one-year layer, ESM European strong-motion validation, ESM regional GMM screening, four-domain transfer boundary, ESM waveform-onset spot audit, residual-persistence audit, residual-mechanism classes, author metadata and DOI-backed references: **65-70%**.
 
-With final manuscript prose, page-scale figure polish, and careful caveats: **70-74%**.
+With clean data/code availability statements, source-data package and final archive DOI: **66-71%**.
 
-With a fully specified regional GMM comparison, manual ESM P picks, or a stronger physical residual mechanism: **73-78%**.
+With one more major independent layer, such as manual ESM P picks or a fully specified regional GMM comparison with curated rupture/site/mechanism fields: **68-73%**.
 
-Treat **80%** as unproven. AQ2009GM full-manifest chunk-streaming supports early-window information in another SeisBench ground-motion dataset with official PGA/PGV metadata targets. ESM adds an external European strong-motion domain. Four-domain transfer adds a measurable boundary: zero-shot median MAE penalty rises from 2.25x at 1 s to 4.27x at 10 s. The ESM waveform-onset spot audit reduces the theoretical-onset weakness, but publication-grade 80% confidence still needs manual ESM P picks, a fully specified regional GMM layer, or a stronger physical residual mechanism.
+Treat **70-80%** as a gate, not a current probability. AQ2009GM full-manifest chunk-streaming and CWA 2011 now support early-window information in two additional SeisBench ground-motion datasets with official PGA/PGV metadata targets. ESM adds an external European strong-motion domain and a regional GMM screening layer. Four-domain transfer adds a measurable boundary: zero-shot median MAE penalty rises from 2.25x at 1 s to 4.27x at 10 s. The residual-persistence and residual-mechanism audits make the unresolved tail inspectable. A defensible 70-80% estimate still needs manual ESM P picks, a fully specified regional GMM layer, or a stronger independent physical mechanism layer.
 
 ## Must-Have Work
 
@@ -50,6 +50,8 @@ Treat **80%** as unproven. AQ2009GM full-manifest chunk-streaming supports early
 
    Additional K-NET screening is done with Kanno2006, Zhao2006, and SiMidorikawa1999 variants. The best screened Japanese GMM candidate is Kanno2006Shallow with MAE 0.242 on balanced held-station K-NET PGA; the early-waveform model has MAE 0.111. This is a screening reference because Vs30, rupture distance, and tectonic class are approximated.
 
+   ESM regional screening is done with BooreEtAl2014, AkkarEtAl2014, BindiEtAl2014, and CauzziEtAl2015 candidates. On held-station ESM rows, the early P+distance+site model reduces MAE relative to the best screened regional GMM by 34.8%/23.8% for 2 s PGA/PGV, 48.3%/30.2% for 5 s PGA/PGV, and 43.1%/30.4% for 10 s PGA/PGV.
+
 5. **Uncertainty and tail risk**
 
    Done with split-conformal intervals on balanced held-station features.
@@ -62,19 +64,25 @@ Treat **80%** as unproven. AQ2009GM full-manifest chunk-streaming supports early
 
    Remaining action: describe it as full-manifest streaming validation and state that raw AQ2009GM HDF5 files were not retained.
 
-7. **Cross-region transfer boundary**
+7. **CWA official PGA/PGV supplement**
+
+   Done for the public 2011 CWA benchmark year. The retained table has 5,882 valid PGA/PGV records from 775 events and 705 stations. Held-event and held-station tests show positive reductions at 2 s and 5 s for both PGA and PGV. Raw CWA metadata, HDF5 and the downloaded tar archive were deleted after feature extraction.
+
+8. **Cross-region transfer boundary**
 
    Done across InstanceGM, K-NET, and AQ2009GM using early waveform features only. The experiment excludes distance, magnitude, site terms, event id, and station id. Every cross-domain row is worse than target-domain training. Median zero-shot penalties are 1.49x, 1.74x, and 2.84x at 1, 3, and 10 s. Target-train offset calibration reduces the medians to 1.40x, 1.65x, and 2.26x.
 
-8. **PNWAccelerometers robustness**
+9. **PNWAccelerometers robustness**
 
-   Done as a supplementary SeisBench accelerometer check. It uses 5,981 earthquake records, held-event and held-station splits, and 1/3/10 s windows. The local file lacks waveform units, so the target is full-record peak horizontal waveform amplitude.
+   Done as a supplementary SeisBench accelerometer check. It uses 5,981 earthquake records, held-event and held-station splits, and 2/5/10 s windows. The local file lacks waveform units, so the target is full-record peak horizontal waveform amplitude. Held-station MAE reductions are 39.2%, 68.0%, and 90.5% for 2, 5, and 10 s.
 
-9. **ESM European strong-motion validation**
+10. **ESM European strong-motion validation**
 
    Done as an external strong-motion check from local ASCII zip packages. The compact feature table covers 951 zip files, 134,250 early-window rows, 861 events, 1,568 stations, and 26,850 event-station samples. ESM held-station baselines and four-domain transfer are complete. The P-onset sensitivity audit quantifies Vp dependence, and the waveform-onset spot audit samples 200 event-station records. In 86 high-confidence onset-proxy detections, median absolute offset from the theoretical 6 km/s onset is 1.223 s and q95 is 3.960 s.
 
-10. **Figure polish**
+   The ESM regional GMM screening is now complete and should be used as the stronger classical-reference layer in the manuscript. It remains a screening comparison because rake and distance geometry are approximated.
+
+11. **Figure polish**
 
    Done for the current evidence package. Main figures now cover:
 
@@ -85,18 +93,18 @@ Treat **80%** as unproven. AQ2009GM full-manifest chunk-streaming supports early
    - residual diagnostics and waveform audit cases;
    - phase-label transfer audit.
 
-11. **Evidence verification**
+12. **Evidence verification**
 
    Done. `outputs/nc_evidence_verification_report.md` verifies generated artifacts, figure files, key CSV row counts, held-out group overlap, OpenQuake comparison direction, conformal probability bounds, and document references.
 
 ## Claims To Use
 
-- Early post-P waveform information improves strong-motion inference across independent datasets and an AQ2009GM full-manifest chunk-streaming supplementary check.
+- Early post-P waveform information improves strong-motion inference across independent datasets, AQ2009GM full-manifest chunk-streaming and a CWA official PGA/PGV one-year check.
 - The gain appears at 1 s and increases for several targets at 3 s and 10 s.
 - Held-event results rule out ordinary random-split leakage as the explanation.
 - Held-station results show useful but target-dependent transfer.
 - Cross-region early-waveform transfer gives an empirical boundary on direct regional portability.
-- Residual tails identify audit targets consistent with path, site, label, or rare waveform-target effects.
+- Residual tails separate into path-attenuation, strong-motion-tail, and early-amplitude boundaries.
 
 ## Claims To Avoid
 
@@ -109,4 +117,4 @@ Treat **80%** as unproven. AQ2009GM full-manifest chunk-streaming supports early
 
 ## Next Action
 
-Tighten manuscript prose and Methods around the verified evidence package. More local experiments help only if they add a fully specified regional GMM comparison, add broader multi-region strong-motion validation, or strengthen the residual mechanism.
+Tighten manuscript prose and Methods around the verified evidence package. More local experiments help only if they add manual P-pick evidence, a fully specified regional GMM comparison, or broader multi-region strong-motion validation.

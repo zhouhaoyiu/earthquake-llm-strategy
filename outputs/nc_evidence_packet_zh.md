@@ -184,6 +184,21 @@ OpenQuake 已装好。BooreEtAl2014 使用训练集 median bias correction。当
 
 写法：这是比单个 Boore2014 更强的 K-NET classical screening；仍受 Vs30、rupture distance 和震源类型近似限制，不能写成完整区域 GMM 证明。
 
+### 4c. ESM 区域 GMM screening
+
+已补充 ESM 区域 GMM screening：`outputs/esm_regional_gmm_screening_summary.md`。候选模型包括 BooreEtAl2014、AkkarEtAl2014、BindiEtAl2014 和 CauzziEtAl2015。输入使用 ESM compact table 中的 source magnitude、source distance、hypocentral distance 和 Vs30；缺 source magnitude 的记录剔除，Vs30 缺失时按 760 m/s，预测使用训练集 median bias correction。
+
+| 目标 | 窗口 | best regional GMM | GMM MAE | early P+distance+site MAE | 相对 GMM 降幅 |
+|---|---:|---|---:|---:|---:|
+| PGA | 2s | AkkarEtAlRhyp2014 | 0.465 | 0.303 | 34.8% |
+| PGA | 5s | AkkarEtAlRhyp2014 | 0.439 | 0.227 | 48.3% |
+| PGA | 10s | AkkarEtAlRhyp2014 | 0.315 | 0.179 | 43.1% |
+| PGV | 2s | AkkarEtAlRhyp2014 | 0.420 | 0.320 | 23.8% |
+| PGV | 5s | AkkarEtAlRhyp2014 | 0.389 | 0.272 | 30.2% |
+| PGV | 10s | BindiEtAl2014Rhyp | 0.326 | 0.227 | 30.4% |
+
+写法：这是当前最强的 classical reference 层之一，说明早窗信息不是只赢了弱 baseline。仍然写成 screening，因为 rake、rupture distance 和区域构造类型不是完整工程 GMPE 输入。
+
 ### 5. 不确定性校准
 
 Split conformal nominal coverage 为 90%。
@@ -268,6 +283,22 @@ AQ2009GM 已按本地 SeisBench chunk manifest 完成流式验证：254 个 chun
 | time | PGV | 5s | 0.249 | 0.048 | 80.6% | 0.984 |
 
 解释：AQ2009GM 结果明显增强了独立 SeisBench 地震动补验层。它有官方 PGA/PGV metadata target，并用流式处理覆盖本地 manifest 中全部 254 个 chunk。边界是：本地没有保留完整 raw AQ2009GM，当前证据是从逐 chunk 下载后提取并保存的小特征表、split、metrics、subgroup 和 uncertainty 文件得到的。
+
+### 7a. CWA official PGA/PGV 台湾独立补验
+
+CWA 已真正落地为官方 PGA/PGV metadata-target 补充层。当前处理的是公开 CWA benchmark 的 2011 年：有效 PGA/PGV 记录 5,882；事件数 775；台站数 705。流程为下载 `merge2011_2014.tar.gz`，只抽取 `metadata_2011.csv` 和 `waveforms_2011.hdf5`，提取 2/5 秒 post-P waveform features，保存小特征表后删除 CWA raw HDF5、metadata 和 tar。
+
+图：`outputs/figures/ground_motion_audit/cwa_official_pga_pgv_panel.png`
+报告：`outputs/cwa_official_pga_pgv_summary.md`
+
+| holdout | target | 2s 降幅 | 5s 降幅 | test rows | test groups |
+|---|---|---:|---:|---:|---:|
+| event | PGA | 15.3% | 34.9% | 3000 | 370 |
+| event | PGV | 16.8% | 41.7% | 3000 | 370 |
+| station | PGA | 14.6% | 29.9% | 883 | 120 |
+| station | PGV | 17.7% | 40.3% | 883 | 120 |
+
+解释：CWA 不是 full 2011-2021 validation，但它补上了一个真正官方 PGA/PGV 的台湾独立数据层。这个层可以替代原先“CWA 不可用”的弱点，写作时应表述为 one-year official CWA supplement。
 
 ### 7b. 跨区域 early-waveform 迁移边界
 
@@ -416,11 +447,11 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
 已补不确定性理论说明：`outputs/nc_uncertainty_boundary_note.md`。核心是 split conformal 的 exchangeability 条件：calibration residuals 和 test residuals 需要来自同一残差分布。source-domain conformal transfer 会故意打破这个条件；观测到的 2 秒 coverage 0.468、5 秒 coverage 0.298 就是 uncertainty-transfer boundary。target-offset conformal 使用目标域 train split 后 coverage 回到约 0.90，但 interval width 增大。
 
-已补区域 GMM 边界说明：`outputs/regional_gmm_boundary_note.md`。当前能支撑 classical-reference screening：attenuation-shaped ridge、BooreEtAl2014、K-NET Japanese GMM screening 和 readiness audit。当前不能支撑完整区域 GMPE/GMM 优越性声明，因为 K-NET 缺 Vs30、rupture distance 和 focal mechanism，InstanceGM focal-mechanism 覆盖很低。
+已补区域 GMM 边界说明：`outputs/regional_gmm_boundary_note.md`。当前能支撑 classical-reference screening：attenuation-shaped ridge、BooreEtAl2014、K-NET Japanese GMM screening、ESM regional GMM screening 和 readiness audit。当前不能支撑完整区域 GMPE/GMM 优越性声明，因为 K-NET 缺 Vs30、rupture distance 和 focal mechanism，InstanceGM focal-mechanism 覆盖很低，ESM screening 仍使用距离代理和固定 rake。
 
 已补主图重画和风格审计：`work/scripts/redraw_nc_main_figures.py` 重画 Figure 1-6，`outputs/nc_figure_style_audit.md` 记录 Figure 1-7 尺寸，contact sheet 为 `outputs/figures/nc_main_figure_contact_sheet.png`。Figure 5 已拆成主文残差诊断图和扩展波形案例图，其余主图已统一为紧凑多面板风格。
 
-下一步实验判断已写入：`outputs/nc_next_experiment_decision.md`。小规模 ESM waveform-level onset-proxy spot audit 已完成，用来降低纯理论 P onset 的最弱环节。完整区域 GMPE/GMM 暂缓，直到 rupture distance、site terms 和 tectonic 或 focal-mechanism metadata 可用。
+下一步实验判断已写入：`outputs/nc_next_experiment_decision.md`。小规模 ESM waveform-level onset-proxy spot audit 和 ESM regional GMM screening 已完成。完整区域 GMPE/GMM 暂缓，直到 rupture distance、site terms 和 tectonic 或 focal-mechanism metadata 可用。
 
 ### 8. PNWAccelerometers 补充检查
 
@@ -430,14 +461,14 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
 | holdout | window | metadata MAE | combined MAE | 降幅 | combined R2 |
 |---|---:|---:|---:|---:|---:|
-| event | 1s | 0.239 | 0.201 | 16.2% | 0.844 |
-| event | 3s | 0.239 | 0.163 | 32.0% | 0.888 |
+| event | 2s | 0.239 | 0.191 | 20.1% | 0.857 |
+| event | 5s | 0.239 | 0.097 | 59.4% | 0.936 |
 | event | 10s | 0.239 | 0.036 | 85.0% | 0.978 |
-| station | 1s | 0.361 | 0.240 | 33.4% | 0.750 |
-| station | 3s | 0.361 | 0.196 | 45.7% | 0.820 |
+| station | 2s | 0.361 | 0.220 | 39.2% | 0.788 |
+| station | 5s | 0.361 | 0.115 | 68.0% | 0.909 |
 | station | 10s | 0.361 | 0.034 | 90.5% | 0.980 |
 
-解释：1 秒和 3 秒结果支持早窗振幅信息不是 InstanceGM/K-NET 特有现象。10 秒结果很强，但更可能说明 PNW 小震/近震的峰值经常落在 P 后 10 秒内，因此不能单独作为 lead-time 证据。
+解释：2 秒和 5 秒结果支持早窗振幅信息不是 InstanceGM/K-NET 特有现象。10 秒结果很强，但更可能说明 PNW 小震/近震的峰值经常落在 P 后 10 秒内，因此不能单独作为 lead-time 证据。
 
 ## 当前可以写的主 claim
 
@@ -451,6 +482,7 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 8. 跨区域 early-waveform transfer 提供 predictability boundary 证据，主文按边界结果表述。
 9. PNWAccelerometers 可作为补充 robustness 结果，但不能写成官方 PGA 验证。
 10. ESM P-onset sensitivity 和 waveform-level onset-proxy spot audit 已量化：retained-row 稳定，high-confidence onset proxy q95 offset 为 3.960 秒，但 ESM 仍不是 catalog/manual P pick 数据。
+11. ESM regional GMM screening 支持早窗信息不是只赢弱 baseline，但不能写成完整 GMPE 优越性。
 
 ## 不能写的 claim
 
@@ -478,15 +510,15 @@ ESM held-out baseline：`outputs/esm_heldout_baseline_summary.md`。
 
 ## 当前 NC 概率判断
 
-当前已验证主图证据包、AQ2009GM full-manifest chunk-streaming、ESM 欧洲强震动外部验证、ESM P-onset sensitivity、ESM waveform-onset spot audit、matched held-station 增益审计、held-station bootstrap CI 审计和 held-station 强尾部审计：**71-74%**。
+当前已验证主图证据包、AQ2009GM full-manifest chunk-streaming、CWA official PGA/PGV one-year layer、ESM 欧洲强震动外部验证、ESM regional GMM screening、ESM P-onset sensitivity、ESM waveform-onset spot audit、matched held-station 增益审计、held-station bootstrap CI 审计、held-station 强尾部审计和 residual-mechanism class audit：**65-70%**。
 
-如果再做投稿级图文细修和人工 ESM P 到时抽查：**70-74%**。
+如果再做投稿级图文细修、干净归档 DOI 和人工 ESM P 到时抽查：**65-72%**。
 
-已完成：主图 1-6 重画、NC 主边界合成图、held-out 证据、matched-support 审计、bootstrap CI 审计、held-station 强尾部审计、OpenQuake/conformal、残差/波形审计、phase audit、AQ2009GM full-manifest、ESM compact features、ESM held-out baseline、ESM P-onset sensitivity、四域 transfer、cross-region conformal/tail/seed sensitivity、uncertainty boundary note、regional GMM boundary note、formal Methods draft 压缩版、figure style audit、evidence verifier。
+已完成：主图 1-6 重画、NC 主边界合成图、held-out 证据、matched-support 审计、bootstrap CI 审计、held-station 强尾部审计、OpenQuake/conformal、K-NET Japanese GMM、ESM regional GMM、残差/波形审计、residual-mechanism classes、phase audit、AQ2009GM full-manifest、ESM compact features、ESM held-out baseline、ESM P-onset sensitivity、四域 transfer、cross-region conformal/tail/seed sensitivity、uncertainty boundary note、regional GMM boundary note、formal Methods draft 压缩版、figure style audit、evidence verifier。
 
-如果加入完整区域 GMM 对照或更强物理残差解释：**73-78%**。
+如果加入完整区域 GMM 对照或人工 ESM P 到时证据：**65-72%**，若同时完成干净数据/代码归档和投稿级图文细修，可再向上看。
 
-现在可以诚实说站上 70%。原因是 ESM 提供了欧洲强震动外部测试域，四域 transfer 给出清晰退化边界，ESM P-onset sensitivity 和 waveform-onset spot audit 已经把主要相位风险量化，source-path support 审计降低了分布伪影解释，bootstrap CI 审计降低了抽样偶然性解释。限制仍然明确：ESM 还不是人工 P pick，当前还没有完整区域 GMM 对照。
+现在不能诚实说稳定站上 70%。原因是 ESM 还不是人工 P pick，当前也没有完整区域 GMPE/GMM 对照。可以诚实说已经从 50-60% 推到 65-70%：CWA 补上了官方 PGA/PGV 台湾独立层，ESM 提供欧洲强震动外部测试域和区域 GMM screening，四域 transfer 给出清晰退化边界，ESM P-onset sensitivity 和 waveform-onset spot audit 已经把主要相位风险量化，source-path support 审计降低了分布伪影解释，bootstrap CI 审计降低了抽样偶然性解释。
 
 ## 下一步
 

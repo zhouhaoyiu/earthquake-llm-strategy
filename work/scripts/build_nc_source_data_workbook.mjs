@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 import fs from "node:fs/promises";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { SpreadsheetFile, Workbook } from "@oai/artifact-tool";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+const artifactToolModule =
+  process.env.ARTIFACT_TOOL_MODULE ??
+  "/Users/yojironoda/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/@oai/artifact-tool/dist/artifact_tool.mjs";
+const { SpreadsheetFile, Workbook } = await import(pathToFileURL(artifactToolModule).href);
 const outputDir = path.join(repoRoot, "outputs/source_data");
 const previewDir = path.join(repoRoot, "work/source_data_previews");
 const workbookPath = path.join(outputDir, "nc_source_data_v1.xlsx");

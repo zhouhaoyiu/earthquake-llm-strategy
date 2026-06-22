@@ -2,7 +2,7 @@
 
 Date: 2026-06-20
 
-This report verifies generated artifacts only. NC 60% remains an empirical target beyond this verifier.
+This report verifies generated artifacts only. Acceptance probability remains an editorial estimate beyond this verifier.
 
 ## Checks
 
@@ -21,6 +21,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: methods provenance table covers held-station strong-tail audit
 - PASS: methods provenance table covers uncertainty boundary note
 - PASS: methods provenance table covers regional GMM boundary note
+- PASS: methods provenance table covers CWA official PGA/PGV supplement
 - PASS: methods provenance table covers main figure redraw and style audit
 - PASS: methods provenance table covers next experiment decision
 - PASS: method script exists: work/scripts/convert_knet_bson.py
@@ -39,10 +40,12 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: method script exists: work/scripts/run_conformal_intervals.py
 - PASS: method script exists: work/scripts/analyze_ground_motion_residuals.py
 - PASS: method script exists: work/scripts/stream_aq2009gm_full_validation.py
+- PASS: method script exists: work/scripts/run_cwa_official_layer.py
 - PASS: method script exists: work/scripts/build_esm_compact_features.py
 - PASS: method script exists: work/scripts/audit_esm_p_onset_sensitivity.py
 - PASS: method script exists: work/scripts/audit_esm_waveform_p_pick_spotcheck.py
 - PASS: method script exists: work/scripts/run_esm_compact_baseline.py
+- PASS: method script exists: work/scripts/run_esm_regional_gmm_screening.py
 - PASS: method script exists: work/scripts/run_pnw_accelerometer_peak_baseline.py
 - PASS: method script exists: work/scripts/build_predictability_boundary_table.py
 - PASS: method script exists: work/scripts/summarize_held_station_window_scan.py
@@ -53,6 +56,8 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: method script exists: work/scripts/redraw_nc_main_figures.py
 - PASS: method script exists: work/scripts/audit_nc_figure_style.py
 - PASS: method script exists: work/scripts/build_figure5_source_data.py
+- PASS: method script exists: work/scripts/audit_residual_persistence.py
+- PASS: method script exists: work/scripts/audit_residual_mechanism.py
 - PASS: method script exists: work/scripts/build_nc_source_data_workbook.mjs
 - PASS: method script exists: work/scripts/build_nc_manuscript_pdf.py
 - PASS: NC reviewer risk matrix exists
@@ -66,13 +71,44 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: reviewer risk matrix covers: attenuation-shaped
 - PASS: reviewer risk matrix covers: fully specified regional GMM
 - PASS: reviewer risk matrix covers: AQ2009GM supplement
+- PASS: reviewer risk matrix covers: CWA 2011
 - PASS: reviewer risk matrix covers: PNW target official PGA
 - PASS: reviewer risk matrix covers: Phase alignment
 - PASS: reviewer risk matrix covers: calibrated under station shift
 - PASS: reviewer risk matrix covers: physical causality
-- PASS: reviewer risk matrix covers: NC 60%
+- PASS: reviewer risk matrix covers: NC 70-80%
+- PASS: NC 70-80 gate audit exists
+- PASS: NC 70-80 gate audit keeps current probability bounded
+- PASS: NC 70-80 gate audit blocks overstated probability claims
 - PASS: PNW unit provenance audit exists
 - PASS: PNWAccelerometers local HDF5 has component_order but no unit field
+- PASS: PNW 2/5/10 peak-amplitude summary exists
+- PASS: PNW 2/5/10 peak-amplitude figure exists
+- PASS: PNW summary keeps target caveat explicit
+- PASS: PNW summary covers 2/5/10 s windows
+- PASS: PNW held-station peak-amplitude reductions are positive
+- PASS: PNW 2 s held-station reduction is substantial
+- PASS: CWA note documents the one-year official PGA/PGV supplement
+- PASS: CWA official PGA/PGV summary exists
+- PASS: CWA official PGA/PGV figure exists
+- PASS: CWA official PGA/PGV figure opens (2616x1084)
+- PASS: CWA official PGA/PGV comparison table exists
+- PASS: CWA official PGA/PGV feature table exists
+- PASS: CWA official layer has 5,882 eligible PGA/PGV records
+- PASS: CWA official layer event/station counts match summary
+- PASS: CWA held-station split has 883 test rows and 120 held stations
+- PASS: CWA run records cleanup_raw=true
+- PASS: CWA official comparison has 8 rows across holdouts, targets, and windows
+- PASS: CWA official comparison includes held-event and held-station splits
+- PASS: CWA official comparison includes PGA and PGV
+- PASS: CWA official comparison covers 2/5 s windows
+- PASS: CWA official held-out group overlap is zero
+- PASS: CWA official early-waveform reductions are positive for every row
+- PASS: CWA official station split has enough held-station coverage
+- PASS: CWA raw/cache artifact deleted: work/cwa_raw/metadata_2011.csv
+- PASS: CWA raw/cache artifact deleted: work/cwa_raw/waveforms_2011.hdf5
+- PASS: CWA raw/cache artifact deleted: work/cwa_raw/merge2011_2014.tar.gz
+- PASS: CWA raw/cache artifact deleted: work/cwa_raw/.cache
 - PASS: AQ2009GM full-manifest streaming summary exists
 - PASS: AQ2009GM streaming covers all 254 local manifest chunks
 - PASS: AQ2009GM chunk inventory has 254 chunks and zero extraction errors
@@ -132,8 +168,20 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: ESM held-out baseline includes held-event and held-station splits
 - PASS: ESM held-out baseline group overlap is zero
 - PASS: ESM held-station P+distance+site model improves over median for every target/window
+- PASS: ESM regional GMM screening summary exists
+- PASS: ESM regional GMM screening table exists
+- PASS: ESM regional GMM screening figure exists
+- PASS: ESM regional GMM figure opens (1866x816)
+- PASS: ESM regional GMM screening has 84 rows across windows, holdouts, targets, and references
+- PASS: ESM regional GMM screening covers 2/5/10 s windows
+- PASS: ESM regional GMM screening covers PGA and PGV
+- PASS: ESM regional GMM screening includes held-event and held-station splits
+- PASS: ESM regional GMM screening group overlap is zero
+- PASS: ESM regional GMM screening aligns six held-station target/window comparisons
+- PASS: ESM early model beats best screened regional GMM for every held-station target/window
+- PASS: ESM early model gives at least 20% MAE reduction over best screened regional GMM
 - PASS: outputs/figures/figure1_dataset_task_matrix.png exists
-- PASS: outputs/figures/figure1_dataset_task_matrix.png opens as a nontrivial image (2880x1224)
+- PASS: outputs/figures/figure1_dataset_task_matrix.png opens as a nontrivial image (2064x2592)
 - PASS: outputs/figures/figure2_early_window_performance.png exists
 - PASS: outputs/figures/figure2_early_window_performance.png opens as a nontrivial image (2880x1776)
 - PASS: outputs/figures/figure3_heldout_generalization.png exists
@@ -141,11 +189,13 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/figures/figure4_classical_uncertainty.png exists
 - PASS: outputs/figures/figure4_classical_uncertainty.png opens as a nontrivial image (2880x1776)
 - PASS: outputs/figures/figure5_residual_waveform_audit.png exists
-- PASS: outputs/figures/figure5_residual_waveform_audit.png opens as a nontrivial image (2272x1512)
+- PASS: outputs/figures/figure5_residual_waveform_audit.png opens as a nontrivial image (2272x1585)
 - PASS: outputs/figures/figure6_phase_label_audit.png exists
 - PASS: outputs/figures/figure6_phase_label_audit.png opens as a nontrivial image (2880x1728)
 - PASS: outputs/figures/extended_waveform_case_audit.png exists
-- PASS: outputs/figures/extended_waveform_case_audit.png opens as an extended audit image (2272x4685)
+- PASS: outputs/figures/extended_waveform_case_audit.png opens as an extended audit image (2272x4755)
+- PASS: outputs/figures/ground_motion_audit/residual_mechanism_audit.png exists
+- PASS: outputs/figures/ground_motion_audit/residual_mechanism_audit.png opens as an extended audit image (2160x1080)
 - PASS: Figure 2 table has 18 rows across 1/3/10 s windows
 - PASS: Figure 2 MAE reductions are positive for all tested rows
 - PASS: Figure 2 K-NET 10 s PGA reduction matches reported value
@@ -333,7 +383,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: regional GMM boundary note exists
 - PASS: regional GMM boundary note limits full regional GMM claims
 - PASS: NC next experiment decision note exists
-- PASS: NC next experiment decision marks ESM waveform onset audit complete
+- PASS: NC next experiment decision marks ESM waveform onset and GMM screening complete
 - PASS: NC next experiment decision defers full regional GMPE/GMM
 - PASS: NC figure style audit summary exists
 - PASS: NC figure style audit table exists
@@ -355,6 +405,19 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: Figure 6 covers STEAD, InstanceGM, Iquique, and K-NET
 - PASS: Figure 5 residual source table has 329 panel-metric rows
 - PASS: Figure 5 residual source table covers all four diagnostic panels
+- PASS: residual-persistence audit covers six dataset-target series
+- PASS: K-NET PGA residual persistence audit reports 20% persistent 10 s tail
+- PASS: K-NET PGA residual persistence audit reports 74% 1 s tail resolution
+- PASS: residual-mechanism audit CSV exists
+- PASS: residual-mechanism class CSV exists
+- PASS: residual-mechanism audit figure exists
+- PASS: residual-mechanism audit covers six series and six covariates
+- PASS: residual-mechanism class table covers six series
+- PASS: residual-mechanism classes include path, tail, and early-amplitude boundaries
+- PASS: residual-mechanism class table keeps causal boundary explicit
+- PASS: K-NET PGA residual mechanism audit identifies distance-shifted residual tail
+- PASS: InstanceGM SA30 residual mechanism audit identifies target-amplitude shifted residual tail
+- PASS: K-NET PGA remaining 10 s residual tail is farther than the full test set
 - PASS: NC source-data workbook exists
 - PASS: NC source-data manifest exists
 - PASS: NC source-data workbook has the expected 16 sheets
@@ -371,6 +434,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/nc_minimum_submission_package.md references Figure 5
 - PASS: outputs/nc_minimum_submission_package.md references Figure 6
 - PASS: outputs/nc_minimum_submission_package.md references AQ2009GM supplementary check
+- PASS: outputs/nc_minimum_submission_package.md references CWA official PGA/PGV supplement
 - PASS: outputs/nc_minimum_submission_package.md references ESM P-onset boundary
 - PASS: outputs/nc_minimum_submission_package.md references ESM waveform onset-proxy spot audit
 - PASS: outputs/nc_minimum_submission_package.md references matched held-station gain audit
@@ -385,6 +449,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 5
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references Figure 6
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references AQ2009GM supplementary check
+- PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references CWA official PGA/PGV supplement
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references ESM P-onset boundary
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references ESM waveform onset-proxy spot audit
 - PASS: outputs/manuscript_scaffold_cross_dataset_early_window_residual_audit.md references matched held-station gain audit
@@ -399,6 +464,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 5
 - PASS: outputs/nc_evidence_packet_zh.md references Figure 6
 - PASS: outputs/nc_evidence_packet_zh.md references AQ2009GM supplementary check
+- PASS: outputs/nc_evidence_packet_zh.md references CWA official PGA/PGV supplement
 - PASS: outputs/nc_evidence_packet_zh.md references ESM P-onset boundary
 - PASS: outputs/nc_evidence_packet_zh.md references ESM waveform onset-proxy spot audit
 - PASS: outputs/nc_evidence_packet_zh.md references matched held-station gain audit
@@ -420,6 +486,7 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: article draft contains bounded claim: coverage gaps of 0.432 and 0.602
 - PASS: article draft contains bounded claim: conformal coverage gap with interval width
 - PASS: article draft contains bounded claim: retained feature tables contain 345,226 valid PGA/PGV records
+- PASS: article draft contains bounded claim: CWA provides an official Taiwan PGA/PGV supplement
 - PASS: article draft contains bounded claim: ESM provides an external European strong-motion check
 - PASS: article draft contains bounded claim: A Vp sensitivity audit
 - PASS: article draft contains bounded claim: waveform-envelope onset-proxy spot audit
@@ -429,39 +496,70 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 - PASS: article draft contains bounded claim: theoretical P-onset estimate
 - PASS: article draft contains bounded claim: 2.53x for PGA and 1.58x for PGV
 - PASS: article draft contains bounded claim: Python 3.12.13
-- PASS: main manuscript legend contains: Figure 3 | Held-out generalization and split distribution
-- PASS: main manuscript legend contains: Figure 4 | Classical reference and uncertainty
-- PASS: main manuscript legend contains: Figure 5 | Residual diagnostics
-- PASS: main manuscript legend contains: Figure 6 | Phase-label transfer audit
-- PASS: main manuscript legend contains: Extended Data Figure | Waveform case audit
+- PASS: main manuscript legend contains: Figure 1 | Public-data benchmark design
+- PASS: main manuscript legend contains: Figure 2 | Longer P windows add strong-motion information
+- PASS: main manuscript legend contains: Figure 3 | Held-out tests show that the early-waveform gain survives
+- PASS: main manuscript legend contains: Figure 4 | Early waveform observations improve over available classical references
+- PASS: main manuscript legend contains: Figure 5 | Residual structure marks the part of strong shaking
+- PASS: main manuscript legend contains: Figure 6 | P-window alignment is stable enough
+- PASS: main manuscript legend contains: Figure 7 | The predictability boundary is positive in-domain
+- PASS: main manuscript legend contains: Extended Data Figure 1 | Waveform case audit
+- PASS: main manuscript legend contains: Extended Data Figure 2 | Large residuals concentrate
 - PASS: main manuscript does not advertise a missing Figure 8
 - PASS: main manuscript reports transfer coverage gaps
-- PASS: main manuscript legend defines Figure 7 coverage-gap axis
-- PASS: main manuscript Introduction final paragraph follows NC article guidance
+- PASS: main manuscript reports CWA official PGA/PGV supplement
+- PASS: main manuscript legend states Figure 7 transfer under-coverage
+- PASS: main manuscript metadata/references contain: Zhou Haoyu
+- PASS: main manuscript metadata/references contain: Qiang Ma
+- PASS: main manuscript metadata/references contain: 0009-0003-8817-1209
+- PASS: main manuscript metadata/references contain: 0000-0002-9768-5223
+- PASS: main manuscript metadata/references contain: Funding: none.
+- PASS: main manuscript metadata/references contain: The authors declare no competing interests.
+- PASS: main manuscript metadata/references contain: https://doi.org/10.13127/AI/AQUILA2009
+- PASS: main manuscript metadata/references contain: https://doi.org/10.17598/NIED.0004
+- PASS: main manuscript metadata/references contain: https://doi.org/10.5194/essd-13-5509-2021
+- PASS: main manuscript has no placeholder: [Author names]
+- PASS: main manuscript has no placeholder: [Affiliations]
+- PASS: main manuscript has no placeholder: [corresponding author email]
+- PASS: main manuscript has no placeholder: [To be completed.]
+- PASS: main manuscript has no placeholder: References must be completed
+- PASS: main manuscript has no placeholder: [Confirm before submission.]
+- PASS: main manuscript Introduction states the information-boundary claim directly
 - PASS: outputs/pdf/nc_manuscript_main_v1.pdf exists
 - PASS: outputs/pdf/nc_manuscript_main_v1.pdf includes updated coverage-gap text
-- PASS: outputs/pdf/nc_manuscript_main_v1.pdf includes updated Figure 7 axis text
+- PASS: outputs/pdf/nc_manuscript_main_v1.pdf includes updated Figure 7 transfer-undercoverage text
 - PASS: outputs/pdf/nc_manuscript_nc_official_template_v1.pdf exists
 - PASS: outputs/pdf/nc_manuscript_nc_official_template_v1.pdf includes updated coverage-gap text
-- PASS: outputs/pdf/nc_manuscript_nc_official_template_v1.pdf includes updated Figure 7 axis text
+- PASS: outputs/pdf/nc_manuscript_nc_official_template_v1.pdf includes updated Figure 7 transfer-undercoverage text
 - PASS: NC official-format manuscript markdown exists
 - PASS: NC official-format manuscript PDF exists with embedded figures
 - PASS: NC official-format manuscript PDF has text and embedded figure pages
+- PASS: NC official-format manuscript metadata contains: Zhou Haoyu
+- PASS: NC official-format manuscript metadata contains: Qiang Ma
+- PASS: NC official-format manuscript metadata contains: 0009-0003-8817-1209
+- PASS: NC official-format manuscript metadata contains: 0000-0002-9768-5223
+- PASS: NC official-format manuscript metadata contains: Funding: none.
+- PASS: NC official-format manuscript metadata contains: The authors declare no competing interests.
+- PASS: NC official-format manuscript has no placeholder: [Author names]
+- PASS: NC official-format manuscript has no placeholder: [Affiliations]
+- PASS: NC official-format manuscript has no placeholder: [corresponding author email]
+- PASS: NC official-format manuscript has no placeholder: [To be completed.]
 - PASS: NC official-format manuscript follows official section order
 - PASS: NC official-format title has 15 words or fewer
 - PASS: NC official-format abstract has 150 words or fewer
-- PASS: NC official-format abstract final sentence uses Here, we show
+- PASS: NC official-format abstract states the measurable-boundary claim
 - PASS: NC official-format main text is no longer a skeletal draft
 - PASS: NC official-format main text is within the 5,000-word guide
 - PASS: NC official-format Methods is below 3,000 words
 - PASS: NC official-format subheadings are 60 characters or fewer
-- PASS: NC official-format Figures section has 7 main legends and 1 extended-data legend
+- PASS: NC official-format Figures section has 7 main legends and 2 extended-data legends
 - PASS: NC official-format figure legends are 350 words or fewer
 - PASS: NC official-format uses Figures as the display-item heading
-- PASS: NC official-format PDF includes the short official abstract
+- PASS: NC official-format PDF includes the revised official abstract
 - PASS: NC official-format PDF separates Data and Code Availability
 - PASS: NC official-format PDF includes embedded main figures
-- PASS: NC official-format PDF includes embedded extended-data figure
+- PASS: NC official-format PDF includes embedded waveform extended-data figure
+- PASS: NC official-format PDF includes embedded residual-mechanism extended-data figure
 - PASS: NC official-format PDF does not advertise a missing Figure 8
 - PASS: NC official-format PDF uses Figures as the display-item heading
 - PASS: NC official-format PDF has no raw LaTeX equation fragments
@@ -470,6 +568,6 @@ This report verifies generated artifacts only. NC 60% remains an empirical targe
 
 ## Current Acceptance-Probability Status
 
-The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, cross-region waveform-transfer boundary, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, extended waveform case auditing, phase-label auditing, full-manifest AQ2009GM feature-table validation, ESM European strong-motion compact-feature validation, ESM P-onset sensitivity auditing, ESM waveform onset-proxy spot auditing, formal Methods drafting, and figure-style auditing.
+The verified package supports the current NC submission story: cross-dataset early waveform information, empirical predictability-boundary table, cross-region waveform-transfer boundary, K-NET pre-peak subset auditing, held-out generalization, attenuation-shaped and OpenQuake references, K-NET Japanese GMM screening, ESM regional GMM screening, regional-GMM readiness auditing, conformal uncertainty, residual auditing, residual-persistence auditing, residual-mechanism class auditing, extended waveform case auditing, phase-label auditing, full-manifest AQ2009GM feature-table validation, CWA official PGA/PGV one-year validation, ESM European strong-motion compact-feature validation, ESM P-onset sensitivity auditing, ESM waveform onset-proxy spot auditing, formal Methods drafting, and figure-style auditing.
 
-The next high-impact empirical gap is no longer ESM timing sanity checking; it is either manual ESM P-pick annotation, stronger residual mechanism evidence, or a fully specified regional GMM comparison once rupture distance, site terms, and tectonic or focal-mechanism metadata are available.
+The next high-impact empirical gap is no longer ESM timing sanity checking, first-pass residual mechanism evidence, or regional screening GMM evidence; it is either manual ESM P-pick annotation or a fully specified regional GMM comparison once rupture distance, site terms, and tectonic or focal-mechanism metadata are available.

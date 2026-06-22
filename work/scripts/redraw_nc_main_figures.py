@@ -8,6 +8,7 @@ from pathlib import Path
 import matplotlib
 import numpy as np
 import pandas as pd
+from matplotlib.patches import FancyArrowPatch, Patch, Rectangle
 from PIL import Image, ImageDraw, ImageFont
 
 matplotlib.use("Agg")
@@ -56,31 +57,126 @@ def save(fig: plt.Figure, path: str) -> None:
 
 
 def figure1() -> None:
-    df = pd.read_csv("outputs/figure1_dataset_task_matrix.csv")
-    fig, axes = plt.subplots(1, 2, figsize=(12, 5.1))
-    ax = axes[0]
+    base = pd.read_csv("outputs/figure1_dataset_task_matrix.csv")
+    rows = [
+        {"dataset": "InstanceGM", "records": 1159223, "role": "main global GM", "pwin": 1, "pga": 1, "pgv": 1, "sa": 1, "transfer": 0, "phase": 1},
+        {"dataset": "K-NET", "records": 22119, "role": "main Japan GM", "pwin": 1, "pga": 1, "pgv": 0, "sa": 0, "transfer": 0, "phase": 1},
+        {"dataset": "AQ2009GM", "records": 345226, "role": "external GM check", "pwin": 1, "pga": 1, "pgv": 1, "sa": 0, "transfer": 1, "phase": 0},
+        {"dataset": "CWA", "records": 5882, "role": "external GM check", "pwin": 1, "pga": 1, "pgv": 1, "sa": 0, "transfer": 0, "phase": 0},
+        {"dataset": "ESM", "records": 134250, "role": "Europe transfer", "pwin": 1, "pga": 1, "pgv": 1, "sa": 0, "transfer": 1, "phase": 0},
+        {
+            "dataset": "STEAD",
+            "records": int(base.loc[base["dataset"].eq("STEAD"), "records"].iloc[0]),
+            "role": "phase audit",
+            "pwin": 1,
+            "pga": 0,
+            "pgv": 0,
+            "sa": 0,
+            "transfer": 0,
+            "phase": 1,
+        },
+        {
+            "dataset": "Iquique",
+            "records": int(base.loc[base["dataset"].eq("Iquique"), "records"].iloc[0]),
+            "role": "phase audit",
+            "pwin": 1,
+            "pga": 0,
+            "pgv": 0,
+            "sa": 0,
+            "transfer": 0,
+            "phase": 1,
+        },
+    ]
+    df = pd.DataFrame(rows)
+    df.to_csv("outputs/figure1_dataset_task_matrix.csv", index=False)
+    fig = plt.figure(figsize=(8.6, 10.8))
+    gs = fig.add_gridspec(3, 1, height_ratios=[1.05, 1.1, 0.78], hspace=0.55)
+    ax = fig.add_subplot(gs[0])
     y = np.arange(len(df))
-    colors = [GRAY if s else BLUE for s in df["supplement"]]
-    ax.barh(y, df["records"] / 1000, color=colors)
+    role_colors = {
+        "main global GM": BLUE,
+        "main Japan GM": BLUE,
+        "external GM check": GREEN,
+        "Europe transfer": GREEN,
+        "phase audit": GRAY,
+    }
+    ax.barh(y, df["records"], color=[role_colors[r] for r in df["role"]])
+    ax.set_xscale("log")
     ax.set_yticks(y)
     ax.set_yticklabels(df["dataset"])
     ax.invert_yaxis()
-    ax.set_xlabel("records (thousand)")
-    style(ax, "A. Public waveform records")
+    ax.set_xlabel("event-station records (log scale)")
+    ax.set_xlim(4_000, 3_600_000)
+    for i, row in df.iterrows():
+        if row["records"] > 800_000:
+            ax.text(row["records"] / 1.10, i, f"{row['records']:,}", va="center", ha="right", fontsize=8, color="white")
+        else:
+            ax.text(row["records"] * 1.12, i, f"{row['records']:,}", va="center", fontsize=8)
+    style(ax, "A. Public records and role")
+    ax.set_title("A. Public records and role", loc="left", pad=24)
+    ax.legend(
+        handles=[
+            Patch(color=BLUE, label="main GM"),
+            Patch(color=GREEN, label="external/transfer"),
+            Patch(color=GRAY, label="phase QC"),
+        ],
+        frameon=False,
+        loc="lower left",
+        bbox_to_anchor=(0.0, 1.02),
+        ncol=3,
+        borderaxespad=0,
+        fontsize=8,
+    )
 
-    ax = axes[1]
-    tasks = ["phase", "detect", "gm", "pga", "pgv", "sa"]
+    ax = fig.add_subplot(gs[1])
+    tasks = ["pwin", "pga", "pgv", "sa", "transfer", "phase"]
     mat = df[tasks].astype(int).to_numpy()
     ax.imshow(mat, cmap=matplotlib.colors.ListedColormap(["#f3f3f3", BLUE]), vmin=0, vmax=1, aspect="auto")
     ax.set_xticks(np.arange(len(tasks)))
-    ax.set_xticklabels(["phase", "detect", "GM", "PGA", "PGV", "SA"], rotation=30, ha="right")
+    ax.set_xticklabels(["P window", "PGA", "PGV", "SA", "transfer", "phase QC"], rotation=25, ha="right")
     ax.set_yticks(np.arange(len(df)))
     ax.set_yticklabels(df["dataset"])
     for i in range(mat.shape[0]):
         for j in range(mat.shape[1]):
             ax.text(j, i, "yes" if mat[i, j] else "", ha="center", va="center", color="white" if mat[i, j] else "#888888", fontsize=7)
-    style(ax, "B. Task and target availability")
-    save(fig, "figure1_dataset_task_matrix.png")
+    style(ax, "B. What each source supports")
+
+    ax = fig.add_subplot(gs[2])
+    ax.axis("off")
+    boxes = [
+        (0.03, "Public records\n+ metadata"),
+        (0.27, "P-window\n1/2/3/5/10 s"),
+        (0.51, "Early features\n+ source-path"),
+        (0.75, "PGA / PGV / SA\n+ intervals"),
+    ]
+    for x0, label in boxes:
+        ax.add_patch(Rectangle((x0, 0.35), 0.17, 0.34, facecolor="#f4f7fa", edgecolor="#777777", linewidth=0.9))
+        ax.text(x0 + 0.085, 0.52, label, ha="center", va="center", fontsize=8.5)
+    for (x0, _), (x1, _) in zip(boxes[:-1], boxes[1:]):
+        ax.add_patch(FancyArrowPatch((x0 + 0.17, 0.52), (x1, 0.52), arrowstyle="-|>", mutation_scale=12, linewidth=1.0, color="#555555"))
+    ax.text(0.03, 0.13, "Evaluation boundary: held event, held station, regional transfer, tail error, conformal coverage", fontsize=8.5)
+    ax.set_title("C. Event-station benchmark used in all main tests", loc="left", fontsize=11)
+    fig.subplots_adjust(left=0.16, right=0.98, top=0.95, bottom=0.06, hspace=0.58)
+    fig.savefig(OUT / "figure1_dataset_task_matrix.png")
+    plt.close(fig)
+    Path("outputs/figure1_dataset_task_matrix_summary.md").write_text(
+        "\n".join(
+            [
+                "# Figure 1 Public-Data Benchmark Design",
+                "",
+                "Figure 1 summarizes the public event-station sources, their role in the evidence chain, supported targets, and the early-window prediction workflow.",
+                "",
+                "- Main in-domain strong-motion tests: InstanceGM and K-NET.",
+                "- External strong-motion checks and transfer tests: AQ2009GM, CWA and ESM.",
+                "- Phase-window quality control: STEAD, Iquique, InstanceGM and K-NET.",
+                "",
+                "Files:",
+                "- `outputs/figures/figure1_dataset_task_matrix.png`",
+                "- `outputs/figure1_dataset_task_matrix.csv`",
+                "",
+            ]
+        )
+    )
 
 
 def figure2() -> None:

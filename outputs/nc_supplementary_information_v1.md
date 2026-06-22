@@ -24,6 +24,7 @@ Key values to report:
 - K-NET: 22,119 complete ZNE records.
 - ESM supporting set: 134,250 event-station rows from 861 events and 1,568 stations.
 - AQ2009GM processed feature evidence: 345,226 rows from 60,310 events and 66 stations.
+- CWA official 2011 supplement: 5,882 eligible PGA/PGV records from 775 events and 705 stations.
 
 ## Supplementary Note 2. Early P-window feature construction
 
@@ -84,6 +85,7 @@ Key values to report:
 - Adding P-window features to metadata improves over metadata-only at every tested window, with median reductions from 20.2% at 1 s to 31.6% at 10 s.
 - In ESM held-station tests, distance gives a large additional gain over P-only features at short windows, while site metadata gives a smaller split- and window-dependent increment.
 - In AQ2009GM, metadata plus P-window features reduce held-station error by 38.0% at 2 s and 63.8% at 5 s.
+- In CWA, metadata plus P-window features reduce held-station error by 14.6%/17.7% at 2 s and 29.9%/40.3% at 5 s for official PGA/PGV targets.
 
 ## Supplementary Note 5. Support, bootstrap and tail audits
 
@@ -108,14 +110,22 @@ Key values to report:
 
 ## Supplementary Note 6. Classical references and regional GMM boundary
 
-Purpose: document attenuation-style references, Boore-style screening and K-NET Japanese GMM checks without claiming a fully specified regional GMPE comparison where metadata are incomplete.
+Purpose: document attenuation-style references, Boore-style screening, K-NET Japanese GMM checks and ESM regional GMM screening without claiming a fully specified regional GMPE comparison where metadata are incomplete.
 
 Current evidence files:
 
 - `outputs/attenuation_reference_summary.md`
 - `outputs/knet_japan_gmm_reference_summary.md`
+- `outputs/esm_regional_gmm_screening_summary.md`
+- `outputs/esm_regional_gmm_screening.csv`
 - `outputs/regional_gmm_readiness_audit.md`
 - `outputs/regional_gmm_boundary_note.md`
+
+Key values to report:
+
+- ESM held-station early P+distance+site models reduce MAE relative to the best screened regional GMM by 34.8%/23.8% for 2 s PGA/PGV.
+- The corresponding 5 s reductions are 48.3%/30.2%, and the 10 s reductions are 43.1%/30.4%.
+- This remains a screening comparison because rake and distance geometry are approximated.
 
 ## Supplementary Note 7. Uncertainty calibration
 
@@ -157,6 +167,25 @@ Key values to report:
 - ESM P-arrival sensitivity median shifts: 2.517 s delayed and 2.130 s advanced.
 - High-confidence ESM onset audit: median offset 1.223 s and 95th percentile 3.960 s.
 
+## Supplementary Note 8a. CWA official PGA/PGV supplement
+
+Purpose: document the independent Taiwan official metadata-target layer without claiming a full CWA benchmark validation.
+
+Current evidence files:
+
+- `outputs/cwa_official_pga_pgv_summary.md`
+- `outputs/figures/ground_motion_audit/cwa_official_pga_pgv_panel.png`
+- `work/cwa_official_layer/cwa_official_comparison.csv`
+- `work/cwa_official_layer/cwa_official_features.csv.gz`
+
+Key values to report:
+
+- Retained CWA 2011 feature table: 5,882 eligible PGA/PGV records, 775 events and 705 stations.
+- Held-station reductions: 14.6%/17.7% at 2 s and 29.9%/40.3% at 5 s for PGA/PGV.
+- Held-station split: 883 test rows and 120 held stations, with zero group overlap.
+- Raw CWA HDF5, metadata, tar archive and failed-download cache were deleted after feature extraction.
+- This is a one-year official CWA supplement, not full 2011-2021 CWA validation.
+
 ## Supplementary Figures
 
 - Supplementary Fig. 1: dataset-task matrix and target availability.
@@ -169,6 +198,7 @@ Key values to report:
 - Supplementary Fig. 8: uncertainty transfer boundary.
 - Supplementary Fig. 9: target-domain calibration sample-size audit.
 - Supplementary Fig. 10: ESM and AQ2009GM supporting transfer evidence.
+- Supplementary Fig. 11: CWA official PGA/PGV one-year supplement.
 
 ## Supplementary Tables
 
@@ -182,6 +212,7 @@ Key values to report:
 - Supplementary Table 8: conformal coverage metrics.
 - Supplementary Table 9: target-domain calibration sample-size metrics.
 - Supplementary Table 10: cross-regional transfer ratios.
+- Supplementary Table 11: CWA official PGA/PGV held-event and held-station metrics.
 
 ## Source data plan
 
