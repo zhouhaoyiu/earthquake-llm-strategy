@@ -1,123 +1,157 @@
-# 基于公开数据刻画早期 P 波预测强震动的边界
+# 公开强震动数据约束下早期 P 波预测地震动的可预测性边界
 
-周浩宇^1，马强^1*
+周浩宇$^{1}$，马强$^{1,*}$
 
-^1 中国地震局工程力学研究所，哈尔滨，中国。
+$^{1}$ 中国地震局工程力学研究所，哈尔滨 150080
 
-*通讯作者：马强，maqiang@iem.ac.cn。作者邮箱：zhouhaoyiu@gmail.com。ORCID：周浩宇，0009-0003-8817-1209；马强，0000-0002-9768-5223。
+\*通讯作者：马强，maqiang@iem.ac.cn。作者邮箱：zhouhaoyiu@gmail.com。ORCID：周浩宇，0009-0003-8817-1209；马强，0000-0002-9768-5223。
+
+**基金项目**：无。
 
 ## 摘要
 
-地震预警必须在破坏性地震动充分到达前估计后续强震动。P 波到时后的最初几秒包含震源、路径和场地响应的信息，但这些信息在跨区域预测中的可迁移边界并不清楚。我们构建了一个事件-台站级公开基准，用 P 到时后 1、2、3、5 和 10 秒窗口预测 PGA、PGV 和反应谱加速度。该基准包含 2,460,425 条统一清单记录，主证据来自 InstanceGM 和本地转换的 K-NET，AQ2009GM、CWA 和欧洲强震动数据提供独立补验。早期波形特征在 held-station 测试中持续降低误差：10 秒窗口下 InstanceGM PGA、InstanceGM PGV 和 K-NET PGA 的 MAE 分别降低 35.5%、52.6% 和 49.9%。AQ2009GM 全清单流式验证、CWA 官方 PGA/PGV 一年补验、ESM 欧洲强震动补验、bootstrap、source-path support 和强震动尾部审计均支持同一结论。跨区域迁移显示边界：源域 conformal 区间在目标区域明显欠覆盖，目标域校准可恢复覆盖率，但区间变宽。结果给出了 P 窗口长度、强震动尾部风险和区域不确定性之间的可测量曲线。
+地震预警需要在强震动充分到达前，根据最早观测到的 P 波估计后续地震动强度。早期 P 波能提供多少强震动信息，以及这些信息在跨区域使用时何时失效，仍缺少以公开强震动数据为基础的统一检验。本文构建事件-台站级公开基准，以 P 到时后 1、2、3、5 和 10 s 波形窗口预测 PGA、PGV 和反应谱加速度，主证据来自 InstanceGM 和本地转换的 K-NET，外部检验来自 AQ2009GM、CWA 官方 PGA/PGV 数据层和欧洲强震动记录。统一清单包含 2,460,425 条记录；AQ2009GM 流式处理得到 345,226 条有效 PGA/PGV 样本；CWA 2011 年公开 benchmark 得到 5,882 条官方 PGA/PGV 样本。结果表明，加入早期 P 波特征后，held-station 测试中的强震动预测误差稳定降低，10 s 窗口下 InstanceGM PGA、InstanceGM PGV 和 K-NET PGA 的 MAE 分别降低 35.5%、52.6% 和 49.9%。强震动尾部、bootstrap、source-path support、AQ2009GM、CWA 和 ESM 检验均保留同一信息增益。跨区域 transfer 显示清晰边界：source-domain conformal 区间在目标区明显欠覆盖，50--100 条目标区校准样本可使覆盖率接近 0.90，但区间宽度显著增大。本文给出早期 P 波窗口长度、强震动尾部漏报风险和跨区域不确定性之间的可测量关系，为公开数据约束下的地震预警模型评估提供基准。
 
-## 引言
+**关键词**：地震预警；早期 P 波；强震动预测；跨区域迁移；不确定性；公开基准
 
-地震预警需要知道早期 P 波在多大程度上约束后续破坏性地震动。P 到时后的最初几秒是台站最早获得的波形证据。它可能携带震源增长、传播路径、局部场地和初始振幅演化信息，也可能受到区域、仪器和标注体系的限制。
+## 0 引言
 
-随机划分不能回答这个问题。随机训练测试划分会混合相近事件、台站和路径，局部相似性容易被误认为可预测性。更接近实际预警场景的是 held-event、held-station 和跨区域 transfer：未来地震未在训练集中出现，目标台站未参与训练，或者目标区域与源区域的仪器和地震动分布不同。
+地震预警的核心任务是在破坏性地震动尚未充分到达前，对目标台站可能经历的强震动作出估计。P 波到时后的最初几秒是单台站最早可获得的波形证据，其中包含震源破裂初始发展、传播路径、场地响应和仪器记录条件共同作用后的观测信息。预警评估需要从随机测试集平均误差推进到可部署场景：早期信息在未见事件、未见台站和不同区域中能稳定贡献多少预测能力。
 
-公开强震动数据为这个问题提供了足够样本量，也带来严格的数据溯源要求。不同数据集的单位、分量方向、P 到时定义、场地信息和目标变量并不一致。本文以事件-台站记录为基本单位，把一个短 P 窗口、预警时可获得的元数据和同一台站后续观测到的强震动目标连接起来。
+已有研究从 P 波幅值、特征周期、震级快速估计、台站网络触发和机器学习模型等角度发展了多种地震预警方法。近年来，深度学习和大规模公开数据提高了相位拾取、事件检测和地震动估计的可用性，也让跨数据集验证成为可能。与此同时，强震动预测的高后果错误通常发生在分布尾部和区域迁移场景中。一个模型可以降低平均误差，同时仍然对最强地震动低估，或者把源区域的残差分布错误地用于目标区域。
 
-主基准使用 InstanceGM 和 K-NET。InstanceGM 提供大规模地震动目标和多样的震源-路径覆盖；K-NET 提供日本强震动记录，并经本地转换得到完整 ZNE 分量。STEAD 和 Iquique 用于相位标注迁移审计。AQ2009GM、CWA 和欧洲强震动数据作为独立补验层，测试同一信息增益是否能在其他公开强震动数据中出现。
+本文把“早期 P 波是否有用”进一步拆成三个可检验问题。第一，早期 P 波在严格 held-out 事件和台站条件下，是否提供 source-path metadata 之外的信息。第二，这种信息在强震动尾部、pre-peak 记录和重采样检验中是否仍然存在。第三，在跨区域 transfer 中，源区域模型和不确定性估计何时失效，目标区域需要多少校准样本才能恢复覆盖率。
 
-本文估计的是离线信息边界。实时通信、报警逻辑和人员响应属于下一层系统问题。这里的预测单元是一个台站的一条事件记录，问题是：在后续强震动目标尚未知时，早期 P 波能在多大程度上减少 PGA、PGV 或 SA 的预测误差。
+公开强震动数据为上述问题提供了样本基础，也带来溯源约束。不同数据集的分量方向、加速度单位、P 到时定义、台站场地信息和 PGA/PGV/SA 目标变量并不一致。若不把这些差异写入数据链路，模型可能把单位、网络或标注差异学习成区域物理信号。本文以事件-台站记录为基本样本，将短 P 波窗口、预警时可获得的元数据和同一台站后续观测到的强震动目标连接起来，并把每一层证据限定在其实际支持的结论范围内。
 
-## 结果
+本文的目标是估计离线信息边界。实时通信延迟、触发策略、报警阈值和公众响应属于工程系统层面，不在本文主证据范围内。本文关注的是在给定 P 到时和事件-台站记录后，早期 P 波能否减少后续 PGA、PGV 或 SA 的预测误差，以及这种减少能否跨区域转移。
 
-### 公开事件-台站基准连接了波形、目标和评估边界
+## 1 数据与方法
 
-统一清单包含 2,460,425 条记录。InstanceGM 贡献 1,159,223 条地震动记录，K-NET 贡献 22,119 条完整 ZNE 强震动记录。K-NET 从原始 BSON 包转换为 HDF5 和 CSV 元数据，分量映射为 UD 到 Z、NS 到 N、EW 到 E。NIED 文档说明 K-NET 加速度单位为 gal，等价于 cm/s2。这个转换步骤写入 provenance，因为单位和分量错误会被模型当成区域信号学习。
+### 1.1 公开数据源与证据角色
 
-其他数据源承担清晰角色。STEAD 和 Iquique 检查 P/S 标注域迁移。AQ2009GM 提供一个独立 SeisBench 地震动数据层，当前全清单流式处理覆盖 254 个本地 manifest chunk，保留 345,226 条有效 PGA/PGV 特征记录。CWA 提供台湾官方 PGA/PGV metadata target 的 2011 年补验层，保留 5,882 条有效记录、775 个事件和 705 个台站。ESM 提供欧洲强震动外部域。PNWAccelerometers 只作为波形峰值幅度稳健性检查，因为本地缓存缺少波形单位和官方 PGA/PGV 目标。
+主基准使用 InstanceGM 和 K-NET。InstanceGM 提供大规模地震动目标和多样的震源-路径覆盖，是多目标 PGA、PGV 和 SA 检验的主数据源。K-NET 提供日本强震动记录，本文将原始 BSON 包本地转换为 HDF5 波形和 CSV 元数据，分量统一为 Z、N、E，其中 UD 映射为 Z，NS 映射为 N，EW 映射为 E。K-NET 加速度按 gal 处理，即 cm/s^2。转换过程保留在 provenance 中。
 
-每条事件-台站记录提取 P 到时后 1、2、3、5 和 10 秒窗口。特征包括分量最大绝对值、RMS、标准差、95 分位绝对幅值、水平向最大值、三分量向量最大值和向量 RMS。目标变量在 log10 单位下建模。主比较是 source-path metadata 基线与 metadata 加早期波形模型。held-event 和 held-station 划分均检查 group overlap，主验证中的 overlap 为 0。
+外部证据层承担不同任务。AQ2009GM 用于独立 SeisBench 强震动检验；本文采用 chunk-streaming 方式处理全部本地 manifest chunk，提取早窗特征、PGA/PGV 和事件-台站标识，保存小特征表后删除原始 chunk。CWA 作为官方 PGA/PGV 数据层，当前仅处理公开 benchmark 的 2011 年样本，不写成完整 2011--2021 年验证。ESM 用于欧洲强震动外部域和区域 GMM screening；本地 ESM 头段缺少显式 P 到时，本文采用理论 P 到时并进行 Vp 敏感性和 envelope onset spot audit。STEAD 和 Iquique 用于相位拾取迁移审计，PNWAccelerometers 仅作为波形峰值幅度稳健性检查。
 
-### 早期 P 波提供了 metadata 之外的信息
+统一 manifest 当前包含 2,460,425 条记录。InstanceGM 贡献 1,159,223 条地震动记录；K-NET 贡献 22,119 条完整 ZNE 强震动记录。AQ2009GM 流式处理后保留 345,226 条有效 PGA/PGV 特征记录，涉及 60,310 个事件和 66 个台站。CWA 2011 年层保留 5,882 条有效记录，涉及 775 个事件和 705 个台站。ESM 本地包得到 134,250 个早窗特征行，涉及 861 个事件和 1,568 个台站。
 
-早期 P 波在主 held-station 测试中稳定降低误差。10 秒窗口下，metadata 加早期波形模型相对 metadata-only 基线的 MAE 降低为：InstanceGM PGA 35.5%，InstanceGM PGV 52.6%，InstanceGM SA03 26.0%，SA10 20.9%，SA30 27.8%，K-NET PGA 49.9%。这些测试排除了训练和测试台站重叠。
+![数据层和任务覆盖。InstanceGM 与 K-NET 构成主强震动检验，AQ2009GM、CWA 和 ESM 提供外部证据层；不同数据源只在其目标变量和标注条件允许的范围内使用。 Fig. 1 Dataset layers and task coverage.](figures/ground_motion_audit/balanced_station_distribution_audit_panel.png)
 
-信息增益随窗口长度变化。K-NET PGA 的 held-station 误差降低从 1 秒的 11.3% 增至 5 秒的 23.3%，10 秒达到 49.9%。InstanceGM PGV 在 1 秒已有 40.1% 降低，5 秒为 45.4%，10 秒为 52.6%。这说明不同目标的可用早期信息不同：PGV 更早出现强信号，PGA 对窗口长度更敏感。
+### 1.2 事件-台站样本、早窗特征与目标变量
 
-K-NET 的 peak-capture 审计给出 lead-time 边界。部分短窗已经包含接近最终 PGA 的水平向峰值。为避免把“已经看到目标峰值”误写成预警信息，我们筛选 early horizontal peak 低于最终 PGA 80% 的 K-NET 记录。在这个 pre-peak 子集中，1 秒和 3 秒窗口仍分别降低 MAE 13.8% 和 17.9%。因此 1 秒和 3 秒结果可以支撑 lead-time 解释；10 秒结果更适合写成较强的 early strong-motion information。
+每条样本对应一个事件在一个台站的一条记录。以 P 到时为起点，提取 1、2、3、5 和 10 s 早期窗口。波形特征包括三分量最大绝对值、RMS、标准差、95 分位绝对幅值、水平向最大值、三分量向量最大值和向量 RMS。全记录峰值不进入预测特征，避免目标泄漏。目标变量在 log10 单位下建模，包括 PGA、PGV 和可用的反应谱加速度 SA(0.3 s)、SA(1.0 s)、SA(3.0 s)。
 
-### 稳健性审计显示增益不是抽样偶然
+输入信息分为四组：source-path metadata；早期 P 波特征；metadata 加早期 P 波；跨区域 transfer 中只使用早期 P 波统计。metadata 包括震级、深度、距离和可用场地信息。跨区域 transfer 排除震级、距离、场地、event id 和 station id，目的在于单独检验早期波形统计本身的可迁移性。
 
-paired bootstrap 对 held-station 测试记录重采样，所有六个主目标的 95% 置信区间下界均为正。最弱下界为 InstanceGM SA10 的 16.9%。K-NET PGA 的 49.9% 平均降低对应 46.6% 到 53.1% 的区间。该审计说明增益在测试记录重采样下保持稳定。
+### 1.3 划分、模型和评价指标
 
-source-path support 审计只根据震级和距离把测试记录限制在训练集中心支持范围内，不使用目标幅值做筛选。该审计保留 82.4% 到 83.9% 的 held-station 测试记录，六个主目标仍全部为正增益，范围为 20.1% 到 54.5%。这降低了“只是测试分布异常造成”的解释空间。
+本文使用 held-event 和 held-station 划分。held-event 保证训练集和测试集事件不重叠，held-station 保证训练集和测试集台站不重叠。所有主表均检查 group overlap，主验证中 overlap 为 0。held-station 是本文更重视的泛化场景，因为预警模型部署时常面对训练集中未出现的目标台站。
 
-强震动尾部审计聚焦目标幅值最高的 5% 记录。早期波形特征对所有主目标的尾部 MAE 均有降低，范围为 18.9% 到 66.0%。但是 factor-2 underprediction 并未完全消失，InstanceGM SA30 的最强尾部中还出现轻微恶化。该结果支持边界表述：早期 P 波减少强震动尾部误差，但不能消除高后果漏报风险。
+主模型采用稳定的树模型和保守超参数。本文固定模型族，把比较重点放在相同 split 和目标定义下早期 P 波是否相对 metadata-only 基线降低误差。评价指标为 log10 目标单位下的 MAE、RMSE、$R^2$、强震动尾部 MAE 和相对误差降低率。相对降低率定义为
 
-残差审计显示剩余误差具有结构。K-NET PGA 的大残差尾部偏向更远距离；InstanceGM 的大残差在 PGA、PGV 和 SA 中重复出现。残差机制表把最大 5% 残差映射到路径衰减边界、强震动尾部边界和早期幅值边界。这个分类是描述性的，不作为因果归因。
+$$
+100 \times \frac{\mathrm{MAE}_{\mathrm{baseline}}-\mathrm{MAE}_{\mathrm{waveform}}}{\mathrm{MAE}_{\mathrm{baseline}}}.
+$$
 
-### 独立数据层支持同一信息增益
+不确定性使用 conformal interval 评估。域内测试采用目标域校准残差。跨区域测试分别使用 source-domain conformal、target-offset calibration 和 target-domain conformal，以区分源域残差、目标区偏移和目标区残差宽度的作用。校准样本量审计固定源域模型，只从目标区抽取 10、25、50、100、250 和 1000 条记录估计一个 offset 和 conformal 残差宽度。
 
-AQ2009GM 是一个独立 SeisBench 地震动补验。流程按本地 chunk manifest 流式处理全部 254 个 chunk，提取早期 velocity features、`trace_pga_cmps2`、`trace_pgv_cmps`、event id 和 station id，写出小特征表后删除原始 chunk 文件。保留结果包含 345,226 条有效 PGA/PGV 记录、60,310 个事件和 66 个台站。5 秒 held-station 测试中，AQ2009GM PGA 和 PGV 的误差降低分别为 55.8% 和 71.9%。
+### 1.4 补充审计
 
-CWA 补上官方独立 PGA/PGV 数据层。当前处理的是公开 CWA benchmark 的 2011 年，不是完整 2011-2021 CWA validation。该层保留 5,882 条有效记录、775 个事件和 705 个台站。held-station 测试中，2 秒窗口 PGA/PGV 分别降低 14.6%/17.7%，5 秒窗口分别降低 29.9%/40.3%。原始 CWA HDF5、metadata、tar 包和失败下载 cache 已在特征提取后删除。
+bootstrap 审计对 held-station 测试记录成对重采样，估计相对误差降低率的置信区间。source-path support 审计只根据震级和距离将测试记录限制在训练集中心支持范围内，不使用目标幅值筛选。强震动尾部审计聚焦目标幅值最高 5% 的记录。pre-peak 审计从 K-NET PGA 中剔除早窗水平峰值已接近最终 PGA 的记录，用于检验短窗结果是否仍有 lead-time 含义。轻量 CNN 波形编码器用于模型复杂度对照，不能作为 foundation model 结果。
 
-ESM 提供欧洲强震动外部域。当前本地包包含 951 个 zip，得到 134,250 个早窗特征行、861 个事件和 1,568 个台站。ESM 本地头段缺少显式 P 到时，因此使用理论 P 到时。Vp 敏感性审计显示，Vp=5.5 km/s 相对 6.0 km/s 的中位延迟为 2.517 s，Vp=6.5 km/s 的中位提前为 2.130 s。200 条波形 envelope onset  spot audit 中，86 条高置信记录的中位绝对偏移为 1.223 s，95 分位为 3.960 s。ESM 因此作为外部强震动和 transfer 域使用，不能写成 catalog/manual P-pick 证据。
+## 2 结果
 
-### 经典参考和区域 GMM screening 支持 added-information 结论
+### 2.1 早期 P 波在未见台站上提供稳定信息增益
 
-我们使用低参数 attenuation-shaped ridge、bias-corrected OpenQuake BooreEtAl2014、K-NET 日本 GMM screening 和 ESM regional GMM screening 作为 classical references。InstanceGM 在当前 split 中有 Vs30；K-NET 缺少 Vs30、rupture distance 和 focal mechanism，因此 K-NET GMM 只能作为 screening reference。
+在主 held-station 测试中，加入早期 P 波特征后，多个目标的预测误差稳定降低。10 s 窗口下，metadata 加早期波形模型相对 metadata-only 基线的 MAE 降低率为：InstanceGM PGA 35.5%、InstanceGM PGV 52.6%、InstanceGM SA03 26.0%、SA10 20.9%、SA30 27.8%、K-NET PGA 49.9%。这些测试排除了训练和测试台站重叠，说明增益不依赖同一台站重复出现。
 
-在相同 held-station 行上，metadata 加早期波形模型优于 BooreEtAl2014 参考。相对 BooreEtAl2014，InstanceGM PGA、PGV、SA03、SA10、SA30 和 K-NET PGA 的 MAE 分别降低 36.6%、59.4%、35.4%、36.4%、48.0% 和 60.6%。K-NET PGA 的日本 GMM screening 中，最佳候选 Kanno2006Shallow 的 MAE 为 0.242，而早期波形模型为 0.111。
+信息增益随 P 窗口长度增加而变化。K-NET PGA 的 held-station 误差降低率从 1 s 的 11.3% 增至 5 s 的 23.3%，10 s 达到 49.9%。InstanceGM PGV 在 1 s 已有 40.1% 降低，5 s 为 45.4%，10 s 为 52.6%。这表明不同强震动目标的早期可观测性不同：PGV 对早期幅值和能量特征更敏感，PGA 对窗口长度的依赖更强。
 
-ESM regional GMM screening 使用 BooreEtAl2014、AkkarEtAl2014、BindiEtAl2014 和 CauzziEtAl2015 候选。相对最佳 screened regional GMM，早期 P+distance+site 模型在 2 秒 PGA/PGV 上降低 MAE 34.8%/23.8%，5 秒为 48.3%/30.2%，10 秒为 43.1%/30.4%。这个层是目前最强的经典参考补充，但仍属于 screening，因为 rupture geometry、rake 和完整构造类型信息不完备。
+![P 窗口长度控制早期地震动信息增益。误差降低率随窗口增长增强，但不同目标的增长速率不同。 Fig. 2 P-window length controls the information gain for strong-motion prediction.](figures/ground_motion_audit/held_station_window_scan.png)
 
-### 不确定性和跨区域迁移给出边界
+### 2.2 增益通过重采样、支持域和尾部检验
 
-target-domain conformal intervals 在主 held-station 测试中接近或略低于 90% 标称覆盖率。K-NET PGA 覆盖率为 0.925，InstanceGM PGV 为 0.898，其他 InstanceGM 目标为 0.820 到 0.876。这说明在同一目标域校准时可以得到可用的不确定性估计。
+paired bootstrap 显示，六个主目标的 95% 置信区间下界均为正。最弱下界为 InstanceGM SA10 的 16.9%；K-NET PGA 的平均降低率为 49.9%，置信区间为 46.6%--53.1%。该结果说明增益在测试记录重采样下保持稳定。
 
-跨区域直接迁移时，coverage 明显失效。2 秒和 5 秒 transfer 中，source-domain conformal coverage 分别为 0.468 和 0.298，对 0.90 标称覆盖率的 gap 为 0.432 和 0.602。target-offset conformal calibration 可把覆盖率拉回接近 0.90，但中位区间宽度达到 2.177 log10 units。结论很直接：源区域残差不能直接代表目标区域不确定性。
+source-path support 审计保留 82.4%--83.9% 的 held-station 测试记录。该审计只使用震级和距离筛选，不用目标幅值。筛选后六个主目标仍均为正增益，范围为 20.1%--54.5%。这降低了“测试样本落在训练集支持域外导致表观增益”的解释空间。
 
-跨区域误差曲线同样显示边界。四域 transfer 使用早期波形特征，不使用震级、距离、场地、event id 或 station id。zero-shot transfer 的中位 MAE penalty 从 1 秒的 2.25 倍升至 10 秒的 4.27 倍。target-offset 校准可降低 penalty，但所有窗口仍高于目标域训练。更多早期波形信息提升域内预测，也可能放大区域和仪器差异。
+强震动尾部结果更接近预警风险。目标幅值最高 5% 的记录中，早期波形对所有主目标的尾部 MAE 均有降低，范围为 18.9%--66.0%。同时，factor-2 underprediction 没有完全消失，InstanceGM SA30 的最强尾部还出现轻微恶化。该结果限定了本文结论：早期 P 波能减少强震动尾部误差，仍不能消除高后果漏报边界。
 
-## 讨论
+![稳健性和尾部审计。Bootstrap、support 限制和强震动尾部检验均保留正增益，同时显示残余漏报风险。 Fig. 3 Robustness and tail audits retain positive gains and expose residual miss risk.](figures/ground_motion_audit/held_station_tail_audit.png)
 
-本文支持一个收窄但可验证的结论：早期 P 波窗口包含 metadata 之外的强震动信息；这种信息在 held-event、balanced held-station、AQ2009GM、CWA 和 ESM 补验中保持可见；跨区域迁移和 conformal coverage 显示它有清晰边界。
+### 2.3 pre-peak 审计给出短窗 lead-time 边界
 
-该结论限定在离线 event-station 信息增益和不确定性边界。实时系统还需要通信延迟、触发逻辑、报警阈值、前瞻验证和用户响应评估。
+短 P 窗口可能已经包含接近最终 PGA 的峰值。若不加区分，模型可能利用已经出现的强震动峰值，削弱预警前瞻性解释。K-NET pre-peak 审计筛选 early horizontal peak 低于最终 PGA 80% 的记录。在这个子集中，1 s 和 3 s 窗口仍分别降低 MAE 13.8% 和 17.9%。这一结果支撑 1--3 s 短窗的 lead-time 信息增益。10 s 窗口结果更适合解释为 early strong-motion information，部分记录在该时间尺度下已接近后续强震动阶段。
 
-当前最强主证据是 InstanceGM PGV、InstanceGM PGA 和 K-NET PGA。SA 目标也有正增益，但 tail underprediction 和 calibration 风险更明显。残差审计不是附属装饰，而是结果的一部分：它指出哪些强震动记录在加入早期 P 波后仍难以预测。
+### 2.4 外部公开数据层保留同一信息增益
 
-现在的 NC 概率可诚实写成 65-70%。CWA 官方 PGA/PGV 层补上了一个关键独立数据短板，ESM regional GMM screening 提升了 classical-reference 对照强度，四域 transfer 给出了边界曲线。要稳定冲到 70-80%，仍需要更强的独立证据，例如人工 ESM P pick 小样本验证、完整区域 GMPE/GMM 对照，或更明确的物理机制层。
+AQ2009GM 作为独立 SeisBench 强震动数据层，提供了更大规模的外部检验。全部本地 manifest chunk 被流式处理后，原始 chunk 文件被删除，只保留特征表和 inventory。5 s held-station 测试中，AQ2009GM PGA 和 PGV 的误差降低率分别为 55.8% 和 71.9%。该结果说明早窗信息增益并不局限于 InstanceGM 和 K-NET。
 
-## 方法概述
+CWA 提供官方 PGA/PGV metadata target。当前结果只覆盖公开 benchmark 的 2011 年，不代表完整 CWA 2011--2021 年验证。held-station 测试中，2 s 窗口 PGA/PGV 的 MAE 分别降低 14.6% 和 17.7%，5 s 窗口分别降低 29.9% 和 40.3%。该层样本量小于 AQ2009GM，目标变量来自官方数据表，是重要独立证据。
 
-### 数据源和目标
+ESM 外部域使用欧洲强震动记录。本地头段缺少显式 P 到时，本文使用理论 P 到时，并通过 Vp 敏感性和 envelope onset spot audit 检查对齐误差。Vp=5.5 km/s 相对 6.0 km/s 的中位延迟为 2.517 s，Vp=6.5 km/s 的中位提前为 2.130 s。200 条波形 envelope onset spot audit 中，86 条高置信记录的中位绝对偏移为 1.223 s，95 分位为 3.960 s。ESM 结果用于外部强震动和 transfer 检验，不写成 catalog/manual P-pick 证据。
 
-主基准使用 InstanceGM 和 K-NET。支持分析使用 STEAD、Iquique、AQ2009GM、CWA、ESM 和 PNWAccelerometers。目标在 log10 单位下建模，包括 PGA、PGV 和 SA。K-NET PGA 使用 NIED 文档支持的 gal 到 cm/s2 映射。AQ2009GM 和 CWA 使用 metadata 中的 `trace_pga_cmps2` 和 `trace_pgv_cmps`。ESM PGA/PGV 从本地 ACC.AP 和 VEL.AP 文件计算。
+![外部公开数据层。AQ2009GM、CWA 和 ESM 从不同数据来源支持同一早窗信息增益，同时各自带有明确的数据边界。 Fig. 4 External public-data layers support the same early-window information gain with explicit data boundaries.](figures/ground_motion_audit/cwa_official_pga_pgv_panel.png)
 
-### 特征和模型
+### 2.5 经典参考和区域 GMM screening 支持 added-information 结论
 
-P 窗口特征在 1、2、3、5 和 10 秒上提取。full-record peak features 不进入预测特征，避免目标泄漏。主模型为稳定的树模型，核心比较为 metadata-only 与 metadata plus early waveform。跨区域 transfer 只使用早期波形特征，排除震级、距离、场地、event id 和 station id。
+本文使用低参数 attenuation-shaped ridge、bias-corrected OpenQuake BooreEtAl2014、K-NET 日本 GMM screening 和 ESM regional GMM screening 作为经典参考。InstanceGM 当前 split 中有 Vs30；K-NET 缺少 Vs30、rupture distance 和 focal mechanism，K-NET GMM 结果保持 screening reference 定位。
 
-### 划分和验证
+在相同 held-station 行上，metadata 加早期波形模型优于 BooreEtAl2014 参考。相对 BooreEtAl2014，InstanceGM PGA、PGV、SA03、SA10、SA30 和 K-NET PGA 的 MAE 分别降低 36.6%、59.4%、35.4%、36.4%、48.0% 和 60.6%。K-NET PGA 的日本 GMM screening 中，最佳候选 Kanno2006Shallow 的 MAE 为 0.242，早期波形模型为 0.111。
 
-held-event 保证事件不重叠，held-station 保证台站不重叠。所有主结果都记录 train groups、test groups 和 group overlap。group overlap 非零即不通过 verifier。bootstrap、source-path support、strong-tail、residual-persistence、conformal 和 transfer 审计用于刻画边界，而不是扩大主结论。
+ESM regional GMM screening 使用 BooreEtAl2014、AkkarEtAl2014、BindiEtAl2014 和 CauzziEtAl2015 候选。相对最佳 screened regional GMM，早期 P+distance+site 模型在 2 s PGA/PGV 上降低 MAE 34.8%/23.8%，5 s 为 48.3%/30.2%，10 s 为 43.1%/30.4%。这个层增强了经典参考对照，但仍是 screening，因为 rupture geometry、rake 和完整构造类型信息不完备。
 
-### 软件和复现
+![经典参考和 GMM screening。早期 P 波信息在相同测试行上超过可用经典参考，但部分 GMM 输入缺失使该层保持 screening 定位。 Fig. 5 Classical references and GMM screening support the added-information result.](figures/ground_motion_audit/esm_regional_gmm_screening.png)
 
-当前结果由本地 `zhy` 环境生成，主要依赖 Python 3.12、pandas、scikit-learn、matplotlib、h5py、SeisBench 和 OpenQuake。仓库保留派生特征表、split、metrics、图表和 verifier。原始波形数据按各提供方许可获取，不在最终公开仓库中重新分发。
+### 2.6 跨区域 transfer 揭示可预测性边界
 
-## 图注草稿
+跨区域 direct transfer 的结果显示，源区域模型不能直接等同于目标区域模型。四域 transfer 只使用早期波形统计，不使用震级、距离、场地、event id 或 station id。2 s 窗口下，source-only transfer 的 MAE penalty 中位数为 2.94 倍；5 s 窗口升至 4.30 倍。target-offset calibration 能把 penalty 降至 1.56 倍和 1.84 倍，但仍高于目标域训练。
 
-**图 1｜公开数据基准设计。** InstanceGM 和 K-NET 支撑主域内强震动测试；AQ2009GM、CWA 和 ESM 提供外部补验；STEAD 和 Iquique 支撑相位窗口质量控制。
+不确定性边界更加明显。source-domain conformal interval 在跨区应用时欠覆盖，2 s 和 5 s 的覆盖率中位数分别为 0.468 和 0.298，远低于 0.90 标称覆盖率。目标区 offset 和 conformal 残差宽度校准后，50 条目标区校准记录已使覆盖率中位数接近 0.90，100 条记录更稳定。代价是区间宽度显著增大，2 s 和 5 s 在 100 条校准记录时的中位区间宽度分别为 2.161 和 2.080 log10 units。
 
-**图 2｜更长 P 窗口增加强震动信息。** 早期波形特征从短窗口开始降低均值误差和尾部误差，不同目标显示不同饱和曲线。
+该结果给出了本文最重要的边界：早期 P 波在目标域内具有可测量信息增益；源域残差分布不能直接代表目标域不确定性；少量目标域样本可以修复覆盖率，但不能消除跨区域地震动差异。
 
-**图 3｜held-out 测试显示增益可泛化到未见事件和未见台站。** group-overlap 检查为零，分布审计显示 held-station 是更接近部署的困难测试。
+![跨区域可预测性边界。更多早期波形信息提高域内预测能力，同时跨区域 direct transfer 保留明显 penalty；目标区校准可恢复覆盖率但扩大区间。 Fig. 6 Cross-region predictability boundary.](figures/ground_motion_audit/nc_supplementary_experiments_summary.png)
 
-**图 4｜早期波形观测优于可用经典参考，但需要校准。** OpenQuake 和区域 GMM screening 支持 added-information 结论，conformal panel 显示目标依赖的校准边界。
+### 2.7 轻量 CNN 对照限定模型复杂度解释
 
-**图 5｜残差结构显示早期 P 波仍无法完全解释的强震动部分。** 距离尾部、重复高残差记录和欠预测风险构成后续物理解释和数据改进目标。
+本文补充了一个小型 CNN 波形编码器对照。该模型直接读取早期波形窗口，并分别测试 waveform-only 和 waveform+metadata 设置。结果显示，小 CNN 能学习到强震动信息；K-NET PGA 10 s waveform+metadata 的 MAE 为 0.139，$R^2$ 为 0.799。在当前样本量和训练设置下，稳定树模型和手工早窗统计仍取得更低误差。InstanceGM 10 s 中位 MAE：CNN waveform-only 为 0.506，CNN waveform+metadata 为 0.351，树模型 waveform+metadata 为 0.210；K-NET 10 s PGA 分别为 0.161、0.139 和 0.105。
 
-**图 6｜P 窗口对齐足以支撑主任务，S 相迁移更不稳定。** phase audit 支持 P-window benchmark，而不是泛化成完整相位迁移结论。
+这个对照的作用是限定模型解释。本文不依赖复杂神经网络获得主结论，也不把 CNN 结果写成最优模型。主证据来自公开数据、严格 split、强震动尾部审计、跨区域 transfer 和 conformal 不确定性边界。
 
-**图 7｜可预测性边界在域内为正，在直接跨区域迁移下脆弱。** 域内信息增益随窗口增长，跨区域误差 penalty 增大，source conformal 欠覆盖，强震动尾部仍保留漏报边界。
+## 3 讨论
 
-**扩展数据图 1｜高残差波形案例。** 展示加入早期波形后仍有大残差的 InstanceGM 和 K-NET 记录，用于审计，不作因果归因。
+本文结果说明，早期 P 波预测强震动的可用信息是可以用公开数据量化的。域内 held-station 测试、强震动尾部审计和多个外部数据层给出一致方向：P 到时后的短窗口确实包含 metadata 之外的信息。该结论的地震学意义在于，早期台站观测不仅是快速震级估计的替代输入，也携带了目标台站路径和局部响应的综合观测约束。
 
-**扩展数据图 2｜大残差集中在特定协变量角落。** IQR 标准化偏移把残差尾部分为路径衰减、强震动尾部和早期幅值边界。
+边界同样清楚。强震动尾部仍存在 factor-2 underprediction；部分大残差在不同目标中重复出现；K-NET PGA 大残差偏向更远距离；跨区域 source conformal 区间严重欠覆盖。这些现象说明，早期 P 波可以降低误差，强震动预测仍然需要显式不确定性。对于预警系统，高风险尾部和跨区域校准应进入模型输出设计。
+
+目标区校准样本量结果对实际部署有直接启发。50--100 条目标区记录已经能将 conformal 覆盖率拉回接近标称水平。这个数量并不大，说明新区域部署时，可以通过少量本地强震动记录修正偏差和区间宽度。区间仍然很宽，反映的是物理和数据分布差异，而非校准失败。
+
+本文也有明确限制。CWA 结果目前只覆盖 2011 年公开 benchmark；ESM P 到时来自理论到时而非人工拾取；K-NET GMM 对照缺少完整 Vs30、rupture distance 和 focal mechanism；AQ2009GM 保留的是特征表而非原始 chunk。上述限制不影响“公开数据下早窗信息增益存在”的主结论，但限制了每个外部层可支持的强度。
+
+后续工作应集中在三方面。第一，增加带人工或官方 P 到时的小样本 ESM 验证，直接检验理论 P 到时带来的窗口误差。第二，在更多区域建立完整 GMM 输入，用区域化 GMM 对照替代 screening。第三，把本文离线边界嵌入实时预警流程，评估通信延迟、报警阈值和用户代价下的可用性。
+
+## 4 结论
+
+（1）公开强震动数据可以构建事件-台站级早期 P 波预测基准。统一清单、分量和单位 provenance、held-event/held-station split 以及外部数据层共同限制了证据边界。
+
+（2）早期 P 波在未见台站测试中提供 metadata 之外的信息。10 s 窗口下 InstanceGM PGA、InstanceGM PGV 和 K-NET PGA 的 MAE 分别降低 35.5%、52.6% 和 49.9%；短窗 pre-peak 子集仍保留正增益。
+
+（3）强震动尾部和外部数据层支持同一方向。AQ2009GM、CWA 2011 年官方 PGA/PGV 层和 ESM screening 均显示早窗信息增益，同时暴露了各自的数据限制。
+
+（4）跨区域 transfer 的主要结论是可预测性边界。source conformal interval 在目标区欠覆盖，少量目标区校准样本可恢复覆盖率，区间宽度同步增大，说明区域不确定性需要显式建模。
+
+（5）轻量 CNN 对照显示，主结论不依赖复杂模型。稳定树模型和透明特征更适合作为当前基准的主分析工具。
+
+## 数据和代码可用性
+
+本文使用的公开数据来自各数据提供方。派生特征表、split、metrics、图件和验证报告保存在本地仓库输出目录；原始受限或体量过大的波形文件不随稿件重新分发。AQ2009GM 和 CWA 原始临时文件在特征提取后已删除，仅保留复现实验所需的小特征表和 inventory。最终公开仓库需要删除本地路径、缓存记录和不应公开的数据副本。
+
+## 利益冲突声明
+
+作者声明无利益冲突。
+
+## 参考文献初稿说明
+
+参考文献条目将在终稿前按目标期刊格式逐条核对。当前正文需要覆盖地震预警基本文献、PhaseNet/EQTransformer 相位拾取文献、InstanceGM/K-NET/ESM/CWA/AQ2009GM 数据源文献、BooreEtAl2014、AkkarEtAl2014、BindiEtAl2014、CauzziEtAl2015 和 Kanno2006 等 GMM 文献，以及 conformal prediction 和区域迁移评估文献。

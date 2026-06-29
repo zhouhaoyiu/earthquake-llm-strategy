@@ -1,10 +1,10 @@
 # A public-data boundary for forecasting strong shaking from early P waves
 
-Zhou Haoyu^1 and Qiang Ma^1*
+Zhou Haoyu\textsuperscript{1} and Qiang Ma\textsuperscript{1,*}
 
-^1 Institute of Engineering Mechanics, China Earthquake Administration, Harbin, China.
+\textsuperscript{1} Institute of Engineering Mechanics, China Earthquake Administration, Harbin, China.
 
-*Correspondence: Qiang Ma, maqiang@iem.ac.cn. Author email: zhouhaoyiu@gmail.com. ORCID: Zhou Haoyu, 0009-0003-8817-1209; Qiang Ma, 0000-0002-9768-5223.
+\textsuperscript{*}Correspondence: Qiang Ma, maqiang@iem.ac.cn. Author email: zhouhaoyiu@gmail.com. ORCID: Zhou Haoyu, 0009-0003-8817-1209; Qiang Ma, 0000-0002-9768-5223.
 
 ## Abstract
 
@@ -15,6 +15,8 @@ Earthquake early warning depends on the first seconds of the P wave. Those secon
 Earthquake early warning must estimate damaging shaking before the strongest motion reaches a site [1,2]. The first seconds after the P arrival are the earliest waveform evidence available at that station. Their usable information is limited by source growth, propagation path, site response and calibration to the target region.
 
 A warning model can improve average predictions and still fail where the stakes are highest. It can miss the strongest motions, lose coverage at unseen stations or carry overconfident intervals into a different region. The central question is where early P-wave information helps and where that help stops.
+
+This boundary is difficult to see from a single benchmark number. Average error, warning-tail error, held-station generalization and regional transfer answer different questions. A model can score well on the first and fail on the others. We treat these quantities as separate evidence layers and require the same early-window claim to pass across them.
 
 Random train-test splits do not answer that question. They mix related stations, events and paths between training and testing, so local similarity can look like predictability. Held-event, held-station and regional-transfer splits test the cases a deployed system faces: an unfamiliar earthquake, an unseen site or a different network.
 
@@ -43,6 +45,8 @@ The baseline model uses source-path information without the early waveform. The 
 The phase-label audit checks whether the P-window alignment itself is plausible. In a 1,000-record-per-dataset audit, PhaseNet P picks remain stable for STEAD and K-NET, with P-pick mean absolute errors of 0.035 s and 0.056 s [9]. S picks show stronger dataset dependence, especially for InstanceGM. We use this result to keep the benchmark focused: P-window extraction is credible for the main early-window task, while broad phase-label transfer is treated as a separate limitation.
 
 Every main split is checked for group leakage. Held-event tests require zero event overlap, and held-station tests require zero station overlap between training and test sets. The split distributions are also inspected because zero overlap alone does not guarantee a hard test. InstanceGM held-station test records are farther and weaker than the training records, with median distance increasing from 44.27 km to 70.61 km and median log10 PGA decreasing from -1.68 to -2.11. K-NET train and test distributions overlap more closely. This difference helps interpret why some targets retain larger gains than others.
+
+The benchmark is organized as a claim ladder. The first layer asks whether early waveform features improve held-out strong-motion prediction. The second asks whether that improvement survives resampling, support matching and strong-tail audits. The third asks whether uncertainty intervals remain calibrated when moved across regions. The fourth asks whether independent public archives keep the same pattern. This organization keeps the main claim tied to observed evidence instead of model preference.
 
 ### Early P waves add information beyond metadata
 
@@ -133,6 +137,8 @@ The analysis also clarifies the role of model complexity. The claim does not req
 The evidence supports three operational implications. First, early waveform observations should be used alongside source-path metadata, because they add station-specific information before the strongest shaking. Second, uncertainty calibration must be regional. Third, evaluation should include held-station splits and strong-tail audits, because random-split averages can hide the failures that matter during damaging earthquakes.
 
 For an operational system, these implications translate into a simple validation checklist. A candidate model should show positive gain over source-path metadata on held stations, retain positive gain in the strongest-motion tail, report interval coverage on a target-domain calibration set, and disclose its cross-region penalty before it is moved to another network. The checklist is intentionally model-agnostic. It can be applied to gradient-boosted trees, convolutional networks, transformers or physics-informed hybrids.
+
+The scientific contribution is the boundary itself. The data show measurable early-waveform information, a target-specific lead-time curve, persistent high-residual cases and a regional calibration cost. These four observations make the result useful beyond the present models: any stronger waveform model should move the curve, shrink the residual set or reduce the calibration cost under the same held-station and transfer tests.
 
 Several limitations remain. Public datasets differ in instrumentation, metadata completeness, picking accuracy and target definitions. ESM currently uses a theoretical P-onset estimate, so ESM supports regional-transfer evidence more strongly than catalog-P lead-time evidence. The current classical comparisons are constrained by rupture-distance, site-term and mechanism availability. Prospective warning performance also requires latency, telemetry, real-time picking and decision thresholds that are outside this offline benchmark.
 
@@ -251,6 +257,37 @@ Z.H. designed and implemented the benchmark analyses, processed the derived feat
 ## Competing interests
 
 The authors declare no competing interests.
+
+## Tables
+
+**Table 1 | Evidence layers and retained public data.**
+
+| Evidence layer | Retained data | Main targets | Role in the claim |
+| --- | --- | --- | --- |
+| Main in-domain benchmark | InstanceGM: 1,159,223 records; K-NET: 22,119 records | PGA, PGV, SA where available | Measures held-event and held-station early-window information gain |
+| External strong-motion checks | AQ2009GM: 345,226 rows; ESM: 134,250 rows; CWA: 5,882 rows | PGA, PGV | Tests whether the information-gain pattern persists outside the main archives |
+| Phase-window quality control | STEAD, Iquique, K-NET and InstanceGM phase audits | P and S pick offsets | Checks whether the P-window construction is stable enough for the main task |
+| Supplementary robustness | PNWAccelerometers peak-amplitude check | Peak acceleration proxy | Tests an accelerometer-only boundary where official PGA/PGV targets are absent |
+
+\clearpage
+
+**Table 2 | Main early-window information checks.**
+
+| Check | Window or subset | Result | Interpretation |
+| --- | --- | --- | --- |
+| Main held-station gain | 10 s | InstanceGM PGA 35.5%, PGV 52.6%, SA03 26.0%, SA10 20.9%, SA30 27.8%; K-NET PGA 49.9% | Early waveform features add information beyond source-path metadata at unseen stations |
+| Paired bootstrap | Held-station rows | All six balanced targets have positive 95% intervals; K-NET PGA 49.9% [46.6%, 53.1%] | The gain is stable under record-level resampling |
+| Strongest-motion tail | Top 5% targets | Tail MAE reductions range from 18.9% to 66.0% | The gain reaches high-consequence records |
+| Pre-peak K-NET subset | 1 s and 3 s | MAE reductions of 13.8% and 17.9% | The gain remains before the early window captures the later PGA-scale peak |
+
+**Table 3 | Transfer and uncertainty boundary checks.**
+
+| Check | Result | Boundary shown |
+| --- | --- | --- |
+| Target-domain conformal calibration | 90% interval coverage ranges from 0.820 to 0.925 in main held-station tests | In-domain residuals can support useful uncertainty calibration |
+| Source-domain conformal transfer | Coverage falls to 0.468 at 2 s and 0.298 at 5 s | Source-region residuals under-cover target regions |
+| Target-offset calibration | Coverage returns near nominal with median width 2.177 log10 units | Restored coverage carries a large interval-width cost |
+| Zero-shot regional transfer | Median error ratios rise from 2.25 at 1 s to 4.27 at 10 s | More early waveform information can amplify regional mismatch without calibration |
 
 ## Figure legends
 

@@ -333,20 +333,54 @@ The authors declare no competing interests.
 
 ## Figures
 
+![](outputs/figures/figure1_dataset_task_matrix.png){width=100%}
+
 **Figure 1 | Public-data benchmark design links each evidence layer to an event-station prediction task.** InstanceGM and K-NET anchor the main in-domain strong-motion tests, AQ2009GM, CWA and European Strong-Motion records test external checks, and STEAD/Iquique support phase-window quality control. The workflow panel shows how public waveforms become P-window features, strong-motion targets, split tests and uncertainty checks.
+
+\clearpage
+
+![](outputs/figures/figure2_early_window_performance.png){width=100%}
 
 **Figure 2 | Longer P windows add strong-motion information, with target-dependent saturation.** Early-waveform features reduce mean and tail errors from short windows onward, while combined-model error and skill show that PGA, PGV and spectral acceleration do not share a single universal lead-time curve.
 
+\clearpage
+
+![](outputs/figures/figure3_heldout_generalization.png){width=100%}
+
 **Figure 3 | Held-out tests show that the early-waveform gain survives held events and unseen stations.** Positive held-event and held-station gains remain after group-overlap checks, while distribution panels expose the magnitude, distance and PGA shifts that make the held-station setting a harder deployment test.
+
+\clearpage
+
+![](outputs/figures/figure4_classical_uncertainty.png){width=100%}
 
 **Figure 4 | Early waveform observations improve over available classical references and require explicit calibration.** Bias-corrected OpenQuake comparisons show added information beyond source-path terms, and conformal panels show where prediction intervals approach or miss nominal coverage. Regional GMM screening is reported in the Results and Supplementary tables.
 
+\clearpage
+
+![](outputs/figures/figure5_residual_waveform_audit.png){width=100%}
+
 **Figure 5 | Residual structure marks the part of strong shaking that early P waves still leave uncertain.** Error reductions coexist with distance-dependent residual tails and repeated high-residual records, separating early-waveform information from unresolved strong-motion cases.
+
+\clearpage
+
+![](outputs/figures/figure6_phase_label_audit.png){width=100%}
 
 **Figure 6 | P-window alignment is stable enough for the main task, while S picks remain dataset dependent.** Cross-dataset picker audits show small P-pick errors for the main early-window construction and larger S-pick tails, supporting a P-window benchmark instead of a broad phase-transfer claim.
 
+\clearpage
+
+![](outputs/figures/nc_core_predictability_boundary.png){width=100%}
+
 **Figure 7 | The predictability boundary is positive in-domain and fragile under direct regional transfer.** Within-domain gains increase with P-window length, cross-region error ratios grow without target calibration, source-domain conformal intervals under-cover target regions, and the strongest-motion tail keeps a visible underprediction boundary.
 
+\clearpage
+
+![](outputs/figures/extended_waveform_case_audit.png){width=100%}
+
 **Extended Data Figure 1 | Waveform case audits identify records that carry large residuals after early-waveform modelling.** Repeated InstanceGM high-residual records and K-NET PGA waveform cases show where the benchmark should guide additional physical or site-specific analysis.
+
+\clearpage
+
+![](outputs/figures/ground_motion_audit/residual_mechanism_audit.png){width=100%}
 
 **Extended Data Figure 2 | Large residuals concentrate in specific covariate corners instead of spreading uniformly.** Dominant IQR-scaled median shifts separate path-attenuation, strong-motion-tail and early-amplitude boundaries. The underprediction panel shows that these high-residual cases are modestly biased toward underprediction, supporting a tail-risk boundary without treating the covariate shifts as causal attribution.
